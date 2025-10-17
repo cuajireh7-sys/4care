@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Calendar Database</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .success { color: #28a745; background: #d4edda; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .info { color: #0c5460; background: #d1ecf1; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 5px; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Calendar Database Structure</h1>
+        <p>This tool will fix the duplicate ID issue in the calendar_schedules table.</p>
+        
+        <button class="btn" onclick="runFix()">🚀 Run Database Fix</button>
+        <button class="btn" onclick="checkStatus()">📊 Check Current Status</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function runFix() {
+            document.getElementById('output').innerHTML = '<div class="info">🔄 Running database fix...</div>';
+            
+            fetch('fix_calendar_database.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('output').innerHTML = '<pre>' + data + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('output').innerHTML = '<div class="error">❌ Error: ' + error + '</div>';
+                });
+        }
+        
+        function checkStatus() {
+            document.getElementById('output').innerHTML = '<div class="info">📊 Checking database status...</div>';
+            
+            fetch('check_database_status.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('output').innerHTML = '<pre>' + data + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('output').innerHTML = '<div class="error">❌ Error: ' + error + '</div>';
+                });
+        }
+    </script>
+</body>
+</html>

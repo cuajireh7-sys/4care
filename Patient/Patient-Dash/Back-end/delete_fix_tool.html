@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Delete Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .success { color: #28a745; background: #d4edda; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .info { color: #0c5460; background: #d1ecf1; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .warning { color: #856404; background: #fff3cd; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 5px; }
+        .btn:hover { background: #0056b3; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Delete Functionality</h1>
+        <p>This tool will fix the database structure and test the delete functionality.</p>
+        
+        <div class="warning">
+            <strong>⚠️ Current Issue:</strong> Multiple entries in calendar_schedules table have duplicate IDs (id = 0), which prevents delete operations from working properly.
+        </div>
+        
+        <button class="btn" onclick="fixDatabase()">🔧 Fix Database Structure</button>
+        <button class="btn" onclick="testDelete()">🧪 Test Delete Function</button>
+        <button class="btn btn-danger" onclick="deleteTestSchedule()">🗑️ Delete Test Schedule</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function fixDatabase() {
+            document.getElementById('output').innerHTML = '<div class="info">🔄 Fixing database structure...</div>';
+            
+            fetch('fix_database_now.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('output').innerHTML = data;
+                })
+                .catch(error => {
+                    document.getElementById('output').innerHTML = '<div class="error">❌ Error: ' + error + '</div>';
+                });
+        }
+        
+        function testDelete() {
+            document.getElementById('output').innerHTML = '<div class="info">🧪 Testing delete functionality...</div>';
+            
+            // Test with a specific ID (you can change this)
+            const testId = prompt('Enter the ID of the schedule you want to test delete for:', '1');
+            if (!testId) return;
+            
+            fetch(`test_delete.php?id=${testId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('output').innerHTML = 
+                            '<div class="success">✅ Schedule found: ' + JSON.stringify(data.schedule, null, 2) + '</div>';
+                    } else {
+                        document.getElementById('output').innerHTML = 
+                            '<div class="error">❌ Error: ' + data.message + '</div>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('output').innerHTML = '<div class="error">❌ Error: ' + error + '</div>';
+                });
+        }
+        
+        function deleteTestSchedule() {
+            const scheduleId = prompt('Enter the ID of the schedule you want to delete:', '1');
+            if (!scheduleId) return;
+            
+            if (!confirm(`Are you sure you want to delete schedule ID ${scheduleId}?`)) {
+                return;
+            }
+            
+            document.getElementById('output').innerHTML = '<div class="info">🗑️ Deleting schedule...</div>';
+            
+            fetch('Doc-Dash/Back-end/api/delete-schedule.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: scheduleId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('output').innerHTML = 
+                        '<div class="success">✅ ' + data.message + '</div>' +
+                        '<div class="info">Deleted schedule: ' + JSON.stringify(data.deleted_schedule, null, 2) + '</div>';
+                } else {
+                    document.getElementById('output').innerHTML = 
+                        '<div class="error">❌ Delete failed: ' + data.message + '</div>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('output').innerHTML = '<div class="error">❌ Error: ' + error + '</div>';
+            });
+        }
+    </script>
+</body>
+</html>
