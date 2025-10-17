@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Patient List Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Scrollbar styling for the patient list */
+    .scrollbar-thin::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: #a0aec0;
+      border-radius: 3px;
+    }
+
+    /* Custom radio tabs */
+    input[type="radio"]:checked+label {
+      @apply bg-white text-blue-600 font-semibold shadow-lg;
+    }
+
+    /* Smooth shadow for container */
+    .container-bg {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      box-shadow: 0 2px 2px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Calendar grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      user-select: none;
+    }
+
+    .calendar-day-name {
+      font-weight: 600;
+      color: #a0aec0;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .calendar-date {
+      width: 32px;
+      height: 32px;
+      text-align: center;
+      line-height: 32px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      color: #4a5568;
+    }
+
+    .calendar-date.today {
+      border: 1.5px solid #2563eb;
+      font-weight: 600;
+    }
+
+    .calendar-date.selected {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+    }
+
+    /* Scroll style for the appointment time list */
+    .scrollbar-y-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scrollbar-y-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scrollbar-y-thin::-webkit-scrollbar-thumb {
+      background-color: #a0aec0;
+      border-radius: 3px;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body class=" flex items-center justify-center p-6 font-sans">
+  <main
+    class="max-w-10xl w-full bg-white rounded-2xl shadow-xl flex overflow-hidden min-h-[650px] text-gray-800 select-none container-bg">
+    <!-- Left Panel -->
+    <section class="w-2/3 bg-blue-600 rounded-tl-1xl rounded-bl-2xl p-8 flex flex-col gap-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <button id="sidebarToggle" aria-label="Toggle Menu" class="text-white focus:outline-none hidden">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <h1 class="text-white font-semibold text-xl">Patient list</h1>
+        </div>
+      </div>
+      <!-- Status Filter Tabs -->
+      <nav class="flex gap-3 mb-6">
+        <input type="radio" name="status" id="filterAll" value="all" checked class="hidden" />
+        <label for="filterAll"
+          class="cursor-pointer px-4 py-1 rounded-full text-sm bg-blue-500 text-white hover:bg-blue-400 transition duration-200 select-none shadow-sm">
+          All status
+        </label>
+
+        <input type="radio" name="status" id="filterNew" value="New" class="hidden" />
+        <label for="filterNew"
+          class="cursor-pointer px-4 py-1 rounded-full text-sm text-white hover:bg-blue-400 transition duration-200 select-none">
+          New
+        </label>
+
+        <input type="radio" name="status" id="filterApproved" value="Approved" class="hidden" />
+        <label for="filterApproved"
+          class="cursor-pointer px-4 py-1 rounded-full text-sm text-white hover:bg-blue-400 transition duration-200 select-none">
+          Approved
+        </label>
+
+        <input type="radio" name="status" id="filterNeedApprove" value="Need approve" class="hidden" />
+        <label for="filterNeedApprove"
+          class="cursor-pointer px-4 py-1 rounded-full text-sm text-white hover:bg-blue-400 transition duration-200 select-none">
+          Need approve
+        </label>
+
+        <input type="radio" name="status" id="filterRefused" value="Refused" class="hidden" />
+        <label for="filterRefused"
+          class="cursor-pointer px-4 py-1 rounded-full text-sm text-white hover:bg-blue-400 transition duration-200 select-none">
+          Refused
+        </label>
+      </nav>
+
+      <div class="flex justify-between items-center text-white font-semibold text-sm mb-2 hidden">
+        <p>Patients for today</p>
+        <div>
+          <button id="showItemsBtn" class="bg-blue-400 hover:bg-blue-300 px-3 py-1 rounded-full w-28 flex justify-between items-center">
+            Show 5 items
+            <svg class="w-4 h-4 ml-1 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mb-4">
+        <input type="text" id="patientSearch" placeholder="Search patients by name or phone..."
+          class="w-full p-2 rounded-md bg-blue-500 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+      </div>
+
+
+      <div id="patientsList" class="overflow-y-auto flex-grow scrollbar-thin">
+        <!-- Patient items inserted via JS -->
+      </div>
+    </section>
+
+    <!-- Right Panel Calendar and Schedule -->
+    <section class="w-1/3 bg-white p-8 rounded-tr-2xl rounded-br-2xl flex flex-col">
+      <header class="flex items-center justify-between mb-6 text-gray-700 select-none">
+        <button id="prevMonth" aria-label="Previous Month" class="hover:text-blue-600 transition">
+          <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            viewBox="0 0 24 24">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <h2 id="monthYear" class="font-semibold text-lg"></h2>
+        <button id="nextMonth" aria-label="Next Month" class="hover:text-blue-600 transition">
+          <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </header>
+      <div class="calendar-grid mb-4" id="calendarDaysNames">
+        <!-- Weekday names inserted by JS -->
+      </div>
+      <div class="calendar-grid mb-6 overflow-y-auto scrollbar-y-thin" id="calendarDates" style="max-height: 200px;">
+        <!-- Dates inserted by JS -->
+      </div>
+      <div class="text-gray-600 font-semibold mb-2 select-none">Time</div>
+      <div id="appointmentTimes" class="flex flex-col gap-2 overflow-auto scrollbar-y-thin max-h-[250px]">
+        <!-- Time slots inserted dynamically -->
+      </div>
+      <button id="addScheduleBtn" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+        Add Schedule
+      </button>
+    </section>
+  </main>
+
+  <!-- Patient Details Modal -->
+  <div id="patientDetailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closePatientDetailsModal">&times;</span>
+      <h3 class="text-xl font-bold mb-4 text-gray-800" id="modalPatientName"></h3>
+      <div class="flex items-center mb-2">
+        <p class="text-gray-600 font-semibold w-24">Status:</p>
+        <span id="modalPatientStatus" class="text-gray-800 capitalize"></span>
+      </div>
+      <div class="flex items-center mb-2">
+        <p class="text-gray-600 font-semibold w-24">Phone:</p>
+        <span id="modalPatientPhone" class="text-gray-800"></span>
+      </div>
+      <div class="flex items-center mb-2">
+        <p class="text-gray-600 font-semibold w-24">Date:</p>
+        <span id="modalAppointmentDate" class="text-gray-800"></span>
+      </div>
+      <div class="flex items-center mb-2">
+        <p class="text-gray-600 font-semibold w-24">Time:</p>
+        <span id="modalAppointmentTime" class="text-gray-800"></span>
+      </div>
+      <div class="mb-2">
+        <p class="text-gray-600 font-semibold mb-1">Discussion:</p>
+        <p id="modalDiscuss" class="text-gray-800 bg-gray-100 p-3 rounded-md"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Schedule Modal -->
+  <div id="addScheduleModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeAddScheduleModal">&times;</span>
+      <h3 class="text-xl font-bold mb-4 text-gray-800">Add New Schedule</h3>
+      <form id="addScheduleForm" class="flex flex-col gap-4">
+        <div>
+          <label for="newPatientName" class="block text-gray-700 text-sm font-bold mb-1">Patient Name:</label>
+          <input type="text" id="newPatientName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+        <div>
+          <label for="newPatientPhone" class="block text-gray-700 text-sm font-bold mb-1">Phone Number:</label>
+          <input type="tel" id="newPatientPhone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+        <div>
+          <label for="newDiscussion" class="block text-gray-700 text-sm font-bold mb-1">Discussion:</label>
+          <textarea id="newDiscussion" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+        </div>
+        <div>
+          <label for="newAppointmentDate" class="block text-gray-700 text-sm font-bold mb-1">Date:</label>
+          <input type="date" id="newAppointmentDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+        <div class="flex gap-4">
+          <div class="w-1/2">
+            <label for="newTimeStart" class="block text-gray-700 text-sm font-bold mb-1">Start Time:</label>
+            <input type="time" id="newTimeStart" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+          </div>
+          <div class="w-1/2">
+            <label for="newTimeEnd" class="block text-gray-700 text-sm font-bold mb-1">End Time:</label>
+            <input type="time" id="newTimeEnd" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+          </div>
+        </div>
+        <div>
+          <label for="newStatus" class="block text-gray-700 text-sm font-bold mb-1">Status:</label>
+          <select id="newStatus" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <option value="Approved">Approved</option>
+            <option value="Need approve">Need approve</option>
+            <option value="New">New</option>
+            <option value="Refused">Refused</option>
+          </select>
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Add Schedule
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    (() => {
+      // Data for patients:
+      const patients = [
+        {
+          id: 1,
+          discuss: "Long discuss about patient's chronic back pain and potential physiotherapy options.",
+          date: "2025-08-24",
+          timeStart: "08:00",
+          timeEnd: "10:00",
+          status: "Approved",
+          patient: { name: "Nina Singleton", phone: "068 250 90 20", avatar: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0ca1e672-94be-40e8-bb7b-ddc72d855fc7.png" },
+        },
+        {
+          id: 2,
+          discuss: "Follow-up on recent surgery. Check incision healing and discuss medication.",
+          date: "2025-08-24",
+          timeStart: "10:00",
+          timeEnd: "12:00",
+          status: "Need approve",
+          patient: { name: "John Norton", phone: "063 780 91 13", avatar: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b7dde156-54fa-4e6f-b909-0a7b9895689a.png" },
+        },
+        {
+          id: 3,
+          discuss: "Initial consultation for new patient. General health check and medical history review.",
+          date: "2025-08-24",
+          timeStart: "12:00",
+          timeEnd: "13:00",
+          status: "New",
+          patient: { name: "Lucy Brady", phone: "095 580 62 53", avatar: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a414e8f3-147c-43a2-a403-afd6761adc3a.png" },
+        }
+      ];
+
+      // Utility function to format date from YYYY-MM-DD to readable
+      function formatDate(dateStr) {
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        return new Date(dateStr).toLocaleDateString(undefined, options);
+      }
+
+      // Map status to color strip and label color in left panel
+      const statusColors = {
+        Approved: "bg-green-400",
+        "Need approve": "bg-orange-400",
+        New: "bg-blue-400",
+        Refused: "bg-red-400",
+      };
+
+      // Patient card generation
+      function createPatientCard(patient) {
+        const container = document.createElement("div");
+        container.className =
+          "bg-white rounded-xl p-4 mb-3 flex items-center justify-between shadow-md cursor-pointer hover:shadow-xl transition-shadow select-text";
+
+        // Color strip on left based on status
+        const colorStrip = document.createElement("div");
+        colorStrip.className = `w-1 rounded-l-xl h-full ${statusColors[patient.status] || "bg-gray-400"}`;
+        container.appendChild(colorStrip);
+
+        // Info container (flex-grow)
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "flex-grow ml-4";
+
+        // Title + status label
+        const titleStatus = document.createElement("div");
+        titleStatus.className = "flex items-center justify-between";
+
+        const title = document.createElement("p");
+        title.textContent = patient.discuss;
+        title.className = "font-semibold text-gray-700";
+
+        const stLabel = document.createElement("span");
+        stLabel.textContent = patient.status;
+        stLabel.className = `text-sm ml-1 capitalize ${
+          patient.status === "Approved"
+            ? "text-green-600"
+            : patient.status === "New"
+              ? "text-blue-500"
+              : patient.status === "Refused"
+                ? "text-red-600"
+                : "text-orange-600"
+        } font-semibold select-text`;
+
+        titleStatus.appendChild(title);
+        titleStatus.appendChild(stLabel);
+
+        // Date and time
+        const dateTime = document.createElement("div");
+        dateTime.className = "text-xs text-gray-500 flex items-center gap-2 mt-1 select-text";
+
+        const calendarIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        calendarIcon.setAttribute("class", "w-4 h-4 stroke-current text-blue-400");
+        calendarIcon.setAttribute("fill", "none");
+        calendarIcon.setAttribute("stroke-width", "2");
+        calendarIcon.setAttribute("stroke-linecap", "round");
+        calendarIcon.setAttribute("stroke-linejoin", "round");
+        calendarIcon.setAttribute("viewBox", "0 0 24 24");
+        calendarIcon.innerHTML = '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>';
+        dateTime.appendChild(calendarIcon);
+
+        const dateText = document.createElement("span");
+        dateText.textContent = formatDate(patient.date);
+        dateTime.appendChild(dateText);
+
+        const timeText = document.createElement("span");
+        timeText.textContent = `${patient.timeStart} - ${patient.timeEnd}`;
+        timeText.className = "ml-2";
+        dateTime.appendChild(timeText);
+
+        infoDiv.appendChild(titleStatus);
+        infoDiv.appendChild(dateTime);
+
+        // Patient info (avatar, name, phone)
+        const patientInfo = document.createElement("div");
+        patientInfo.className = "flex items-center gap-2 ml-4 select-text";
+
+        const avatar = document.createElement("img");
+        avatar.src = patient.patient.avatar;
+        avatar.alt = `Avatar of ${patient.patient.name}`;
+        avatar.className = "w-10 h-10 rounded-full object-cover border border-gray-300";
+        avatar.onerror = function () {
+          this.src = "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1ba0eab7-1bc0-4b26-a960-8891d532091a.png?&font=roboto";
+        };
+
+        const patDetails = document.createElement("div");
+        patDetails.className = "text-xs";
+
+        const patName = document.createElement("p");
+        patName.textContent = patient.patient.name;
+        patName.className = "font-semibold text-gray-700";
+
+        const patPhone = document.createElement("p");
+        patPhone.textContent = patient.patient.phone;
+        patPhone.className = "text-gray-400";
+
+        patDetails.appendChild(patName);
+        patDetails.appendChild(patPhone);
+
+        patientInfo.appendChild(avatar);
+        patientInfo.appendChild(patDetails);
+
+        // Arrow right icon button
+        const arrowBtn = document.createElement("button");
+        arrowBtn.setAttribute("aria-label", `Details for ${patient.patient.name}`);
+        arrowBtn.className = "text-blue-500 hover:text-blue-700 ml-6 focus:outline-none";
+
+        arrowBtn.innerHTML =
+          '<svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="9" y1="6" x2="15" y2="12"></line><line x1="9" y1="18" x2="15" y2="12"></line></svg>';
+
+        // Clicking arrow triggers modal
+        arrowBtn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          showPatientDetailsModal(patient);
+        });
+
+        container.appendChild(colorStrip);
+        container.appendChild(infoDiv);
+        container.appendChild(patientInfo);
+        container.appendChild(arrowBtn);
+
+        return container;
+      }
+
+      // Render filtered patients to list
+      let currentFilterStatus = "all";
+      let currentSearchTerm = "";
+
+      function renderPatients() {
+        const container = document.getElementById("patientsList");
+        container.innerHTML = "";
+        let filtered = patients;
+
+        // Apply status filter
+        if (currentFilterStatus !== "all") {
+          filtered = filtered.filter((p) => p.status === currentFilterStatus);
+        }
+
+        // Apply search filter
+        if (currentSearchTerm) {
+          const searchTermLower = currentSearchTerm.toLowerCase();
+          filtered = filtered.filter(
+            (p) =>
+              p.patient.name.toLowerCase().includes(searchTermLower) ||
+              p.patient.phone.includes(searchTermLower)
+          );
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = '<p class="text-white text-center mt-4">No patients found matching your criteria.</p>';
+          return;
+        }
+
+        filtered.forEach((patient) => {
+          container.appendChild(createPatientCard(patient));
+        });
+      }
+
+      // Initial render all patients
+      renderPatients();
+
+      // Tab change logic
+      document.querySelectorAll('input[name="status"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          currentFilterStatus = radio.value;
+          renderPatients();
+        });
+      });
+
+      // Search bar logic
+      document.getElementById("patientSearch").addEventListener("input", (event) => {
+        currentSearchTerm = event.target.value;
+        renderPatients();
+      });
+
+
+      // Date Utilities
+      function daysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+      }
+
+      // Variables for calendar state
+      let currentDate = new Date(2025, 7, 24); // Start at August 24, 2025 (month 0-based)
+      let selectedDay = 24;
+
+      // Month and weekday names
+      const weekdayNames = ["M", "T", "W", "T", "F", "S", "S"];
+      const fullWeekdaysLong = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+      // Render weekday names in calendar top header
+      const calendarDaysNames = document.getElementById("calendarDaysNames");
+      weekdayNames.forEach((day) => {
+        const el = document.createElement("div");
+        el.className = "calendar-day-name select-none";
+        el.textContent = day;
+        calendarDaysNames.appendChild(el);
+      });
+
+      // Render calendar days based on currentDate
+      function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const monthDaysCount = daysInMonth(year, month);
+
+        const calendarDates = document.getElementById("calendarDates");
+        calendarDates.innerHTML = "";
+
+        // Determine day of week for 1st of month (Monday-based index)
+        // Sunday=0 but we want Monday=0 so we adjust
+        let firstDay = new Date(year, month, 1).getDay();
+        firstDay = (firstDay === 0) ? 6 : firstDay - 1;
+
+        // Append blank days if firstDay > 0
+        for (let i = 0; i < firstDay; i++) {
+          const emptyDay = document.createElement("div");
+          emptyDay.className = "calendar-date select-none pointer-events-none";
+          calendarDates.appendChild(emptyDay);
+        }
+
+        // Append days with event listeners
+        for (let day = 1; day <= monthDaysCount; day++) {
+          const dateDiv = document.createElement("div");
+          dateDiv.className = "calendar-date";
+          dateDiv.textContent = day;
+
+          // Highlight today and selected
+          if (day === selectedDay) {
+            dateDiv.classList.add("selected");
+          }
+          // Highlight current actual date
+          const today = new Date();
+          if (
+            year === today.getFullYear() &&
+            month === today.getMonth() &&
+            day === today.getDate()
+          ) {
+            dateDiv.classList.add("today");
+          }
+
+          dateDiv.addEventListener("click", () => {
+            selectedDay = day;
+            renderCalendar();
+            renderAppointmentTimes();
+            // Pre-fill date in add schedule modal
+            const selectedDate = new Date(year, month, selectedDay);
+            document.getElementById("newAppointmentDate").value = selectedDate.toISOString().split('T')[0];
+          });
+
+          calendarDates.appendChild(dateDiv);
+        }
+
+        // Update month-year header
+        const monthYear = document.getElementById("monthYear");
+        const monthNamesFull = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December",
+        ];
+        monthYear.textContent = `${monthNamesFull[month]} ${year}`;
+
+        // Pre-fill date in add schedule modal when calendar month changes
+        const selectedDate = new Date(year, month, selectedDay);
+        document.getElementById("newAppointmentDate").value = selectedDate.toISOString().split('T')[0];
+      }
+
+      // Render time slots for selected date
+      function renderAppointmentTimes() {
+        const timeContainer = document.getElementById("appointmentTimes");
+        timeContainer.innerHTML = "";
+
+        // Build the date string YYYY-MM-DD for selected day
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1; // 1-based month
+        const day = selectedDay;
+        const selectedDateString = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+
+        // Filter patients for the selected date
+        const appointments = patients.filter((p) => p.date === selectedDateString);
+        if (appointments.length === 0) {
+          const noApp = document.createElement("p");
+          noApp.textContent = "No appointments";
+          noApp.className = "italic text-gray-400 text-center py-4"; // Added padding for better look
+          timeContainer.appendChild(noApp);
+          return;
+        }
+
+        // Sort appointments by timeStart
+        appointments.sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1));
+
+        // Create entries for each appointment's time and patient name with respective background colors
+        appointments.forEach((a) => {
+          const block = document.createElement("div");
+          block.className = "rounded-md px-3 py-2 text-xs font-semibold text-gray-900 flex justify-between items-center"; // Added flex for alignment
+
+          const timeSpan = document.createElement("span");
+          timeSpan.textContent = `${a.timeStart} - ${a.timeEnd}`;
+          block.appendChild(timeSpan);
+
+          const patientNameSpan = document.createElement("span");
+          patientNameSpan.textContent = a.patient.name;
+          patientNameSpan.className = "ml-2 truncate"; // Truncate long names
+          block.appendChild(patientNameSpan);
+
+          // Background color from status
+          const bg = (() => {
+            switch (a.status) {
+              case "Approved":
+                return "bg-green-200";
+              case "Need approve":
+                return "bg-orange-200";
+              case "New":
+                return "bg-blue-200";
+              case "Refused":
+                return "bg-red-200";
+              default:
+                return "bg-gray-200";
+            }
+          })();
+          block.classList.add(bg);
+          timeContainer.appendChild(block);
+        });
+      }
+
+      // Handle month prev/next navigation
+      document.getElementById("prevMonth").addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        // Reset selected day to 1 to avoid invalid dates if the new month has fewer days
+        selectedDay = Math.min(selectedDay, daysInMonth(currentDate.getFullYear(), currentDate.getMonth()));
+        renderCalendar();
+        renderAppointmentTimes();
+      });
+
+      document.getElementById("nextMonth").addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        selectedDay = Math.min(selectedDay, daysInMonth(currentDate.getFullYear(), currentDate.getMonth()));
+        renderCalendar();
+        renderAppointmentTimes();
+      });
+
+      // Show items button alert for demo
+      document.getElementById("showItemsBtn").addEventListener("click", () => {
+        alert("This demo currently shows 5 items by default.");
+      });
+
+      // Patient Details Modal functionality
+      const patientDetailsModal = document.getElementById("patientDetailsModal");
+      const closePatientDetailsModalBtn = document.getElementById("closePatientDetailsModal");
+
+      function showPatientDetailsModal(patient) {
+        document.getElementById("modalPatientName").textContent = patient.patient.name;
+        document.getElementById("modalPatientStatus").textContent = patient.status;
+        document.getElementById("modalPatientPhone").textContent = patient.patient.phone;
+        document.getElementById("modalAppointmentDate").textContent = formatDate(patient.date);
+        document.getElementById("modalAppointmentTime").textContent = `${patient.timeStart} - ${patient.timeEnd}`;
+        document.getElementById("modalDiscuss").textContent = patient.discuss;
+
+        // Set status color for the modal
+        const statusElement = document.getElementById("modalPatientStatus");
+        statusElement.className = `text-gray-800 capitalize font-semibold ${
+          patient.status === "Approved"
+            ? "text-green-600"
+            : patient.status === "New"
+              ? "text-blue-500"
+              : patient.status === "Refused"
+                ? "text-red-600"
+                : "text-orange-600"
+        }`;
+
+        patientDetailsModal.style.display = "flex"; // Use flex to center the modal
+      }
+
+      closePatientDetailsModalBtn.addEventListener("click", () => {
+        patientDetailsModal.style.display = "none";
+      });
+
+      // Add Schedule Modal functionality
+      const addScheduleModal = document.getElementById("addScheduleModal");
+      const addScheduleBtn = document.getElementById("addScheduleBtn");
+      const closeAddScheduleModalBtn = document.getElementById("closeAddScheduleModal");
+      const addScheduleForm = document.getElementById("addScheduleForm");
+
+      addScheduleBtn.addEventListener("click", () => {
+        // Pre-fill the date input with the currently selected calendar date
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const day = selectedDay;
+        const selectedDate = new Date(year, month, day);
+        document.getElementById("newAppointmentDate").value = selectedDate.toISOString().split('T')[0];
+        addScheduleModal.style.display = "flex";
+      });
+
+      closeAddScheduleModalBtn.addEventListener("click", () => {
+        addScheduleModal.style.display = "none";
+        addScheduleForm.reset(); // Clear form fields
+      });
+
+      addScheduleForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent default form submission
+
+        const newPatientName = document.getElementById("newPatientName").value;
+        const newPatientPhone = document.getElementById("newPatientPhone").value;
+        const newDiscussion = document.getElementById("newDiscussion").value;
+        const newAppointmentDate = document.getElementById("newAppointmentDate").value;
+        const newTimeStart = document.getElementById("newTimeStart").value;
+        const newTimeEnd = document.getElementById("newTimeEnd").value;
+        const newStatus = document.getElementById("newStatus").value;
+
+        // Basic validation
+        if (!newPatientName || !newPatientPhone || !newDiscussion || !newAppointmentDate || !newTimeStart || !newTimeEnd || !newStatus) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        const newPatientId = patients.length > 0 ? Math.max(...patients.map(p => p.id)) + 1 : 1;
+
+        const newPatient = {
+          id: newPatientId,
+          discuss: newDiscussion,
+          date: newAppointmentDate,
+          timeStart: newTimeStart,
+          timeEnd: newTimeEnd,
+          status: newStatus,
+          patient: {
+            name: newPatientName,
+            phone: newPatientPhone,
+            avatar: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1ba0eab7-1bc0-4b26-a960-8891d532091a.png?&font=roboto" // Default avatar
+          },
+        };
+
+        patients.push(newPatient);
+        renderPatients(); // Re-render patient list
+        renderAppointmentTimes(); // Re-render calendar appointments
+        addScheduleModal.style.display = "none"; // Close modal
+        addScheduleForm.reset(); // Clear form fields
+        alert("Schedule added successfully!");
+      });
+
+
+      // Close modals when clicking outside
+      window.addEventListener("click", (event) => {
+        if (event.target === patientDetailsModal) {
+          patientDetailsModal.style.display = "none";
+        }
+        if (event.target === addScheduleModal) {
+          addScheduleModal.style.display = "none";
+          addScheduleForm.reset(); // Clear form fields if closed by clicking outside
+        }
+      });
+
+
+      // Initial UI setup
+      renderCalendar();
+      renderAppointmentTimes();
+    })();
+  </script>
+</body>
+
+</html>

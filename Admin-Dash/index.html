@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OCR Dashboard</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Tesseract.js OCR-->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- OpenCV.js -->
+  <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+
+  <style>
+    :root{
+      --card-radius: 12px;
+      --muted: #6c757d;
+      --accent: #0d6efd;
+    }
+
+    body{
+      background: #f4f7fb;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #222;
+    }
+
+    .container { max-width: 1400px; }
+
+    .card{
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      background: #fff;
+    }
+
+    h4 { font-weight: 700; }
+
+    /* Upload box */
+    .upload-box{
+      border: 2px dashed var(--accent);
+      border-radius: var(--card-radius);
+      background: #f9fbff;
+      height: 220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      color:var(--accent);
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+    
+    .upload-box:hover{ background:#eef3fc; transform: translateY(-2px); }
+    .upload-box i{ font-size:50px; margin-bottom:10px; }
+
+    /* Camera/Video */
+    #cameraPreview { width:100%; border-radius:12px; display:none; margin-top:10px; }
+
+    /* Patient form compact rules */
+    #patientCard h6 {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: .95rem;
+    }
+
+    #patientCard .form-control {
+      border-radius: 8px;
+      height: 38px;
+      padding: .4rem .6rem;
+    }
+
+    .search-bar .form-control{ border-right: none; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+    .search-bar .btn{ border-top-left-radius: 0; border-bottom-left-radius: 0; min-width:44px; }
+
+    .form-group-row { margin-bottom: .5rem; }
+
+    .form-actions .btn { min-width: 110px; border-radius: 8px; }
+
+    .alert { margin-bottom: 1rem; }
+
+    @media (max-width: 992px){
+      .upload-box { height: 320px; }
+    }
+
+    @media (max-width: 576px){
+      .upload-box { height: 260px; font-size: 14px; }
+      #patientCard .form-control { height: 44px; }
+      .form-actions { gap: .6rem; }
+    }
+
+   /* ===================
+       MOBILE LAYOUT VER
+      =================== */
+
+@media (max-width: 991px) {
+  body {
+    display: flex;
+    justify-content: center;
+    background: #f4f7fb;
+  }
+
+  /* tweaked: added side spacing */
+  .container {
+    width: 100%;
+    max-width: none;
+    padding: 0.6rem 1rem; /* added horizontal space */
+  }
+
+  .row.g-4.align-items-start {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.8rem !important;
+  }
+
+  .col-12, .col-md-5, .col-md-7 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .card {
+    border-radius: 14px;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+    background: #fff;
+    padding: 1rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .upload-box {
+    width: 100%;
+    height: 210px;
+    border: 2px dashed var(--accent);
+    border-radius: var(--card-radius);
+    background: #f9fbff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    color: var(--accent);
+  }
+
+  #cameraPreview {
+    width: 100%;
+    border-radius: 10px;
+    display: none;
+    margin-top: 10px;
+  }
+
+  #patientCard h6 {
+    margin-top: 0.9rem;
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  #patientCard .form-control {
+    border-radius: 8px;
+    height: 50px;
+    padding: 0.55rem 0.8rem;
+    font-size: 1rem;
+  }
+  
+    #saveBtn {
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+  }
+
+  .search-bar {
+    display: flex;
+    width: 100%;
+  }
+
+  .search-bar .form-control {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .search-bar .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    min-width: 50px;
+  }
+
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    border-radius: 8px;
+    height: 46px;
+    font-size: 0.95rem;
+  }
+
+  .alert {
+    margin-bottom: 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  html, body {
+    overflow-x: hidden;
+  }
+}
+  /*Zip & Country input alignment (mobile)*/
+@media (max-width: 991px) {
+  #patientCard .row.form-group-row .col-6 {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  #zip, #country {
+    width: 100%;
+    height: 50px !important;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+}
+
+  /* smooth fade animation for notifs */
+  .alert {
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.4s ease;
+  }
+
+  .alert.showing {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+/* Scroll to Top Button */
+#scrollTopBtn {
+  display: none; 
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px; /* adjust roundness */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+#scrollTopBtn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 991px) {
+  #scrollTopBtn {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #scrollTopBtn.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+  </style>
+
+</head>
+
+<body>
+  <div class="container py-4">
+    <h4 class="text-primary mb-4 text-center text-md-start">
+      Optical Character Recognition (OCR)
+    </h4>
+
+    <!-- alert area -->
+    <div id="alertBox"></div>
+
+    <div class="row g-4 align-items-start">
+      <!-- Upload Sec -->
+      <div class="col-12 col-md-5">
+        <div class="card p-4">
+          <h5 class="fw-semibold text-primary mb-3">
+            <i class="fa-solid fa-file-upload me-2"></i> Upload Document for OCR
+          </h5>
+
+          <div id="uploadBox" class="upload-box mb-3">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p class="mb-0 small">Drag & drop your image/file or click to select (PNG / JPG)</p>
+            <input id="fileInput" type="file" accept="image/*" class="form-control d-none" />
+          </div>
+
+          <div class="text-center mb-3">
+            <button id="openCamera" class="btn btn-outline-primary btn-sm me-2">
+              <i class="fa-solid fa-camera me-1"></i> Open Camera
+            </button>
+            <button id="captureBtn" class="btn btn-outline-success btn-sm me-2" disabled>
+              <i class="fa-solid fa-circle me-1"></i> Capture
+            </button>
+            <button id="closeCamera" class="btn btn-outline-danger btn-sm" style="display:none;">
+              <i class="fa-solid fa-power-off me-1"></i> Stop
+            </button>
+          </div>
+
+          <video id="cameraPreview" autoplay playsinline></video>
+
+          <div class="text-center mt-3">
+            <button id="performOCR" class="btn btn-primary btn-sm" disabled>
+              <i class="fa-solid fa-magnifying-glass me-1"></i> Perform OCR
+            </button>
+
+            <div id="loadingSpinner" class="mt-3" style="display:none;">
+              <div class="spinner-border text-primary" role="status" style="width:1.25rem;height:1.25rem;"></div>
+              <span class="ms-2 small text-muted">Processing OCR please wait.</span>
+            </div>
+
+            <p id="status" class="small text-muted mt-2">No file selected yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patient details  sec-->
+      <div class="col-12 col-md-7">
+        <div id="patientCard" class="card p-4">
+          <h5 class="fw-semibold text-primary mb-3">
+            <i class="fa-solid fa-user me-2"></i> Patient Details
+          </h5>
+
+          <!-- Search -->
+          <div class="input-group mb-3 search-bar">
+            <input id="searchPatient" type="text" class="form-control" placeholder="Search patient" />
+            <button id="searchBtn" class="btn btn-primary" type="button">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+
+          <!-- PERSONAL -->
+          <h6>Personal Information</h6>
+          <div class="row form-group-row">
+            <div class="col-12 col-md-6 mb-2">
+              <input id="firstName" class="form-control" placeholder="First Name" />
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+              <input id="lastName" class="form-control" placeholder="Last Name" />
+            </div>
+          </div>
+
+          <div class="row form-group-row">
+            <div class="col-12 col-md-6 mb-2">
+              <input id="dob" class="form-control" placeholder="Date of Birth" />
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+              <input id="gender" class="form-control" placeholder="Gender" />
+            </div>
+          </div>
+
+          <!-- CONTACT -->
+          <h6>Contact Information</h6>
+          <div class="row form-group-row">
+            <div class="col-12 col-md-5 mb-2">
+              <input id="city" class="form-control" placeholder="City" />
+            </div>
+            <div class="col-6 col-md-4 mb-2">
+              <input id="zip" class="form-control" placeholder="Zip/Postal Code" />
+            </div>
+            <div class="col-6 col-md-3 mb-2">
+              <input id="country" class="form-control" placeholder="Country" />
+            </div>
+          </div>
+
+          <div class="row form-group-row">
+            <div class="col-12 col-md-6 mb-2">
+              <input id="phoneNumber" class="form-control" placeholder="Phone Number" />
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+              <input id="address" class="form-control" placeholder="Address/Street" />
+            </div>
+          </div>
+
+          <!-- MEDICAL -->
+          <h6>Medical Information</h6>
+          <div class="row form-group-row">
+            <div class="col-12 col-md-4 mb-2">
+              <input id="bloodType" class="form-control" placeholder="Blood Type" />
+            </div>
+            <div class="col-12 col-md-8 mb-2">
+              <input id="currentMedications" class="form-control" placeholder="Current Medications" />
+            </div>
+          </div>
+
+          <div class="row form-group-row">
+            <div class="col-12 mb-2">
+              <input id="allergies" class="form-control" placeholder="Allergies" />
+            </div>
+          </div>
+
+          <div class="row form-group-row">
+            <div class="col-12 mb-2">
+              <input id="medicalConditions" class="form-control" placeholder="Medical Conditions" />
+            </div>
+          </div>
+
+          <!-- form actions -->
+          <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap form-actions">
+            <button id="addInfoBtn" class="btn btn-secondary mb-2">
+              <i class="fa-solid fa-plus me-1"></i> Add Additional Info
+            </button>
+
+            <div class="d-flex gap-2">
+              <button id="saveBtn" class="btn btn-primary mb-2">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Save Patient Details
+              </button>
+              <button id="resetBtn" class="btn btn-outline-danger mb-2">
+                <i class="fa-solid fa-rotate-left me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollTopBtn" title="Back to top">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+  <!-- SCRIPT -->
+  <script>
+    // DOM elements
+    const uploadBox = document.getElementById('uploadBox');
+    const fileInput = document.getElementById('fileInput');
+    const performOCR = document.getElementById('performOCR');
+    const status = document.getElementById('status');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const alertBox = document.getElementById('alertBox');
+    const openCamera = document.getElementById('openCamera');
+    const captureBtn = document.getElementById('captureBtn');
+    const closeCamera = document.getElementById('closeCamera');
+    const cameraPreview = document.getElementById('cameraPreview');
+    const searchBtn = document.getElementById('searchBtn');
+
+    const DEFAULT_STATUS = "No file selected yet.";
+    let currentFile = null;
+    let stream = null;
+
+    status.textContent = DEFAULT_STATUS;
+
+    function showAlert(msg){
+  alertBox.innerHTML = `
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      ${msg}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>`;
+  
+  const alertEl = alertBox.querySelector('.alert');
+  requestAnimationFrame(() => alertEl.classList.add('showing')); // fade-in
+
+  // notif logic
+  setTimeout(() => {
+    alertEl.classList.remove('showing'); 
+    setTimeout(() => alertEl.remove(), 400); 
+  }, 3000);
+}
+
+    // upload drag/drop logic
+    uploadBox.addEventListener('click', ()=> fileInput.click());
+    uploadBox.addEventListener('dragover', e=> { e.preventDefault(); uploadBox.style.background = '#eef3fc'; });
+    uploadBox.addEventListener('dragleave', ()=> uploadBox.style.background = '');
+    uploadBox.addEventListener('drop', e=> {
+      e.preventDefault();
+      uploadBox.style.background = '';
+      if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+      }
+    });
+
+    fileInput.addEventListener('change', ()=>{
+      if(fileInput.files && fileInput.files.length){
+        currentFile = fileInput.files[0];
+        status.textContent = `Ready: ${currentFile.name}`;
+        performOCR.disabled = false;
+      }
+    });
+
+    // camera logic
+    openCamera.addEventListener('click', async ()=>{
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        cameraPreview.srcObject = stream;
+        cameraPreview.style.display = 'block';
+        captureBtn.disabled = false;
+        closeCamera.style.display = 'inline-block';
+      } catch (err){
+        showAlert('Unable to access camera: ' + err.message);
+      }
+    });
+
+    captureBtn.addEventListener('click', ()=>{
+      if(!cameraPreview.videoWidth || !cameraPreview.videoHeight) return showAlert('Camera not ready');
+      const canvas = document.createElement('canvas');
+      canvas.width = cameraPreview.videoWidth;
+      canvas.height = cameraPreview.videoHeight;
+      canvas.getContext('2d').drawImage(cameraPreview,0,0);
+      canvas.toBlob(blob=>{
+        currentFile = new File([blob],'capture.png',{ type:'image/png' });
+        status.textContent = 'Captured image ready.';
+        performOCR.disabled = false;
+      },'image/png');
+    });
+
+    closeCamera.addEventListener('click', ()=>{
+      if(stream) stream.getTracks().forEach(t=>t.stop());
+      cameraPreview.srcObject = null;
+      cameraPreview.style.display = 'none';
+      captureBtn.disabled = true;
+      closeCamera.style.display = 'none';
+    });
+
+    // preprocessing with OpenCV
+    function preprocessImageCV(imgSrc, cb){
+      let img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function(){
+        let canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        let ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0);
+        let src = cv.imread(canvas);
+        let dst = new cv.Mat();
+        cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
+        cv.threshold(dst, dst, 0, 255, cv.THRESH_BINARY+cv.THRESH_OTSU);
+        cv.imshow(canvas, dst);
+        src.delete(); dst.delete();
+        cb(canvas.toDataURL('image/png'));
+      };
+      img.src = imgSrc;
+    }
+
+    async function runOCR(file){
+      return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = function(){
+          preprocessImageCV(reader.result, async (processedDataUrl)=>{
+            try {
+              const { data: { text } } = await Tesseract.recognize(processedDataUrl, 'eng', { logger: m => console.log(m) });
+              resolve(text);
+            } catch(err){
+              reject(err);
+            }
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // simple fuzzy field extraction
+    function extractField(text, fieldNames){
+      for(const f of fieldNames){
+        let regex = new RegExp(f + '[:\\-]?\\s*([^\\n\\r]+)','i');
+        let m = text.match(regex);
+        if(m && m[1]) return m[1].trim();
+      }
+      return '';
+    }
+
+    // OCR button
+    performOCR.addEventListener('click', async ()=>{
+      if(!currentFile) { showAlert('Please upload or capture a file first'); return; }
+      loadingSpinner.style.display = 'inline-block';
+      try {
+        const text = await runOCR(currentFile);
+
+        // fuzzy field extraction (field mapping)
+        const fuzzyMappings = {
+          firstName: ['First Name','Given Name','FName'],
+          lastName: ['Last Name','Surname','LName'],
+          dob: ['Date of Birth','DOB','Birth Date'],
+          gender: ['Gender','Sex'],
+          
+          city: ['City','Town'],
+          zip: ['Zip/Postal Code','Postal Code','ZIP'],
+          phoneNumber: ['Phone Number','Mobile','Contact No'],
+          address: ['Address','Street'],
+          country: ['Country','Nation'],
+          bloodType: ['Blood Type','Blood Group'],
+          allergies: ['Allergies','Allergy'],
+          medicalConditions: ['Medical Conditions','Conditions','Illnesses'],
+          currentMedications: ['Current Medications','Medications','Drugs']
+        };
+
+        for(const id in fuzzyMappings){
+          const val = extractField(text, fuzzyMappings[id]);
+          if(val) document.getElementById(id).value = val;
+        }
+
+        showAlert('OCR auto-fill completed!');
+
+        // auto-scroll to patient form logic (works only in mobile/vertical layout)
+        if (window.innerWidth <= 991) {
+        const patientCard = document.getElementById('patientCard');
+        if (patientCard) {
+        patientCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      } catch(err){
+        console.error(err);
+        showAlert('OCR failed');
+      } finally {
+        loadingSpinner.style.display = 'none';
+      }
+    });
+
+    // reset button logic
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      const inputs = document.querySelectorAll('#patientCard input');
+      inputs.forEach(i => i.value = '');
+      document.querySelectorAll('.additional-info').forEach(x => x.remove());
+      currentFile = null;
+      performOCR.disabled = true;
+      status.textContent = DEFAULT_STATUS;
+      showAlert('Cleared.');
+    });
+
+    // add additional info
+    document.getElementById('addInfoBtn').addEventListener('click', ()=>{
+      const newField = document.createElement('input');
+      newField.type = 'text';
+      newField.className = 'form-control mb-2 additional-info';
+      newField.placeholder = 'Additional Info';
+      const actionRow = document.querySelector('.form-actions');
+      document.getElementById('patientCard').insertBefore(newField, actionRow);
+    });
+
+    // search (can be edited later)
+    searchBtn.addEventListener('click', ()=>{
+      const q = document.getElementById('searchPatient').value.trim();
+      if(!q){ console.log("Please enter a patient name to search."); return; }
+      console.log(`Search triggered for "${q}" (connect to backend to fetch patients).`);
+    });
+
+    // Save button placeholder
+    document.getElementById('saveBtn').addEventListener('click', ()=>{
+      const data = {};
+      document.querySelectorAll('#patientCard input').forEach(inp => data[inp.id || inp.placeholder] = inp.value || '');
+      console.log('Save payload:', data);
+      showAlert('Saved. (implement backend integration).');
+    });
+
+    // accessibility
+    uploadBox.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+    
+    // scroll to top button logic (works only in mobile/vertical layout)
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+    window.addEventListener("scroll", () => {
+    const isMobile = window.innerWidth <= 991;
+     if (isMobile && (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
+     scrollTopBtn.classList.add("show");
+     } else {
+    scrollTopBtn.classList.remove("show");
+    }
+  });
+
+    scrollTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+   // Recheck visibility when resizing
+   window.addEventListener("resize", () => {
+   window.dispatchEvent(new Event("scroll"));
+  });
+
+  </script>
+
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html> 

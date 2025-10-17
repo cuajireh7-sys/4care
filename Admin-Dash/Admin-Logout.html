@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout Confirmation</title>
+    <link rel="stylesheet" href="4Care-Admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal-overlay" id="logoutModalOverlay">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-content-wrapper">
+            <div class="modal-header-new">
+                <h2 class="modal-title-new">Confirm Logout</h2>
+                <button id="closeLogoutModalBtn" class="close-modal-btn-new">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <i class="fas fa-sign-out-alt" style="font-size: 50px; color: #1a73e8; margin-bottom: 20px;"></i>
+                <p style="font-size: 16px; margin-bottom: 25px;">Are you sure you want to log out?</p>
+                <div class="form-actions" style="justify-content: center;">
+                    <button type="button" id="cancelLogout" class="btn-secondary">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirmLogout" class="btn-primary-modal">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="Admin-Logout.js"></script>
+</body>
+</html>

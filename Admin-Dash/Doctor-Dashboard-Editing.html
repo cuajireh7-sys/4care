@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Edit</title>
+    <link rel="icon" type="image/x-icon" href="../4CARE LOGO.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reusing some styles from your original Doctor-Dashboard.html for consistency */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            display: flex; 
+            min-height: 100vh;
+            background-color: rgba(212, 209, 209, 0.1);
+        }
+
+        .editor-sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .editor-sidebar h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #fff;
+            width: 200px;
+            margin-left: 5px;
+            text-align: left;
+        }
+
+        .editor-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 1rem;
+        }
+
+
+        .editor-nav-item:hover, .editor-nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .editor-main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 25px;
+            background-color: white;
+        }
+
+        .editor-section {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 0px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 300px;
+        }
+
+        .editor-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgba(26, 115, 232, 1);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-field, .textarea-field, .select-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-field:focus, .textarea-field:focus, .select-field:focus {
+            border-color: rgba(26, 115, 232, 1);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+            outline: none;
+        }
+
+        .image-upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .image-upload-box:hover {
+            border-color: rgba(26, 115, 232, 1);
+        }
+
+        .image-upload-box img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-save {
+            background-color: rgba(26, 115, 232, 1);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            margin-top: 15px;
+        }
+
+        .btn-save:hover {
+            background-color: rgba(20, 90, 180, 1);
+        }
+
+        .stat-card-editor {
+            display: flex;
+            align-items: center;
+            background-color: #eef2ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card-editor i {
+            font-size: 1.8rem;
+            color: rgba(26, 115, 232, 1);
+            margin-right: 15px;
+        }
+
+        .stat-card-editor .input-field {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .stat-card-editor .label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+
+        .table-editor-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            align-items: center;
+            background-color: #fff;
+        }
+
+        .table-editor-row .input-field {
+            flex: 1;
+        }
+
+        .table-editor-row .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-editor-row .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-add-row {
+            background-color: rgba(52, 168, 83, 1);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .btn-add-row:hover {
+            background-color: rgba(40, 130, 65, 1);
+        }
+
+        .user-view-iframe {
+            width: 100%;
+            height: 800px; /* Adjust as needed */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* New styles for hamburger menu and back-to-home button */
+        .sidebar-bottom-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1em;
+        }
+
+        .sidebar-bottom-buttons button {
+            width: 100%;
+            padding: 13px 10px;
+            border-radius: 5px;
+            text-align: left;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s;
+            background: none; /* Ensure no default button background */
+            border: none; /* Ensure no default button border */
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .sidebar-bottom-buttons button i{
+            padding-right: 10px;
+        }
+
+        .sidebar-bottom-buttons button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%; /* Adjusted width for better responsiveness */
+            max-width: 400px; /* Increased max-width for better content display */
+            max-height: 90vh;
+            animation: animatetop 0.4s; /* Added animation */
+        }
+
+        .modal-content h3{
+            text-align: center;
+        }
+
+        .modal-content p{
+            margin-top: 10px;
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        /* Add Animation */
+        @-webkit-keyframes animatetop {
+            from {top:-300px; opacity:0} 
+            to {top:0; opacity:1}
+        }
+
+        @keyframes animatetop {
+            from {top:-300px; opacity:0}
+            to {top:0; opacity:1}
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* MODIFIED: Buttons within modal content now stack vertically */
+        .modal-content button {
+            background-color: rgba(26, 115, 232, 1);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 0; /* Adjusted margin for vertical stacking */
+            transition: background-color 0.2s ease;
+            display: block; /* Make buttons block-level to stack */
+            width: 100%; /* Make buttons take full width */
+        }
+
+        .modal-content button:hover {
+            background-color: rgba(20, 90, 180, 1);
+        }
+
+        .modal-content .btn-cancel {
+            background-color: #6c757d;
+        }
+
+        .modal-content .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
+        .modal-content .btn-danger-modal {
+            background-color: #dc3545;
+        }
+
+        .modal-content .btn-danger-modal:hover {
+            background-color: #c82333;
+        }
+
+        /* Confirmation Modal Styles */
+        .confirmation-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .confirmation-modal-content h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-modal-content p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .confirmation-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .confirmation-modal-buttons button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .confirmation-modal-buttons .confirm-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .confirmation-modal-buttons .confirm-btn:hover {
+            background-color: #1669c1;
+        }
+
+        .confirmation-modal-buttons .cancel-btn {
+            background-color: #ccc;
+            color: #333;
+            border: 1px solid #bbb;
+        }
+
+        .confirmation-modal-buttons .cancel-btn:hover {
+            background-color: #bbb;
+        }
+
+        #confirmActionBtn {
+            width: 60px;
+            padding: 17px;
+            font-size: 15px;
+            margin-left: 100px;
+            margin-top: 2px;
+
+        }
+
+        #cancelActionBtn{
+            width: 60px;
+            padding: 17px;
+            font-size: 15px;
+            margin-top: -61px;
+            margin-left: 180px;
+            background-color:#bbb;
+            color: black;
+        }   
+    </style>
+</head>
+<body>
+    <div class="editor-sidebar">
+        <h2>Doctor Dashboard Editor</h2>
+        <a href="#" class="editor-nav-item active" data-section="doctor-profile-editor">
+             Doctor Profile
+        </a>
+        <a href="#" class="editor-nav-item" data-section="dashboard-stats-editor">
+            Dashboard Stats
+        </a>
+        <a href="#" class="editor-nav-item" data-section="patients-today-editor">
+            Patients Today
+        </a>
+        <a href="#" class="editor-nav-item" data-section="incoming-patients-editor">
+            Incoming Patients
+        </a>
+        <a href="#" class="editor-nav-item" data-section="general-settings-editor">
+            General Settings
+        </a>
+        <a href="#" class="editor-nav-item" data-section="custom-content-editor">
+            Custom Content
+        </a>
+        
+        <div class="sidebar-bottom-buttons">
+                <button id="hamburgerNavBtn"><i class="fas fa-bars mr-2"></i> More Options</button>
+                <button id="backToAdminPageIcon"><i class="fas fa-home mr-2"></i> Back to Home</button>
+                <button id="adminLogoutBtnSidebar" class="bg-red-500"><i class="fas fa-sign-out-alt mr-2"></i> Logout</button>
+            </div>
+    </div>
+
+    <div class="editor-main-content">
+        <!-- Doctor Profile Editor Section -->
+        <div id="doctor-profile-editor" class="editor-section active">
+            <h3 class="section-title">Edit Doctor Profile</h3>
+            <div class="form-group">
+                <label for="doctorName">Doctor Name</label>
+                <input type="text" id="doctorName" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="doctorPosition">Position/Specialization</label>
+                <input type="text" id="doctorPosition" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="doctorEmail">Email</label>
+                <input type="email" id="doctorEmail" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="doctorImageUpload">Doctor Image</label>
+                <div class="image-upload-box" id="doctorImageUploadBox">
+                    <input type="file" id="doctorImageInput" accept="image/*" style="display: none;">
+                    <img id="doctorImagePreview" src="https://st2.depositphotos.com/1006318/5909/v/450/depositphotos_59095203-stock-illustration-medical-doctor-profile.jpg" alt="Doctor Profile">
+                    <p>Click to change image</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="doctorOnlineStatus">Online Status</label>
+                <select id="doctorOnlineStatus" class="select-field">
+                    <option value="true">Online</option>
+                    <option value="false">Offline</option>
+                </select>
+            </div>
+            <button class="btn-save" id="saveDoctorProfile">Save Profile</button>
+        </div>
+
+        <!-- Dashboard Stats Editor Section -->
+        <div id="dashboard-stats-editor" class="editor-section">
+            <h3 class="section-title">Edit Dashboard Statistics</h3>
+            <div class="form-group">
+                <label for="dashboardTitle">Dashboard Section Title</label>
+                <input type="text" id="dashboardTitle" class="input-field">
+            </div>
+            <div class="stat-card-editor">
+                <i class="fas fa-users"></i>
+                <span class="label">Total Patients:</span>
+                <input type="number" id="statTotalPatients" class="input-field">
+            </div>
+            <div class="stat-card-editor">
+                <i class="fas fa-calendar-check"></i>
+                <span class="label">Today's Appointments:</span>
+                <input type="number" id="statTodaysAppointments" class="input-field">
+            </div>
+            <div class="stat-card-editor">
+                <i class="fas fa-user-md"></i>
+                <span class="label">Available Doctors:</span>
+                <input type="number" id="statAvailableDoctors" class="input-field">
+            </div>
+            <div class="stat-card-editor">
+                <i class="fas fa-file-medical"></i>
+                <span class="label">New Records:</span>
+                <input type="number" id="statNewRecords" class="input-field">
+            </div>
+            <button class="btn-save" id="saveDashboardStats">Save Statistics</button>
+        </div>
+
+        <!-- Patients Today Editor Section -->
+        <div id="patients-today-editor" class="editor-section">
+            <h3 class="section-title">Edit "Your Patients Today" Table</h3>
+            <div class="form-group">
+                <label for="patientsTodayTitle">Section Title</label>
+                <input type="text" id="patientsTodayTitle" class="input-field">
+            </div>
+            <div id="patientsTodayTableEditor">
+                <!-- Rows will be dynamically added here -->
+            </div>
+            <button class="btn-add-row" id="addPatientTodayRow"><i class="fas fa-plus"></i> Add New Patient</button>
+            <button class="btn-save" id="savePatientsToday">Save Patients Today</button>
+        </div>
+
+        <!-- Incoming Patients Editor Section -->
+        <div id="incoming-patients-editor" class="editor-section">
+            <h3 class="section-title">Edit Incoming Patients</h3>
+            <div class="form-group">
+                <label for="incomingPatientsTitle">Section Title</label>
+                <input type="text" id="incomingPatientsTitle" class="input-field">
+            </div>
+            <div id="incomingPatientsListEditor">
+                <!-- Incoming patient items will be dynamically added here -->
+            </div>
+            <button class="btn-add-row" id="addIncomingPatientRow"><i class="fas fa-plus"></i> Add New Incoming Patient</button>
+            <button class="btn-save" id="saveIncomingPatients">Save Incoming Patients</button>
+        </div>
+
+        <!-- General Settings Editor Section -->
+        <div id="general-settings-editor" class="editor-section">
+            <h3 class="section-title">General Dashboard Settings</h3>
+            <div class="form-group">
+                <label for="mainDashboardTitle">Main Dashboard Title (e.g., "Doctor Dashboard")</label>
+                <input type="text" id="mainDashboardTitle" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="primaryColor">Primary Theme Color</label>
+                <input type="color" id="primaryColor" class="input-field" value="#1a73e8">
+            </div>
+            <div class="form-group">
+                <label for="viewDetailsBtnText">"View Details" Button Text</label>
+                <input type="text" id="viewDetailsBtnText" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="acceptBtnText">"Accept" Button Text</label>
+                <input type="text" id="acceptBtnText" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="declineBtnText">"Decline" Button Text</label>
+                <input type="text" id="declineBtnText" class="input-field">
+            </div>
+            <button class="btn-save" id="saveGeneralSettings">Save General Settings</button>
+        </div>
+
+        <!-- Custom Content Editor Section -->
+        <div id="custom-content-editor" class="editor-section">
+            <h3 class="section-title">Add Custom Content to Dashboard</h3>
+            <div class="form-group">
+                <label for="customContentTitle">Custom Content Section Title</label>
+                <input type="text" id="customContentTitle" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="customContentHtml">Custom HTML/Text Content (supports basic HTML tags)</label>
+                <textarea id="customContentHtml" class="textarea-field" rows="10" placeholder="Enter your custom content here. Example: <h3>Important Announcements</h3><p>New clinic hours starting next week.</p>"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="customContentPosition">Position on Dashboard</label>
+                <select id="customContentPosition" class="select-field">
+                    <option value="top">Top of Main Content</option>
+                    <option value="after_stats">After Dashboard Stats</option>
+                    <option value="after_patients_today">After Patients Today</option>
+                    <option value="bottom">Bottom of Main Content</option>
+                </select>
+            </div>
+            <button class="btn-save" id="saveCustomContent">Save Custom Content</button>
+        </div>
+
+    </div>
+
+    <!-- Hamburger Modal -->
+    <div id="hamburgerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>More Options</h3>
+            <button id="editMainDashboardBtn">Edit Main Dashboard</button>
+            <button id="editPatientDashboardBtn">Edit Patient Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="confirmationModalTitle"></h3>
+            <p id="confirmationModalMessage"></p>
+            <button id="confirmActionBtn">Yes</button>
+            <button id="cancelActionBtn" class="btn-cancel">No</button>
+        </div>
+    </div>
+
+    <script>
+        const editorData = {
+            doctorProfile: {
+                name: "Dr. Alice Smith",
+                position: "General Practitioner",
+                email: "alice.smith@example.com",
+                image: "https://st2.depositphotos.com/1006318/5909/v/450/depositphotos_59095203-stock-illustration-medical-doctor-profile.jpg",
+                isOnline: true
+            },
+            dashboardStats: {
+                title: "Dashboard Overview", // New editable title
+                totalPatients: 0, 
+                todaysAppointments: 0,
+                availableDoctors: 0,
+                newRecords: 0
+            },
+            patientsToday: {
+                title: "Your Patients Today", // New editable title
+                data: [] 
+            },
+            incomingPatients: {
+                title: "Incoming Patients", // New editable title
+                data: [] 
+            },
+            generalSettings: {
+                mainDashboardTitle: "Doctor Dashboard", // New editable title for the main dashboard
+                primaryColor: "#1a73e8", // Default primary color (blue)
+                viewDetailsBtnText: "View Details",
+                acceptBtnText: "Accept",
+                declineBtnText: "Decline"
+            },
+            customContent: {
+                title: "Announcements",
+                html: "",
+                position: "top" // top, after_stats, after_patients_today, bottom
+            },
+
+            dashboardStats: {
+            title: "Dashboard Overview", // New
+            // ... existing stats ...
+        },
+        patientsToday: {
+            title: "Your Patients Today", // New
+            data: [] // Patients data moved under 'data'
+        },
+        incomingPatients: {
+            title: "Incoming Patients", // New
+            data: [] // Incoming patients data moved under 'data'
+        },
+        generalSettings: { // New object
+            mainDashboardTitle: "Doctor Dashboard",
+            primaryColor: "#1a73e8", // Default blue
+            viewDetailsBtnText: "View Details",
+            acceptBtnText: "Accept",
+            declineBtnText: "Decline"
+        },
+        customContent: { // New object
+            title: "Announcements",
+            html: "",
+            position: "top"
+        }
+
+        };
+        
+
+        
+
+        // --- DOM Elements ---
+        const editorNavItems = document.querySelectorAll('.editor-nav-item');
+        const editorSections = document.querySelectorAll('.editor-section');
+
+        // Doctor Profile
+        const doctorNameInput = document.getElementById('doctorName');
+        const doctorPositionInput = document.getElementById('doctorPosition');
+        const doctorEmailInput = document.getElementById('doctorEmail');
+        const doctorImageUploadBox = document.getElementById('doctorImageUploadBox');
+        const doctorImageInput = document.getElementById('doctorImageInput');
+        const doctorImagePreview = document.getElementById('doctorImagePreview');
+        const doctorOnlineStatusSelect = document.getElementById('doctorOnlineStatus');
+        const saveDoctorProfileBtn = document.getElementById('saveDoctorProfile');
+
+        // Dashboard Stats
+        const dashboardTitleInput = document.getElementById('dashboardTitle'); // New
+        const statTotalPatientsInput = document.getElementById('statTotalPatients');
+        const statTodaysAppointmentsInput = document.getElementById('statTodaysAppointments');
+        const statAvailableDoctorsInput = document.getElementById('statAvailableDoctors');
+        const statNewRecordsInput = document.getElementById('statNewRecords');
+        const saveDashboardStatsBtn = document.getElementById('saveDashboardStats');
+
+        // Patients Today
+        const patientsTodayTitleInput = document.getElementById('patientsTodayTitle'); // New
+        const patientsTodayTableEditor = document.getElementById('patientsTodayTableEditor');
+        const addPatientTodayRowBtn = document.getElementById('addPatientTodayRow');
+        const savePatientsTodayBtn = document.getElementById('savePatientsToday');
+
+        // Incoming Patients
+        const incomingPatientsTitleInput = document.getElementById('incomingPatientsTitle'); // New
+        const incomingPatientsListEditor = document.getElementById('incomingPatientsListEditor');
+        const addIncomingPatientRowBtn = document.getElementById('addIncomingPatientRow');
+        const saveIncomingPatientsBtn = document.getElementById('saveIncomingPatients');
+
+        // General Settings (New)
+        const mainDashboardTitleInput = document.getElementById('mainDashboardTitle');
+        const primaryColorInput = document.getElementById('primaryColor');
+        const viewDetailsBtnText = document.getElementById('viewDetailsBtnText');
+        const acceptBtnText = document.getElementById('acceptBtnText');
+        const declineBtnText = document.getElementById('declineBtnText');
+        const saveGeneralSettingsBtn = document.getElementById('saveGeneralSettings');
+
+        // Custom Content (New)
+        const customContentTitleInput = document.getElementById('customContentTitle');
+        const customContentHtmlInput = document.getElementById('customContentHtml');
+        const customContentPositionSelect = document.getElementById('customContentPosition');
+        const saveCustomContentBtn = document.getElementById('saveCustomContent');
+
+        // User View
+        const doctorDashboardIframe = document.getElementById('doctorDashboardIframe');
+
+        // Sidebar Bottom Buttons
+        const hamburgerNavBtn = document.getElementById('hamburgerNavBtn');
+        const backToAdminPageIcon = document.getElementById('backToAdminPageIcon');
+        const adminLogoutBtnSidebar = document.getElementById('adminLogoutBtnSidebar');
+
+        // Modals
+        const hamburgerModal = document.getElementById('hamburgerModal');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationModalTitle = document.getElementById('confirmationModalTitle');
+        const confirmationModalMessage = document.getElementById('confirmationModalMessage');
+        const confirmActionBtn = document.getElementById('confirmActionBtn');
+        const cancelActionBtn = document.getElementById('cancelActionBtn');
+
+        // Hamburger Modal Buttons
+        const editMainDashboardBtn = document.getElementById('editMainDashboardBtn');
+        const editPatientDashboardBtn = document.getElementById('editPatientDashboardBtn');
+
+
+        // --- Functions ---
+
+        // Load data from localStorage or initial values
+        function loadEditorData() {
+            const savedData = localStorage.getItem('doctorDashboardEditorData');
+            if (savedData) {
+                // Deep merge to preserve new default properties if not in savedData
+                const parsedData = JSON.parse(savedData);
+                Object.keys(editorData).forEach(key => {
+                    if (parsedData[key] !== undefined) {
+                        if (typeof editorData[key] === 'object' && editorData[key] !== null && !Array.isArray(editorData[key])) {
+                            Object.assign(editorData[key], parsedData[key]);
+                        } else {
+                            editorData[key] = parsedData[key];
+                        }
+                    }
+                });
+            } else {
+                // If no saved data, try to get initial values from the iframe
+                // This part needs to be careful as the iframe might not be fully loaded yet.
+                // It's better to rely on hardcoded defaults or a pre-defined structure.
+                // For now, we'll keep the existing logic but note its limitations.
+                doctorDashboardIframe.onload = () => {
+                    const iframeDoc = doctorDashboardIframe.contentDocument || doctorDashboardIframe.contentWindow.document;
+                    
+                    // Get doctor profile data
+                    editorData.doctorProfile.name = iframeDoc.getElementById('loggedInDoctorName')?.textContent || editorData.doctorProfile.name;
+                    editorData.doctorProfile.position = iframeDoc.getElementById('loggedInDoctorPosition')?.textContent || editorData.doctorProfile.position;
+                    editorData.doctorProfile.email = iframeDoc.getElementById('loggedInDoctorEmail')?.textContent || editorData.doctorProfile.email;
+                    editorData.doctorProfile.image = iframeDoc.getElementById('loggedInDoctorImage')?.src || editorData.doctorProfile.image;
+                    editorData.doctorProfile.isOnline = iframeDoc.getElementById('statusToggleSwitch')?.checked || editorData.doctorProfile.isOnline;
+
+                    // Get dashboard stats (these are hardcoded in your original HTML, so we'll just use placeholders)
+                    // You would need to parse the text content of the stat cards if they were dynamic
+                    editorData.dashboardStats.totalPatients = parseInt(iframeDoc.querySelector('.dashboard-card:nth-child(1) .stat-card p')?.textContent) || 100; 
+                    editorData.dashboardStats.todaysAppointments = parseInt(iframeDoc.querySelector('.dashboard-card:nth-child(2) .stat-card p')?.textContent) || 12;
+                    editorData.dashboardStats.availableDoctors = parseInt(iframeDoc.querySelector('.dashboard-card:nth-child(3) .stat-card p')?.textContent) || 5;
+                    editorData.dashboardStats.newRecords = parseInt(iframeDoc.querySelector('.dashboard-card:nth-child(4) .stat-card p')?.textContent) || 8;
+                    editorData.dashboardStats.title = iframeDoc.querySelector('.main-content h2')?.textContent || editorData.dashboardStats.title;
+
+
+                    // Get Patients Today data
+                    const patientsTodayTable = iframeDoc.getElementById('dashboardPatientTable');
+                    if (patientsTodayTable) {
+                        editorData.patientsToday.data = Array.from(patientsTodayTable.querySelector('tbody').rows).map(row => ({
+                            name: row.cells[0].textContent,
+                            doctor: row.cells[1].textContent,
+                            date: row.cells[2].textContent,
+                            time: row.cells[3].textContent,
+                            status: row.cells[4].textContent.trim() // Trim to remove whitespace
+                        }));
+                        editorData.patientsToday.title = iframeDoc.querySelector('.patients-today-section h3')?.textContent || editorData.patientsToday.title;
+                    }
+
+                    // Get Incoming Patients data
+                    const incomingPatientList = iframeDoc.getElementById('incomingPatientList');
+                    if (incomingPatientList) {
+                        editorData.incomingPatients.data = Array.from(incomingPatientList.children).map(item => ({
+                            name: item.querySelector('h4')?.textContent.replace('Patient: ', '') || '',
+                            reason: item.querySelector('.view-details-btn')?.dataset.patientReason || '',
+                            notes: item.querySelector('.view-details-btn')?.dataset.patientNotes || ''
+                        }));
+                        editorData.incomingPatients.title = iframeDoc.querySelector('.incoming-patients-section h3')?.textContent || editorData.incomingPatients.title;
+                    }
+
+                    // General Settings - Attempt to read from iframe if possible
+                    editorData.generalSettings.mainDashboardTitle = iframeDoc.querySelector('.header-title h1')?.textContent || editorData.generalSettings.mainDashboardTitle;
+                    editorData.generalSettings.viewDetailsBtnText = iframeDoc.querySelector('.view-details-btn')?.textContent.trim() || editorData.generalSettings.viewDetailsBtnText;
+                    editorData.generalSettings.acceptBtnText = iframeDoc.querySelector('.accept-btn')?.textContent.trim() || editorData.generalSettings.acceptBtnText;
+                    editorData.generalSettings.declineBtnText = iframeDoc.querySelector('.decline-btn')?.textContent.trim() || editorData.generalSettings.declineBtnText;
+                    // Color is harder to extract reliably from computed styles, so we'll stick to default or saved.
+
+                    populateEditorFields();
+                    updateIframeContent(); // Ensure iframe is updated with initial loaded data
+                };
+            }
+            populateEditorFields();
+        }
+
+        // Populate editor fields with current data
+        function populateEditorFields() {
+            // Doctor Profile
+            doctorNameInput.value = editorData.doctorProfile.name;
+            doctorPositionInput.value = editorData.doctorProfile.position;
+            doctorEmailInput.value = editorData.doctorProfile.email;
+            doctorImagePreview.src = editorData.doctorProfile.image;
+            doctorOnlineStatusSelect.value = editorData.doctorProfile.isOnline.toString();
+
+            // Dashboard Stats
+            dashboardTitleInput.value = editorData.dashboardStats.title; // New
+            statTotalPatientsInput.value = editorData.dashboardStats.totalPatients;
+            statTodaysAppointmentsInput.value = editorData.dashboardStats.todaysAppointments;
+            statAvailableDoctorsInput.value = editorData.dashboardStats.availableDoctors;
+            statNewRecordsInput.value = editorData.dashboardStats.newRecords;
+
+            // Patients Today
+            patientsTodayTitleInput.value = editorData.patientsToday.title; // New
+            renderPatientsTodayEditor();
+
+            // Incoming Patients
+            incomingPatientsTitleInput.value = editorData.incomingPatients.title; // New
+            renderIncomingPatientsEditor();
+
+            // General Settings (New)
+            mainDashboardTitleInput.value = editorData.generalSettings.mainDashboardTitle;
+            primaryColorInput.value = editorData.generalSettings.primaryColor;
+            viewDetailsBtnText.value = editorData.generalSettings.viewDetailsBtnText;
+            acceptBtnText.value = editorData.generalSettings.acceptBtnText;
+            declineBtnText.value = declineBtnText.value;
+
+            // Custom Content (New)
+            customContentTitleInput.value = editorData.customContent.title;
+            customContentHtmlInput.value = editorData.customContent.html;
+            customContentPositionSelect.value = editorData.customContent.position;
+        }
+
+        // Save data to localStorage
+        function saveEditorData() {
+            localStorage.setItem('doctorDashboardEditorData', JSON.stringify(editorData));
+            updateIframeContent();
+            // alert('Changes saved successfully!'); // Removed to avoid multiple alerts
+        }
+
+        // Update the iframe content with edited data
+        function updateIframeContent() {
+            // Ensure iframe is loaded before trying to access its content
+            // This is crucial for changes to reflect immediately after saving.
+            doctorDashboardIframe.onload = () => { 
+                const iframeDoc = doctorDashboardIframe.contentDocument || doctorDashboardIframe.contentWindow.document;
+
+                // Inject dynamic styles for primary color
+                let styleTag = iframeDoc.getElementById('dynamic-editor-styles');
+                if (!styleTag) {
+                    styleTag = iframeDoc.createElement('style');
+                    styleTag.id = 'dynamic-editor-styles';
+                    iframeDoc.head.appendChild(styleTag);
+                }
+                styleTag.textContent = `
+                    :root {
+                        --primary-color: ${editorData.generalSettings.primaryColor};
+                    }
+                    .sidebar, .header-search button, .btn-primary, .badge-success, .status-toggle-switch:checked + .slider {
+                        background-color: var(--primary-color) !important;
+                    }
+                    .sidebar a:hover, .sidebar a.active, .text-primary, .stat-card i, .action-btn:hover {
+                        color: var(--primary-color) !important;
+                    }
+                    .header-search button:hover, .btn-primary:hover {
+                        background-color: color-mix(in srgb, var(--primary-color) 80%, black) !important; /* Darken on hover */
+                    }
+                    .form-control:focus, .input-field:focus, .textarea-field:focus, .select-field:focus {
+                        border-color: var(--primary-color) !important;
+                        box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--primary-color) 25%, transparent) !important;
+                    }
+                `;
+
+                // Update Main Dashboard Title
+                const mainDashboardTitleElement = iframeDoc.querySelector('.header-title h1');
+                if (mainDashboardTitleElement) {
+                    mainDashboardTitleElement.textContent = editorData.generalSettings.mainDashboardTitle;
+                }
+
+                // Update Doctor Profile
+                if (iframeDoc.getElementById('loggedInDoctorName')) {
+                    iframeDoc.getElementById('loggedInDoctorName').textContent = editorData.doctorProfile.name;
+                }
+                if (iframeDoc.getElementById('loggedInDoctorPosition')) {
+                    iframeDoc.getElementById('loggedInDoctorPosition').textContent = editorData.doctorProfile.position;
+                }
+                if (iframeDoc.getElementById('loggedInDoctorEmail')) {
+                    iframeDoc.getElementById('loggedInDoctorEmail').textContent = editorData.doctorProfile.email;
+                }
+                if (iframeDoc.getElementById('loggedInDoctorImage')) {
+                    iframeDoc.getElementById('loggedInDoctorImage').src = editorData.doctorProfile.image;
+                }
+                if (iframeDoc.getElementById('profileDoctorImage')) { // Also update profile section image
+                    iframeDoc.getElementById('profileDoctorImage').src = editorData.doctorProfile.image;
+                }
+                if (iframeDoc.getElementById('statusToggleSwitch')) {
+                    iframeDoc.getElementById('statusToggleSwitch').checked = editorData.doctorProfile.isOnline;
+                    // Manually trigger change to update status text/color in iframe if its JS relies on it
+                    iframeDoc.getElementById('statusToggleSwitch').dispatchEvent(new Event('change'));
+                }
+
+                // Update Dashboard Stats
+                const dashboardSectionTitle = iframeDoc.querySelector('.main-content h2');
+                if (dashboardSectionTitle) {
+                    dashboardSectionTitle.textContent = editorData.dashboardStats.title;
+                }
+                const statCards = iframeDoc.querySelectorAll('.dashboard-card .stat-card p'); 
+                if (statCards.length >= 4) {
+                    statCards[0].textContent = editorData.dashboardStats.totalPatients;
+                    statCards[1].textContent = editorData.dashboardStats.todaysAppointments;
+                    statCards[2].textContent = editorData.dashboardStats.availableDoctors;
+                    statCards[3].textContent = editorData.dashboardStats.newRecords;
+                }
+
+                // Update Patients Today Table
+                const patientsTodaySectionTitle = iframeDoc.querySelector('.patients-today-section h3');
+                if (patientsTodaySectionTitle) {
+                    patientsTodaySectionTitle.textContent = editorData.patientsToday.title;
+                }
+                const patientsTodayTableBody = iframeDoc.querySelector('#dashboardPatientTable tbody');
+                if (patientsTodayTableBody) {
+                    patientsTodayTableBody.innerHTML = ''; // Clear existing rows
+                    editorData.patientsToday.data.forEach(patient => {
+                        const row = patientsTodayTableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${patient.name}</td>
+                            <td>${patient.doctor}</td>
+                            <td>${patient.date}</td>
+                            <td>${patient.time}</td>
+                            <td><span class="badge badge-${patient.status === 'Confirmed' ? 'success' : 'warning'}">${patient.status}</span></td>
+                            <td>
+                                <button class="action-btn edit-patient-btn" data-patient-id="${patient.id || ''}" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-patient-btn" data-patient-id="${patient.id || ''}" data-patient-name="${patient.name}"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-primary view-patient-btn" data-patient-id="${patient.id || ''}" style="padding: 5px 10px;">
+                                    <i class="fas fa-eye"></i> ${editorData.generalSettings.viewDetailsBtnText}
+                                </button>
+                            </td>
+                        `;
+                    });
+                }
+
+                // Update Incoming Patients List
+                const incomingPatientsSectionTitle = iframeDoc.querySelector('.incoming-patients-section h3');
+                if (incomingPatientsSectionTitle) {
+                    incomingPatientsSectionTitle.textContent = editorData.incomingPatients.title;
+                }
+                const incomingPatientList = iframeDoc.getElementById('incomingPatientList');
+                if (incomingPatientList) {
+                    incomingPatientList.innerHTML = ''; // Clear existing items
+                    editorData.incomingPatients.data.forEach(patient => {
+                        const patientItem = iframeDoc.createElement('div');
+                        patientItem.classList.add('incoming-patient-item');
+                        patientItem.dataset.patientId = patient.id || ''; // Assuming IDs are managed
+                        patientItem.innerHTML = `
+                            <h4>Patient: ${patient.name}</h4>
+                            <div class="incoming-patient-actions">
+                                <button class="btn btn-primary view-details-btn" 
+                                    data-patient-id="${patient.id || ''}"
+                                    data-patient-name="${patient.name}" 
+                                    data-patient-age="${patient.age || 'N/A'}" 
+                                    data-patient-gender="${patient.gender || 'N/A'}" 
+                                    data-patient-reason="${patient.reason}" 
+                                    data-patient-notes="${patient.notes}">${editorData.generalSettings.viewDetailsBtnText}</button>
+                                <button class="btn btn-success accept-btn" data-patient-id="${patient.id || ''}" data-patient-name="${patient.name}">${editorData.generalSettings.acceptBtnText}</button>
+                                <button class="btn btn-danger decline-btn" data-patient-id="${patient.id || ''}" data-patient-name="${patient.name}">${editorData.generalSettings.declineBtnText}</button>
+                            </div>
+                        `;
+                        incomingPatientList.appendChild(patientItem);
+                    });
+                }
+
+                // Update Custom Content Section
+                let customContentContainer = iframeDoc.getElementById('custom-content-container');
+                if (!customContentContainer) {
+                    customContentContainer = iframeDoc.createElement('div');
+                    customContentContainer.id = 'custom-content-container';
+                    customContentContainer.classList.add('section-card'); // Add a class for styling
+                    customContentContainer.style.marginTop = '20px'; // Basic spacing
+                    customContentContainer.style.padding = '20px';
+                    customContentContainer.style.backgroundColor = '#fff';
+                    customContentContainer.style.borderRadius = '8px';
+                    customContentContainer.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
+                    
+                    const mainContentDiv = iframeDoc.querySelector('.main-content'); // Assuming this is the parent
+                    if (mainContentDiv) {
+                        const existingSections = mainContentDiv.children;
+                        let targetElement = null;
+
+                        switch (editorData.customContent.position) {
+                            case 'top':
+                                targetElement = existingSections[0]; // Insert before the first section
+                                break;
+                            case 'after_stats':
+                                targetElement = iframeDoc.querySelector('.dashboard-stats-section'); // Find the stats section
+                                if (targetElement) targetElement = targetElement.nextElementSibling; // Insert after it
+                                break;
+                            case 'after_patients_today':
+                                targetElement = iframeDoc.querySelector('.patients-today-section'); // Find patients today section
+                                if (targetElement) targetElement = targetElement.nextElementSibling; // Insert after it
+                                break;
+                            case 'bottom':
+                            default:
+                                targetElement = null; // Append to end
+                                break;
+                        }
+
+                        if (targetElement && targetElement.parentNode === mainContentDiv) {
+                            mainContentDiv.insertBefore(customContentContainer, targetElement);
+                        } else {
+                            mainContentDiv.appendChild(customContentContainer);
+                        }
+                    }
+                }
+
+                if (editorData.customContent.html.trim() !== "") {
+                    customContentContainer.style.display = 'block';
+                    customContentContainer.innerHTML = `
+                        <h3 class="section-title" style="color: var(--primary-color);">${editorData.customContent.title}</h3>
+                        <div>${editorData.customContent.html}</div>
+                    `;
+                } else {
+                    customContentContainer.style.display = 'none'; // Hide if no content
+                }
+            };
+            // Reload iframe to apply changes if it's already loaded
+            // This is a simple way to force a refresh. For more complex apps,
+            // you might want to use postMessage for communication.
+            doctorDashboardIframe.src = doctorDashboardIframe.src; 
+        }
+
+        // Render Patients Today Editor
+        function renderPatientsTodayEditor() {
+            patientsTodayTableEditor.innerHTML = '';
+            editorData.patientsToday.data.forEach((patient, index) => {
+                addPatientTodayRow(patient, index);
+            });
+        }
+
+        // Add a row to Patients Today Editor
+        function addPatientTodayRow(patient = {}, index = null) {
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('table-editor-row');
+            rowDiv.dataset.index = index !== null ? index : patientsTodayTableEditor.children.length;
+
+            rowDiv.innerHTML = `
+                <input type="text" class="input-field patient-name" placeholder="Name" value="${patient.name || ''}">
+                <input type="text" class="input-field patient-doctor" placeholder="Doctor" value="${patient.doctor || ''}">
+                <input type="date" class="input-field patient-date" placeholder="Date" value="${patient.date || ''}">
+                <input type="time" class="input-field patient-time" placeholder="Time" value="${patient.time || ''}">
+                <select class="select-field patient-status">
+                    <option value="Confirmed" ${patient.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                    <option value="Pending" ${patient.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="Cancelled" ${patient.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+                <button class="btn-danger remove-row"><i class="fas fa-trash"></i></button>
+            `;
+            patientsTodayTableEditor.appendChild(rowDiv);
+
+            rowDiv.querySelector('.remove-row').addEventListener('click', () => {
+                rowDiv.remove();
+            });
+        }
+
+        // Render Incoming Patients Editor
+        function renderIncomingPatientsEditor() {
+            incomingPatientsListEditor.innerHTML = '';
+            editorData.incomingPatients.data.forEach((patient, index) => {
+                addIncomingPatientRow(patient, index);
+            });
+        }
+
+        // Add a row to Incoming Patients Editor
+        function addIncomingPatientRow(patient = {}, index = null) {
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('table-editor-row');
+            rowDiv.dataset.index = index !== null ? index : incomingPatientsListEditor.children.length;
+
+            rowDiv.innerHTML = `
+                <input type="text" class="input-field incoming-patient-name" placeholder="Patient Name" value="${patient.name || ''}">
+                <input type="text" class="input-field incoming-patient-reason" placeholder="Reason for Visit" value="${patient.reason || ''}">
+                <textarea class="textarea-field incoming-patient-notes" placeholder="Notes">${patient.notes || ''}</textarea>
+                <button class="btn-danger remove-row"><i class="fas fa-trash"></i></button>
+            `;
+            incomingPatientsListEditor.appendChild(rowDiv);
+
+            rowDiv.querySelector('.remove-row').addEventListener('click', () => {
+                rowDiv.remove();
+            });
+        }
+
+        // Function to show confirmation modal
+        function showConfirmationModal(title, message, onConfirm) {
+            confirmationModalTitle.textContent = title;
+            confirmationModalMessage.textContent = message;
+            confirmActionBtn.onclick = () => {
+                onConfirm();
+                confirmationModal.style.display = 'none';
+            };
+            cancelActionBtn.onclick = () => {
+                confirmationModal.style.display = 'none';
+            };
+            confirmationModal.style.display = 'flex'; // Use flex to center
+        }
+
+        // --- Event Listeners ---
+
+        // Sidebar Navigation
+        editorNavItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                editorNavItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                editorSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(this.dataset.section).classList.add('active');
+            });
+        });
+
+        // Doctor Profile Editor
+        doctorImageUploadBox.addEventListener('click', () => doctorImageInput.click());
+        doctorImageInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    doctorImagePreview.src = event.target.result;
+                    editorData.doctorProfile.image = event.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        saveDoctorProfileBtn.addEventListener('click', () => {
+            editorData.doctorProfile.name = doctorNameInput.value;
+            editorData.doctorProfile.position = doctorPositionInput.value;
+            editorData.doctorProfile.email = doctorEmailInput.value;
+            editorData.doctorProfile.isOnline = doctorOnlineStatusSelect.value === 'true';
+            saveEditorData();
+            alert('Doctor Profile saved successfully!');
+        });
+
+        // Dashboard Stats Editor
+        saveDashboardStatsBtn.addEventListener('click', () => {
+            editorData.dashboardStats.title = dashboardTitleInput.value; // New
+            editorData.dashboardStats.totalPatients = parseInt(statTotalPatientsInput.value) || 0;
+            editorData.dashboardStats.todaysAppointments = parseInt(statTodaysAppointmentsInput.value) || 0;
+            editorData.dashboardStats.availableDoctors = parseInt(statAvailableDoctorsInput.value) || 0;
+            editorData.dashboardStats.newRecords = parseInt(statNewRecordsInput.value) || 0;
+            saveEditorData();
+            alert('Dashboard Statistics saved successfully!');
+        });
+
+        // Patients Today Editor
+        addPatientTodayRowBtn.addEventListener('click', () => addPatientTodayRow());
+        savePatientsTodayBtn.addEventListener('click', () => {
+            editorData.patientsToday.title = patientsTodayTitleInput.value; // New
+            editorData.patientsToday.data = [];
+            document.querySelectorAll('#patientsTodayTableEditor .table-editor-row').forEach(rowDiv => {
+                editorData.patientsToday.data.push({
+                    name: rowDiv.querySelector('.patient-name').value,
+                    doctor: rowDiv.querySelector('.patient-doctor').value,
+                    date: rowDiv.querySelector('.patient-date').value,
+                    time: rowDiv.querySelector('.patient-time').value,
+                    status: rowDiv.querySelector('.patient-status').value
+                });
+            });
+            saveEditorData();
+            alert('"Your Patients Today" table saved successfully!');
+        });
+
+        // Incoming Patients Editor
+        addIncomingPatientRowBtn.addEventListener('click', () => addIncomingPatientRow());
+        saveIncomingPatientsBtn.addEventListener('click', () => {
+            editorData.incomingPatients.title = incomingPatientsTitleInput.value; // New
+            editorData.incomingPatients.data = [];
+            document.querySelectorAll('#incomingPatientsListEditor .table-editor-row').forEach(rowDiv => {
+                editorData.incomingPatients.data.push({
+                    name: rowDiv.querySelector('.incoming-patient-name').value,
+                    reason: rowDiv.querySelector('.incoming-patient-reason').value,
+                    notes: rowDiv.querySelector('.incoming-patient-notes').value
+                });
+            });
+            saveEditorData();
+            alert('Incoming Patients saved successfully!');
+        });
+
+        // General Settings Editor (New)
+        saveGeneralSettingsBtn.addEventListener('click', () => {
+            editorData.generalSettings.mainDashboardTitle = mainDashboardTitleInput.value;
+            editorData.generalSettings.primaryColor = primaryColorInput.value;
+            editorData.generalSettings.viewDetailsBtnText = viewDetailsBtnText.value;
+            editorData.generalSettings.acceptBtnText = acceptBtnText.value;
+            editorData.generalSettings.declineBtnText = declineBtnText.value;
+            saveEditorData();
+            alert('General Settings saved successfully!');
+        });
+
+        // Custom Content Editor (New)
+        saveCustomContentBtn.addEventListener('click', () => {
+            editorData.customContent.title = customContentTitleInput.value;
+            editorData.customContent.html = customContentHtmlInput.value;
+            editorData.customContent.position = customContentPositionSelect.value;
+            saveEditorData();
+            alert('Custom Content saved successfully!');
+        });
+
+        // Hamburger Nav Button
+        hamburgerNavBtn.addEventListener('click', () => {
+            hamburgerModal.style.display = 'flex'; // Use flex to center
+        });
+
+        // Close Hamburger Modal
+        hamburgerModal.querySelector('.close-button').addEventListener('click', () => {
+            hamburgerModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == hamburgerModal) {
+                hamburgerModal.style.display = 'none';
+            }
+            if (event.target == confirmationModal) {
+                confirmationModal.style.display = 'none';
+            }
+        });
+
+        // Hamburger Modal - Edit Main Dashboard
+        editMainDashboardBtn.addEventListener('click', () => {
+            hamburgerModal.style.display = 'none';
+            window.location.href = '4Care-Page-Editing.html'; // Navigate to dashboard.html
+        });
+
+        // Hamburger Modal - Edit Patient Dashboard
+        editPatientDashboardBtn.addEventListener('click', () => {
+            hamburgerModal.style.display = 'none';
+            // Assuming 'dashboard.html' is the main dashboard and 'patient-dashboard.html' is the patient one
+            // If both are handled by 'dashboard.html' with different views, you might need a parameter
+            window.location.href = 'Patient-Dashboard-Editing.html'; // Or 'patient-dashboard.html' if it exists
+        });
+
+        // Back to Admin Page Button
+        backToAdminPageIcon.addEventListener('click', () => {
+            showConfirmationModal(
+                'Confirm Navigation',
+                'Are you sure you want to go back to the Admin Home Page? Any unsaved changes will be lost.',
+                ()                => { window.location.href = '4Care-Admin.html'; }
+            );
+        });
+
+        // Admin Logout Button
+        adminLogoutBtnSidebar.addEventListener('click', () => {
+            showConfirmationModal(
+                'Confirm Logout',
+                'Are you sure you want to log out? You will be redirected to the Staff Login page.',
+                () => { window.location.href = '../Staff-Login/Staff-Login.html'; }
+            );
+        });
+
+        // Initial load
+        loadEditorData();
+        // The iframe's onload event listener in loadEditorData will call updateIframeContent
+        // if no saved data exists. If saved data exists, we need to call it explicitly.
+        if (localStorage.getItem('doctorDashboardEditorData')) {
+            updateIframeContent();
+        }
+    </script>
+</body>
+</html>

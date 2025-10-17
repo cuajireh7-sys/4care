@@ -1,0 +1,198 @@
+<!-- EditPatientModal.html -->
+<div class="modal-overlay" id="editPatientModalOverlay">
+    <div class="modal-container">
+        <div class="modal-content-wrapper">
+            <div class="modal-header-new">
+                <h2 class="modal-title-new">Edit Patient Details</h2>
+                <button id="closeEditPatientModalBtn" class="close-modal-btn-new" aria-label="Close Edit Patient Modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editPatientForm" class="patient-form" novalidate>
+                <input type="hidden" id="editPatientId">
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-user-circle"></i>
+                        Personal Information
+                    </h3>
+                    <div class="form-grid md-cols-2">
+                        <div class="form-group">
+                            <label for="editFirstName" class="form-label">First Name *</label>
+                            <input type="text" id="editFirstName" class="input-field" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLastName" class="form-label">Last Name *</label>
+                            <input type="text" id="editLastName" class="input-field" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDob" class="form-label">Date of Birth *</label>
+                            <input type="date" id="editDob" class="input-field" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGender" class="form-label">Gender *</label>
+                            <select id="editGender" class="input-field" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-address-book"></i>
+                        Contact Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editEmail" class="form-label">Email Address</label>
+                            <input type="email" id="editEmail" class="input-field" placeholder="example@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="editPhone" class="form-label">Phone Number *</label>
+                            <input type="tel" id="editPhone" class="input-field" required pattern="[0-9]{10,15}" placeholder="1234567890">
+                            <p class="input-hint">Format: 1234567890 (10-15 digits)</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="editAddress" class="form-label">Address *</label>
+                            <textarea id="editAddress" rows="2" class="input-field" required></textarea>
+                        </div>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="editCity" class="form-label">City *</label>
+                                <input type="text" id="editCity" class="input-field" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editZipCode" class="form-label">Zip/Postal Code *</label>
+                                <input type="text" id="editZipCode" class="input-field" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBarangay" class="form-label">Barangay *</label>
+                            <select id="editBarangay" class="input-field" required>
+                                <option value="">Select Barangay</option>
+                                <option value="545">545</option>
+                                <option value="546">546</option>
+                                <option value="547">547</option>
+                                <option value="548">548</option>
+                                <option value="549">549</option>
+                                <option value="550">550</option>
+                                <option value="551">551</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCountry" class="form-label">Country *</label>
+                            <select id="editCountry" class="input-field" required>
+                                <option value="">Select Country</option>
+                                <option value="PH" selected>Philippines</option>
+                                <option value="US">United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="AU">Australia</option>
+                                <option value="IN">India</option>
+                                <option value="JP">Japan</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Medical Information Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-heartbeat"></i>
+                        Medical Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editBloodType" class="form-label">Blood Type</label>
+                            <select id="editBloodType" class="input-field">
+                                <option value="">Select Blood Type</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editAllergies" class="form-label">Allergies</label>
+                            <textarea id="editAllergies" rows="2" class="input-field" placeholder="List any known allergies"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editConditions" class="form-label">Medical Conditions</label>
+                            <textarea id="editConditions" rows="2" class="input-field" placeholder="List any existing medical conditions"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMedications" class="form-label">Current Medications</label>
+                            <textarea id="editMedications" rows="2" class="input-field" placeholder="List current medications"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!-- Additional Information Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Additional Information
+                    </h3>
+                    <div class="form-grid md-cols-2">
+                        <div class="form-group">
+                            <label for="editOccupation" class="form-label">Occupation</label>
+                            <input type="text" id="editOccupation" class="input-field" placeholder="Occupation">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMaritalStatus" class="form-label">Marital Status</label>
+                            <select id="editMaritalStatus" class="input-field">
+                                <option value="">Select Status</option>
+                                <option value="single">Single</option>
+                                <option value="married">Married</option>
+                                <option value="divorced">Divorced</option>
+                                <option value="widowed">Widowed</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="editEmergencyNotes" class="form-label">Emergency Notes</label>
+                            <textarea id="editEmergencyNotes" rows="2" class="input-field" placeholder="Any additional notes for emergency contacts"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!-- Emergency Contact Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Emergency Contact
+                    </h3>
+                    <div class="form-grid md-cols-2">
+                        <div class="form-group">
+                            <label for="editEmergencyName" class="form-label">Name *</label>
+                            <input type="text" id="editEmergencyName" class="input-field" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmergencyRelationship" class="form-label">Relationship *</label>
+                            <input type="text" id="editEmergencyRelationship" class="input-field" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmergencyPhone" class="form-label">Phone Number *</label>
+                            <input type="tel" id="editEmergencyPhone" class="input-field" required pattern="[0-9]{10,15}" placeholder="1234567890">
+                        </div>
+                    </div>
+                </div>
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary-modal" aria-label="Save Patient Details">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" id="cancelEditPatientForm" class="btn-secondary" aria-label="Cancel Editing Patient Details">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

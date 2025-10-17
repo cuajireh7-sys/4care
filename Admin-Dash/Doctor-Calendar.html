@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hospital Calendar Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --secondary: #34a853;
+      --accent: #fbbc05;
+      --dark: #202124;
+      --light: #f8f9fa;
+    }
+
+    .body {
+      height: 500px;
+    }
+
+    .event-info::-webkit-scrollbar {
+      width: 1px;
+    }
+    
+    .event-info::-webkit-scrollbar-thumb {
+      background-color: var(--primary);
+      border-radius: 3px;
+      width: 1px;
+    }
+    
+    .event-dot {
+      height: 8px;
+      width: 8px;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-right: 0.15rem;
+    }
+    
+    .day-cell {
+      cursor: pointer;
+      transition: background-color 0.15s ease-in-out;
+      border: 1px solid rgb(255, 255, 255, 0.5); /* Added subtle border */
+      height: 50px;
+    }
+    
+    .day-cell:hover {
+      background-color: rgba(254, 243, 199, 0.2); /* Lighter hover for gradient background */
+    }
+    
+    .day-cell.selected {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary); /* Highlight border on selection */
+    }
+    
+    .event-label {
+      background-color: var(--primary);
+      color: var(--light);
+      font-size: 0.5rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 0.25rem;
+      margin-top: 0.15rem;
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      user-select: none;
+    }
+
+    /* Improve right panel readability */
+    #eventDetails {
+      font-size: 18px;
+      line-height: 2.0;
+    }
+    .event-name-chip {
+      font-size: 16px !important;
+      padding: 10px 14px !important;
+      border-radius: 12px !important;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      border-radius: 18px;
+      margin-bottom: 28px;
+      margin-top: 20px; /* add space so modal is more centered */
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem 1.5rem 1.5rem 1.5rem; /* add a little extra top space */
+      box-shadow: 0 10px 25px black; /* Added shadow for modal */
+    }
+
+    /* Form styling */
+    .input-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .input-group input, 
+    .input-group select, 
+    .input-group textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: rgb(190, 42, 42);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s, transform 0.1s; /* Added transform for button press effect */
+    }
+
+    .btn-primary:hover {
+      background-color: #0d5dbd;
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px); /* Button press effect */
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-secondary:hover {
+      background-color: #4b5563;
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px);
+    }
+
+    /* Aesthetic improvements */
+    .container-bg {
+      background: linear-gradient(135deg, rgba(26,115,232,0.9), rgba(52,168,83,0.8)); /* Applied gradient to main container */
+      box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1); /* Stronger shadow for main container */
+    }
+
+    .md\:col-span-9 {
+      background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent background for calendar panel */
+      border-right: 1px solid rgba(255, 255, 255, 0.2); /* Separator line */
+    }
+
+    .md\:col-span-3 {
+      background-color: rgba(255, 255, 255, 0.95); /* Slightly opaque white for event details */
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1); /* Shadow for right panel */
+    }
+
+    .text-white {
+      color: white;
+    }
+
+    .text-gray-800 {
+      color: #374151; /* Ensure text color is readable on light background */
+    }
+
+    .text-black {
+      color: #1f2937; /* Ensure text color is readable on light background */
+    }
+
+    .border-b {
+      border-color: rgba(255, 255, 255, 0.3); /* Lighter border for weekday headers */
+    }
+
+    .text-gray-500 {
+      color: rgba(255, 255, 255, 0.7); /* Lighter text for weekday headers */
+    }
+
+    .day-cell .font-semibold {
+      color: white; /* Ensure day numbers are white */
+    }
+
+    .day-cell.text-gray-300 {
+      color: rgba(255, 255, 255, 0.5); /* Lighter text for prev/next month days */
+    }
+
+    #monthYearLabel {
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Text shadow for month/year label */
+    }
+
+    #todayBtn {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    #todayBtn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #searchInput {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #374151;
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    #searchInput::placeholder {
+      color: #6b7280;
+    }
+
+
+  </style>
+</head>
+<body class="flex items-center justify-center p-3 font-sans">
+  <main
+    class="max-w-none w-full bg-white rounded-2xl flex overflow-hidden min-h-[400px] text-gray-800 select-none container-bg">
+<div class="max-w-none w-full rounded-2xl grid grid-cols-5 md:grid-cols-12 bg-[linear-gradient(135deg,rgba(26,115,232,0.9),rgba(52,168,83,0.8))] h-[650px]">
+    <!-- Left Panel - Calendar -->
+    <div class="md:col-span-9 p-8 max-h-[700px] flex flex-col">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-2">
+          <h1 class="font-bold text-4xl text-slate-900 select-none text-white" id="monthYearLabel">April 2020</h1>
+          <button id="prevMonth" aria-label="Go to previous month" class="text-white text-[var(--primary)] hover:text-[var(--accent)] hover:font-semibold transition text-4xl">
+            <
+          </button>
+          <button id="nextMonth" aria-label="Go to next month" class="text-white text-[var(--primary)] hover:text-[var(--accent)] hover:font-semibold transition text-4xl">
+            >
+          </button>
+          <button id="todayBtn" class="ml-4 bg-gray-100 px-3 py-1 rounded-md text-sm hover:bg-gray-200 hidden">Today</button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="searchBtn" aria-label="Search" class="text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <input type="text" id="searchInput" placeholder="Search events..." class="hidden px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" />
+          <button id="closeSearch" aria-label="Close search" class="text-white p-2 rounded-md hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="text-white h-5 w-5 text-slate-400 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="text-white font-bold grid grid-cols-7 text-center border-b border-white-300 pb-1 text-gray-500 text-l select-none" aria-hidden="true">
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+        <div>Sun</div>
+      </div>
+
+      <!-- Calendar grid container -->
+      <div id="calendarGrid" class="grid grid-cols-7 gap-1 mt-2 flex-grow overflow-auto text-xl text-white color-white" style="min-height: 418px;">
+        <!-- Days will be rendered here dynamically -->
+      </div>
+
+      <!-- Event Type Legend -->
+      <div class="mt-4 flex space-x-6 justify-center text-sm select-none text-white font-bold">
+        <label class="flex items-center space-x-2 cursor-pointer text-white font-bold">
+          <input type="checkbox" class="event-filter-checkbox" data-type="Consultation" checked />
+          <span class="w-4 h-4 rounded-md bg-purple-600 inline-block"></span>
+          <span>Consultation</span>
+        </label>
+        <label class="flex items-center space-x-2 cursor-pointer text-white font-bold">
+          <input type="checkbox" class="event-filter-checkbox" data-type="CheckUp" checked />
+          <span class="w-4 h-4 rounded-md bg-blue-500 inline-block"></span>
+          <span>Check Up</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Right Panel - Event Details -->
+    <div class="md:col-span-3 border-l bg-gray-100 p-8 flex flex-col event-info relative" >
+      <div id="eventDetails" class="overflow-auto pt-2 text-black" style="max-height:600px">
+        <p class="select-none">Click a date with an event to see details here.</p>
+      </div>
+      <!-- Add empty state at bottom -->
+      <div id="emptyState" class="hidden flex flex-col justify-center items-center p-1 border-t border-gray-300 mt-auto text-black">
+        <p class="text-center mb-4 select-none">No scheduled activity for this date</p>
+        <button id="addScheduleBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-8 rounded-md" style="color:#ffffff !important;">
+          + Add Schedule 
+        </button>
+      </div>
+    </div>
+  </div>
+
+  </main>
+
+  <!-- Modal for adding events -->
+  <div id="eventModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Schedule New Event</h2>
+        <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <form id="eventForm">
+        <input type="hidden" id="eventDate" value="" />
+        
+        <div class="input-group">
+          <label for="eventTitle">Title</label>
+          <input type="text" id="eventTitle" required placeholder="Enter event title">
+        </div>
+        
+        <div class="input-group">
+          <label for="eventDescription">Description</label>
+          <textarea id="eventDescription" rows="3" placeholder="Enter event details"></textarea>
+        </div>
+        
+        <div class="input-group">
+          <label for="eventType">Type</label>
+          <select id="eventType">
+            <option value="CheckUp">check Up</option>
+            <option value="Consultation">Consultation</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="eventTime">Time</label>
+          <input type="text" id="eventTime" required placeholder="e.g. 09:00 - 10:30">
+        </div>
+        
+        <div class="input-group">
+          <label for="eventDuration">Duration (minutes)</label>
+          <input type="number" id="eventDuration" placeholder="60" min="15">
+        </div>
+        
+        <div class="input-group">
+          <label for="instructorName">Instructor/Doctor Name</label>
+          <input type="text" id="instructorName" placeholder="Enter name">
+        </div>
+        
+        <div class="input-group">
+          <label for="instructorRole">Role</label>
+          <input type="text" id="instructorRole" placeholder="Enter role">
+        </div>
+        
+        <div class="flex gap-3 mt-6">
+          <button type="submit" id="eventSubmitBtn" class="btn-primary flex-1">Create Event</button>
+          <button type="button" id="cancelBtn" class="btn-secondary flex-1">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      // Month names for display
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
+      // Events storage - start empty and fill from backend
+      let events = {};
+
+      // Accept schedules pushed from parent via postMessage and render them
+      function transformBackendSchedulesToEventsMap(schedules) {
+        const map = {};
+        if (!Array.isArray(schedules)) return map;
+        schedules.forEach((row) => {
+          const dateKey = row.start_date; // already YYYY-MM-DD
+          if (!dateKey) return;
+
+          // Map backend event_type to calendar types
+          let type;
+          switch ((row.event_type || '').toLowerCase()) {
+            case 'consultation':
+              type = 'Consultation';
+              break;
+            case 'checkup':
+            case 'check_up':
+              type = 'CheckUp';
+              break;
+            case 'appointment':
+            default:
+              // Default to CheckUp so it shows with a color
+              type = 'CheckUp';
+          }
+
+          const start = row.start_time ? row.start_time.substring(0,5) : '';
+          const end = row.end_time ? row.end_time.substring(0,5) : '';
+          let durationLabel = '';
+          if (row.duration_minutes && Number(row.duration_minutes) > 0) {
+            durationLabel = `${row.duration_minutes} min`;
+          }
+
+          const entry = {
+            id: Number(row.id) || Date.now(),
+            title: row.title || row.doctor_name || 'Schedule',
+            description: row.description || '',
+            type: type,
+            date: '',
+            time: start && end ? `${start} - ${end}` : (start || ''),
+            duration: durationLabel,
+            doctor_name: row.doctor_name || '',
+            role: row.role || '',
+            event_type: row.event_type || ''
+          };
+
+          if (!map[dateKey]) map[dateKey] = [];
+          map[dateKey].push(entry);
+        });
+        return map;
+      }
+
+      window.addEventListener('message', (event) => {
+        const data = event.data || {};
+        if (data.type === 'UPDATE_SCHEDULES') {
+          const incoming = transformBackendSchedulesToEventsMap(data.schedules || []);
+          // Replace defaults with backend data
+          events = incoming;
+          renderCalendar();
+        } else if (data.type === 'SET_RANGE') {
+          // When parent notifies the visible month, request that range
+          try {
+            window.parent && window.parent.postMessage({ type: 'REQUEST_SCHEDULES', range: data.range }, '*');
+          } catch (_) {}
+        }
+      });
+
+      // Ask parent for schedules if available (in case we loaded after parent fetched)
+      try {
+        window.parent && window.parent.postMessage({ type: 'REQUEST_SCHEDULES' }, '*');
+      } catch (_) {}
+
+      // Debug: log incoming schedules count
+      window.addEventListener('message', (event) => {
+        const data = event.data || {};
+        if (data.type === 'UPDATE_SCHEDULES') {
+          console.log('Received schedules from parent:', (data.schedules||[]).length);
+        }
+      });
+
+      // Map event types to colors, to match legend boxes
+      const eventTypeColors = {
+        Consultation: "bg-purple-600",
+        CheckUp: "bg-blue-500"
+      };
+
+      // Reverse map colors for dots (used in calendar)
+      const eventTypeDotColors = {
+        Consultation: "#7c3aed",
+        CheckUp: "#3b82f6"
+      };
+
+      // Filter state: which event types are shown
+      let activeFilters = new Set(["CheckUp", "Consultation"]);
+
+      // `calendarDate` is the first day of the month currently shown in the calendar
+      let calendarDate = new Date(2025, 7, 1); // August 2025 initially (month is zero-based)
+
+      // Reference to calendar grid and month-year label
+      const calendarGrid = document.getElementById("calendarGrid");
+      const monthYearLabel = document.getElementById("monthYearLabel");
+
+      // Event details container and close button
+      const eventDetails = document.getElementById("eventDetails");
+      const closeDetailsBtn = null;
+      const emptyState = document.getElementById("emptyState");
+      const addScheduleBtn = document.getElementById("addScheduleBtn");
+
+      // Search elements
+      const searchBtn = document.getElementById("searchBtn");
+      const searchInput = document.getElementById("searchInput");
+      const closeSearchBtn = document.getElementById("closeSearch");
+
+      // Track selected day element and date
+      let selectedDayElement = null;
+      let selectedDate = null;
+
+      // API base
+      const apiBase = '/4care/Admin-Dash/Back-end/api/';
+
+      // Modal elements
+      const eventModal = document.getElementById("eventModal");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const eventForm = document.getElementById("eventForm");
+      const eventDateInput = document.getElementById("eventDate");
+
+      /** Format date to "YYYY-MM-DD" string */
+      function formatDateString(date) {
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, "0");
+        const d = date.getDate().toString().padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      /** Format date to "Month DD, YYYY" */
+      function formatDisplayDate(date) {
+        return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+      }
+
+      function parseDisplayDate(display) {
+        if (!display) return null;
+        const parts = display.split(/\s+/); // Month DD, YYYY
+        if (parts.length < 3) return null;
+        const month = monthNames.indexOf(parts[0]);
+        const day = parseInt(parts[1].replace(',', ''), 10);
+        const year = parseInt(parts[2], 10);
+        if (month < 0 || !day || !year) return null;
+        return new Date(year, month, day);
+      }
+
+      /** Safe-time format display from 24h */
+      function formatTime(timeStr) {
+        return timeStr;
+      }
+
+      /** Clears the calendar grid */
+      function clearCalendar() {
+        calendarGrid.innerHTML = "";
+      }
+
+      /**
+       * Renders the calendar grid for the current month/year (calendarDate)
+       * @param {string} searchQuery - Optional search query to filter events
+       */
+      function renderCalendar(searchQuery = '') {
+        clearCalendar();
+
+        // Display month and year label, e.g. "April 2020"
+        monthYearLabel.textContent = `${monthNames[calendarDate.getMonth()]} ${calendarDate.getFullYear()}`;
+
+        // First day of month
+        const firstDayOfMonth = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), 1);
+        // Last day of month
+        const lastDayOfMonth = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 0);
+
+        // What weekday (Mon=1,... Sun=7) does the month start on? JS getDay: Sun=0...Sat=6
+        // We want Mon=1...Sun=7 strictly to align to calendar headers
+        let startWeekday = firstDayOfMonth.getDay();
+        startWeekday = startWeekday === 0 ? 7 : startWeekday;
+
+        // Calculate total days to render (including previous month's days for blank cells)
+        const totalDays = lastDayOfMonth.getDate();
+
+        // Calculate days from previous month to fill in start offset
+        const offsetBefore = startWeekday - 1;
+
+        // Total cells is offsetBefore + totalDays + trailing cells to make full weeks of 7 days
+        let cellsTotal = offsetBefore + totalDays;
+        if (cellsTotal % 7 !== 0) {
+          cellsTotal += 7 - (cellsTotal % 7);
+        }
+
+        // Start date for calendar grid: Possibly days from previous month
+        // Calculate previous month days count to fill
+        const prevMonthLastDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), 0).getDate();
+
+        // Today's date for highlighting if inside the month/year
+        const now = new Date();
+        const isCurrentMonth = now.getFullYear() === calendarDate.getFullYear() && now.getMonth() === calendarDate.getMonth();
+
+        // Loop through all cells to render days
+        for (let i = 0; i < cellsTotal; i++) {
+          const dayCell = document.createElement("div");
+          dayCell.className = "day-cell p-2 rounded-lg h-20 flex flex-col justify-start transition relative select-none";
+
+          // Determine which date this cell represents (prev month, current month, next month)
+          let dayNumber = null;
+          let cellDate = null;
+          let isPrevMonth = false;
+          let isNextMonth = false;
+
+          if (i < offsetBefore) {
+            // Days from previous month
+            dayNumber = prevMonthLastDate - offsetBefore + 1 + i;
+            // Date in previous month
+            cellDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, dayNumber);
+            isPrevMonth = true;
+          } else if (i < offsetBefore + totalDays) {
+            dayNumber = i - offsetBefore + 1;
+            cellDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), dayNumber);
+          } else {
+            // Days from next month
+            dayNumber = i - (offsetBefore + totalDays) + 1;
+            cellDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, dayNumber);
+            isNextMonth = true;
+          }
+
+          const dateStr = formatDateString(cellDate);
+
+          // Show day numbers for prev/next months lighter
+          if (isPrevMonth || isNextMonth) {
+            dayCell.classList.add("text-gray-300", "cursor-default");
+          } else {
+            dayCell.classList.add("text-white");
+            dayCell.setAttribute("tabindex", "0");
+            dayCell.setAttribute("role", "button");
+            dayCell.setAttribute("aria-label", `Select day ${dayNumber} ${monthNames[calendarDate.getMonth()]} ${calendarDate.getFullYear()}`);
+          }
+
+          // Show day number top-left
+          const dayNumberSpan = document.createElement("span");
+          dayNumberSpan.textContent = dayNumber;
+          dayNumberSpan.className = "font-semibold text-sm";
+
+          // Highlight today's date if current month
+          if (isCurrentMonth && dayNumber === now.getDate() && !isPrevMonth && !isNextMonth) {
+            dayNumberSpan.classList.add("bg-orange-400", "text-white", "rounded-full", "w-6", "h-6", "inline-flex", "items-center", "justify-center");
+          }
+
+          dayCell.appendChild(dayNumberSpan);
+
+          // Add events dots and labels if present
+          if (events[dateStr]) {
+            // Filter events by active filters and search query
+            const filteredEvents = events[dateStr].filter(ev => 
+              activeFilters.has(ev.type) && 
+              (searchQuery === '' || ev.title.toLowerCase().includes(searchQuery.toLowerCase()) || ev.description.toLowerCase().includes(searchQuery.toLowerCase()))
+            );
+
+            if (filteredEvents.length > 0) {
+              // Add event dots colored by type (show up to 3 dots)
+              const dotsContainer = document.createElement("div");
+              dotsContainer.className = "mt-1 flex space-x-1";
+
+              filteredEvents.slice(0, 3).forEach(ev => {
+                const dot = document.createElement("span");
+                dot.className = "event-dot";
+                dot.style.backgroundColor = eventTypeDotColors[ev.type] || "#999";
+                dotsContainer.appendChild(dot);
+              });
+
+              dayCell.appendChild(dotsContainer);
+
+              // Render only the first label to keep cells simple
+              filteredEvents.slice(0, 1).forEach(ev => {
+              const eventLabel = document.createElement("div");
+              eventLabel.className = "event-label";
+                eventLabel.textContent = ev.title;
+              dayCell.appendChild(eventLabel);
+              });
+              // If more events exist, indicate count
+              const extra = filteredEvents.length - 1;
+              if (extra > 0) {
+                const more = document.createElement("div");
+                more.className = "event-label";
+                more.textContent = `+${extra} more`;
+                dayCell.appendChild(more);
+              }
+            }
+          }
+
+          // When clicking or pressing enter/space on day cell, show event details if any
+          if (!isPrevMonth && !isNextMonth) {
+            dayCell.addEventListener("click", () => {
+              selectDay(dayCell, dateStr);
+            });
+            dayCell.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                selectDay(dayCell, dateStr);
+              }
+            });
+          }
+
+          calendarGrid.appendChild(dayCell);
+        }
+      }
+
+      /**
+       * Display event information on right panel for the selected date.
+       * If multiple events, show first event details with note about others.
+       * @param {string|null} dateStr - date in YYYY-MM-DD or null for empty
+       */
+      const selectedEventIdxByDate = {};
+
+      function showEventDetails(dateStr) {
+        if (!dateStr) {
+          eventDetails.innerHTML = `<p class="select-none">Click a date with an event to see details here.</p>`;
+          emptyState.classList.add('hidden');
+          return;
+        }
+
+        // Filter events by active filters and current search query
+        const currentSearchQuery = searchInput.value;
+        const filteredEvents = events[dateStr] ? events[dateStr].filter(ev => 
+          activeFilters.has(ev.type) && 
+          (currentSearchQuery === '' || ev.title.toLowerCase().includes(currentSearchQuery.toLowerCase()) || ev.description.toLowerCase().includes(currentSearchQuery.toLowerCase()))
+        ) : [];
+
+        selectedDate = dateStr;
+        
+        if (filteredEvents.length === 0) {
+          eventDetails.innerHTML = `<p class="select-none">No events scheduled for this date.</p>`;
+          emptyState.classList.remove('hidden');
+        } else {
+          // Which event is selected for detail view
+          const selIdx = Number.isInteger(selectedEventIdxByDate[dateStr]) ? selectedEventIdxByDate[dateStr] : 0;
+          const safeIdx = Math.max(0, Math.min(selIdx, filteredEvents.length - 1));
+          selectedEventIdxByDate[dateStr] = safeIdx;
+
+          const selected = filteredEvents[safeIdx];
+
+          // Clickable list of event names at the top
+          const namesBar = `
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+              ${filteredEvents.map((ev, i) => `
+                <button data-ev-idx="${i}" class="event-name-chip" style="padding:10px 14px; border-radius:12px; border:1px solid #d1d5db; background:${i===safeIdx?'#2563eb':'#ffffff'}; color:${i===safeIdx?'#ffffff':'#111827'}; font-size:16px; font-weight:700;">
+                  ${ev.title}
+                </button>
+              `).join('')}
+            </div>`;
+
+          // Detail section for the selected event
+          const detailHtml = `
+                    <div>
+              <div style="font-weight:800; font-size:22px; margin-bottom:10px;">${selected.title}</div>
+              <div style="font-size:16px; margin-bottom:14px; line-height:1.6;">${selected.description || 'No description available.'}</div>
+              <div style="font-size:16px; line-height:1.8;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-500" viewBox="0 0 20 20" fill="currentColor"><path d="M6 2a1 1 0 00-1 1v1H5a2 2 0 00-2 2v1h14V6a2 2 0 00-2-2h0V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1z"/><path d="M3 9h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+                  <strong>Date:</strong> ${selected.date}
+                      </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-12.5a.75.75 0 00-1.5 0V10c0 .199.079.39.22.53l2.5 2.5a.75.75 0 101.06-1.06l-2.28-2.28V5.5z" clip-rule="evenodd"/></svg>
+                  <strong>Time:</strong> ${formatTime(selected.time || 'Not specified')}
+                    </div>
+                ${selected.duration ? `<div style=\"display:flex; align-items:center; gap:8px;\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5 text-orange-500\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path d=\"M11 3a1 1 0 00-2 0v5H6a1 1 0 100 2h4a1 1 0 001-1V3z\"/></svg><strong>Duration:</strong> ${selected.duration}</div>` : ''}
+                ${selected.event_type ? `<div><strong>Type:</strong> ${selected.event_type}</div>` : ''}
+                ${selected.doctor_name ? `<div><strong>Doctor:</strong> ${selected.doctor_name}</div>` : ''}
+                ${selected.role ? `<div><strong>Role:</strong> ${selected.role}</div>` : ''}
+                  </div>
+                  </div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+              <button id="addScheduleBtnInline" class="btn-primary" style="width:100%; padding:10px 12px; font-size:14px; color:#ffffff !important;">+ Add Schedule</button>
+              <button id="editScheduleBtn" class="btn-secondary" style="width:100%; background:#24A824; color:#fff; padding:10px 12px; font-size:14px;">Edit</button>
+              <button id="deleteScheduleBtn" class="btn-secondary" style="width:100%; background:#ef4444; color:#fff; padding:10px 12px; font-size:14px; margin-top:12px;">Delete</button>
+                  </div>
+          `;
+
+          eventDetails.innerHTML = namesBar + detailHtml;
+
+          // Wire name chips to switch details
+          document.querySelectorAll('.event-name-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const idx = parseInt(btn.getAttribute('data-ev-idx'), 10);
+              selectedEventIdxByDate[dateStr] = idx;
+              showEventDetails(dateStr);
+            });
+          });
+          const inlineBtn = document.getElementById('addScheduleBtnInline');
+          if (inlineBtn) inlineBtn.addEventListener('click', showEventModal);
+          const editBtn = document.getElementById('editScheduleBtn');
+          if (editBtn) {
+            editBtn.addEventListener('click', () => {
+              if (!selected) return;
+              // Open modal in edit mode with the selected event data
+              showEventModal(true, selected);
+            });
+          }
+          const delBtn = document.getElementById('deleteScheduleBtn');
+          if (delBtn) {
+            delBtn.addEventListener('click', async () => {
+              if (!selected || !selected.id) return;
+              if (!confirm('Delete this schedule?')) return;
+              try {
+                const res = await fetch(apiBase + 'delete-schedule.php', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ 
+                    id: selected.id,
+                    title: selected.title,
+                    start_date: selectedDate
+                  })
+                });
+                const txt = await res.text();
+                let json = {};
+                try { json = JSON.parse(txt); } catch (_) {}
+                if (!json.success) {
+                  alert('Delete failed: ' + (json.message || 'Unknown error'));
+                  return;
+                }
+                
+                // Show success message
+                alert('Schedule deleted successfully!');
+                
+                // Refresh the calendar
+                await loadSchedulesForVisibleMonth();
+                
+                // Clear selection and details
+                clearSelectionAndDetails();
+              } catch (e) {
+                alert('Network error: ' + e.message);
+              }
+            });
+          }
+          emptyState.classList.add('hidden');
+        }
+      }
+
+      /**
+       * Handles selecting one day in calendar and showing event details
+       * @param {HTMLElement} dayEl Selected day cell element
+       * @param {string} dateStr date in YYYY-MM-DD
+       */
+      function selectDay(dayEl, dateStr) {
+        if (selectedDayElement) {
+          selectedDayElement.classList.remove("selected");
+        }
+        dayEl.classList.add("selected");
+        selectedDayElement = dayEl;
+        selectedDate = dateStr;
+        showEventDetails(dateStr);
+      }
+
+      /**
+       * Navigate calendar to previous month
+       */
+      function prevMonth() {
+        calendarDate.setMonth(calendarDate.getMonth() - 1);
+        calendarDate.setDate(1);
+        renderCalendar(searchInput.value);
+        clearSelectionAndDetails();
+        loadSchedulesForVisibleMonth();
+      }
+
+      /**
+       * Navigate calendar to next month
+       */
+      function nextMonth() {
+        calendarDate.setMonth(calendarDate.getMonth() + 1);
+        calendarDate.setDate(1);
+        renderCalendar(searchInput.value);
+        clearSelectionAndDetails();
+        loadSchedulesForVisibleMonth();
+      }
+
+      /**
+       * Jump calendar to today
+       */
+      function goToToday() {
+        const today = new Date();
+        calendarDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        renderCalendar(searchInput.value);
+        clearSelectionAndDetails();
+        loadSchedulesForVisibleMonth();
+      }
+
+      /**
+       * Clear selected day highlight and event details
+       */
+      function clearSelectionAndDetails() {
+        if (selectedDayElement) {
+          selectedDayElement.classList.remove("selected");
+          selectedDayElement = null;
+        }
+        selectedDate = null;
+        showEventDetails(null);
+      }
+
+      /**
+       * Update active filters and re-render calendar
+       */
+      function updateFilters() {
+        activeFilters.clear();
+        document.querySelectorAll(".event-filter-checkbox").forEach(checkbox => {
+          if (checkbox.checked) {
+            activeFilters.add(checkbox.dataset.type);
+          }
+        });
+        renderCalendar(searchInput.value);
+        clearSelectionAndDetails();
+      }
+
+      /**
+       * Handles search functionality
+       */
+      function toggleSearch() {
+        const isSearchVisible = searchInput.classList.contains('hidden');
+        if (isSearchVisible) {
+          searchInput.classList.remove('hidden');
+          closeSearchBtn.classList.remove('hidden');
+          searchBtn.classList.add('hidden');
+          searchInput.focus();
+        } else {
+          searchInput.classList.add('hidden');
+          closeSearchBtn.classList.add('hidden');
+          searchBtn.classList.remove('hidden');
+          searchInput.value = ''; // Clear search on close
+          renderCalendar(); // Re-render calendar without search filter
+          clearSelectionAndDetails();
+        }
+      }
+
+      /** 
+       * Show modal for adding or editing an event 
+       * @param {boolean} isEdit
+       * @param {object} ev - existing event when editing
+       */
+      let editingScheduleId = null;
+      function showEventModal(isEdit = false, ev = null) {
+        // Clear any prior edit state
+        editingScheduleId = null;
+        eventForm.reset();
+
+        if (isEdit && ev) {
+          // Prefill fields from existing event
+          editingScheduleId = ev.id || null;
+          const dateStr = ev.date || selectedDate;
+          if (dateStr) {
+            const dateObj = new Date(dateStr + 'T00:00:00');
+            eventDateInput.value = formatDisplayDate(dateObj);
+            selectedDate = formatDateString(dateObj); // keep internal value consistent
+          }
+          document.getElementById('eventTitle').value = ev.title || '';
+          document.getElementById('eventDescription').value = ev.description || '';
+          document.getElementById('eventType').value = ev.event_type || 'consultation';
+          // Time can be provided as combined string or separate start/end
+          const combinedTime = (ev.time && typeof ev.time === 'string') ? ev.time
+                                : [ev.start_time, ev.end_time].filter(Boolean).join(' - ');
+          document.getElementById('eventTime').value = combinedTime || '';
+          document.getElementById('eventDuration').value = (ev.duration_minutes || ev.duration || '').toString();
+          document.getElementById('instructorName').value = ev.doctor_name || '';
+          document.getElementById('instructorRole').value = ev.role || '';
+          // Update submit button label in edit mode
+          const submitBtn = document.getElementById('eventSubmitBtn');
+          if (submitBtn) submitBtn.textContent = 'Save';
+        } else {
+          // Add mode requires a selected date
+          if (!selectedDate) {
+            alert('Please click a date on the calendar first, then press + Add Schedule.');
+            return;
+          }
+          const dateObj = new Date(selectedDate + 'T00:00:00');
+          eventDateInput.value = formatDisplayDate(dateObj);
+          // Ensure submit button label is for create
+          const submitBtn = document.getElementById('eventSubmitBtn');
+          if (submitBtn) submitBtn.textContent = 'Create Event';
+        }
+
+        // Show modal
+        eventModal.classList.remove('hidden');
+      }
+
+      /** 
+       * Close modal 
+       */
+      function closeEventModal() {
+        eventModal.classList.add('hidden');
+        editingScheduleId = null;
+        const submitBtn = document.getElementById('eventSubmitBtn');
+        if (submitBtn) submitBtn.textContent = 'Create Event';
+      }
+
+      /**
+       * Handle form submission
+       */
+      async function handleFormSubmit(event) {
+        event.preventDefault();
+        
+        if (!selectedDate) {
+          const parsed = parseDisplayDate(eventDateInput.value);
+          if (parsed) selectedDate = formatDateString(parsed);
+          if (!selectedDate) {
+            alert('Please choose a date on the calendar');
+            return;
+          }
+        }
+        const title = document.getElementById('eventTitle').value;
+        const description = document.getElementById('eventDescription').value;
+        const eventType = document.getElementById('eventType').value || 'consultation';
+        const timeRange = document.getElementById('eventTime').value || '';
+        const durationMinutes = parseInt(document.getElementById('eventDuration').value || '', 10) || null;
+        const doctorName = document.getElementById('instructorName').value || null;
+        const role = document.getElementById('instructorRole').value || null;
+        let start_time = '';
+        let end_time = '';
+        const parts = timeRange.split('-').map(s => s.trim());
+        if (parts.length >= 1) start_time = parts[0];
+        if (parts.length >= 2) end_time = parts[1];
+
+        if (!title) {
+          alert('Please enter a title');
+          return;
+        }
+
+        try {
+          const payload = {
+            title: title,
+            description: description,
+            start_date: selectedDate,
+            start_time: start_time,
+            end_time: end_time,
+            event_type: eventType,
+            duration_minutes: durationMinutes,
+            doctor_name: doctorName,
+            role: role
+          };
+
+          // Decide whether to create or update
+          const endpoint = editingScheduleId ? 'update-schedule.php' : 'save-schedule.php';
+          if (editingScheduleId) payload.id = editingScheduleId;
+
+          const res = await fetch(apiBase + endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const text = await res.text();
+          let json = {};
+          try { json = JSON.parse(text); } catch (_) {
+            console.error('Invalid JSON from schedule endpoint:', text);
+            alert('Server returned invalid response. Check PHP errors.');
+            return;
+          }
+          if (!json.success) {
+            alert('Save failed: ' + (json.message || 'Unknown error'));
+            return;
+          }
+          closeEventModal();
+          await loadSchedulesForVisibleMonth();
+        } catch (e) {
+          alert('Network error: ' + e.message);
+          console.error(e);
+        }
+      }
+
+      // Initialize UI event bindings
+
+      document.getElementById("prevMonth").addEventListener("click", prevMonth);
+      document.getElementById("nextMonth").addEventListener("click", nextMonth);
+      document.getElementById("todayBtn").addEventListener("click", goToToday);
+
+      // Filters
+      document.querySelectorAll(".event-filter-checkbox").forEach(cb => {
+        cb.addEventListener("change", updateFilters);
+      });
+
+      // Close event details panel
+      // Removed close button (X) on the right panel
+
+      // Event form elements
+      addScheduleBtn.addEventListener("click", showEventModal);
+      closeModalBtn.addEventListener("click", closeEventModal);
+      cancelBtn.addEventListener("click", closeEventModal);
+      eventForm.addEventListener("submit", handleFormSubmit);
+
+      // Search functionality
+      searchBtn.addEventListener("click", toggleSearch);
+      closeSearchBtn.addEventListener("click", toggleSearch);
+      searchInput.addEventListener("input", () => {
+        renderCalendar(searchInput.value);
+        clearSelectionAndDetails();
+      });
+
+      async function loadSchedulesForVisibleMonth() {
+        const start = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), 1).toISOString().split('T')[0];
+        const end = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 0).toISOString().split('T')[0];
+        try {
+          const res = await fetch(apiBase + `get-schedules.php?start_date=${start}&end_date=${end}`);
+          const data = await res.json();
+          if (data.success) {
+            // Filter out finished entries from display
+            const visible = (data.data || []).filter(r => (r.status || 'scheduled') !== 'finished');
+            const incoming = transformBackendSchedulesToEventsMap(visible);
+            events = incoming;
+      renderCalendar();
+      showEventDetails(null);
+            try { window.parent && window.parent.postMessage({ type: 'SCHEDULE_COUNT', count: (data.data||[]).length }, '*'); } catch (_) {}
+          }
+        } catch (e) {
+          // Silently ignore
+        }
+      }
+
+      // Initial Render + Load from DB
+      renderCalendar();
+      showEventDetails(null);
+      loadSchedulesForVisibleMonth();
+
+      // Poll every 15s for near real-time updates
+      setInterval(loadSchedulesForVisibleMonth, 15000);
+    })();
+  </script>
+</body>
+</html>

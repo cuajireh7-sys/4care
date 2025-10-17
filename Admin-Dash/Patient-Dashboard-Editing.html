@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Edit</title>
+    <link rel="icon" type="image/x-icon" href="../4CARE LOGO.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #34a853;
+            --accent: #fbbc05;
+            --dark: #202124;
+            --light: #f8f9fa;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));
+            color: white;
+            padding: 20px 15px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .dashboard-content {
+            margin-left: 250px;
+            padding: 25px;
+            flex: 1;
+            background-color: white;
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        .section-header {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .admin-controls {
+            background-color: #f5f7fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .admin-controls h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .editable-text, .image-upload-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            min-height: 20px;
+            background-color: white;
+        }
+
+        .image-upload-box {
+            border: 2px dashed #bbb;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 150px;
+        }
+
+        .image-upload-box i {
+            font-size: 2.5rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .image-upload-box p {
+            color: #777;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .save-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .save-btn:hover {
+            background-color: #1669c1;
+        }
+
+        .admin-section-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .admin-section-controls button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .save-section-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .add-item-btn {
+            background-color: var(--primary);
+            color: white;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            height: 45px;
+            padding: 10px;
+            font-weight: bold;
+            width: 200px;
+        }
+
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .item-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .item-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .item-controls button {
+            padding: 5px 8px;
+            margin-left: 5px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .edit-btn {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-form input[type="text"],
+        .modal-form input[type="date"],
+        .modal-form textarea,
+        .modal-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-form button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        /* New styles for hamburger menu and back-to-home button */
+        .sidebar-bottom-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-bottom-buttons button {
+            width: 100%;
+            padding: 10px 10px;
+            border-radius: 5px;
+            text-align: left;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .sidebar-bottom-buttons button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .hamburger-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hamburger-modal-content button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .hamburger-modal-content button:hover {
+            background-color: #1669c1;
+        }
+
+        /* Confirmation Modal Styles */
+        .confirmation-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .confirmation-modal-content h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-modal-content p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .confirmation-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .confirmation-modal-buttons button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .confirmation-modal-buttons .confirm-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .confirmation-modal-buttons .confirm-btn:hover {
+            background-color: #1669c1;
+        }
+
+        .confirmation-modal-buttons .cancel-btn {
+            background-color: #ccc;
+            color: #333;
+            border: 1px solid #bbb;
+        }
+
+        .confirmation-modal-buttons .cancel-btn:hover {
+            background-color: #bbb;
+        }
+
+               .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .color-picker-group input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .color-picker-group input[type="text"] {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="text-xl font-bold mb-6">Patient Dashboard Editor</div>
+            
+            <a href="#" class="active" data-section="profile-section">Patient Profile</a>
+            <a href="#" data-section="appointments-section">Upcoming Appointments</a>
+            <a href="#" data-section="medical-section">Medical History</a>
+            <a href="#" data-section="colors-section">Color Settings</a>
+            <a href="#" data-section="user-view-section">User View</a>
+            
+
+            <div class="sidebar-bottom-buttons">
+                <button id="hamburgerNavBtn"><i class="fas fa-bars mr-2"></i> More Options</button>
+                <button id="backToHomeBtn"><i class="fas fa-home mr-2"></i> Back to Home</button>
+                <button id="adminLogoutBtn" class="bg-red-500"><i class="fas fa-sign-out-alt mr-2"></i> Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- Patient Profile Section -->
+            <section id="profile-section" class="dashboard-section active">
+                <h2 class="section-header">Patient Profile</h2>
+                
+                <div class="admin-controls">
+                    <h3>Profile Header</h3>
+                    <div class="form-group">
+                        <label>Welcome Message</label>
+                        <div class="editable-text" contenteditable="true" data-text-id="welcome-message">Welcome Back, John Doe!</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <div class="editable-text" contenteditable="true" data-text-id="profile-description">Your health journey, simplified. Book appointments, view your history, and stay connected.</div>
+                    </div>
+                </div>
+
+                <div class="admin-controls">
+                    <h3>Profile Photo</h3>
+                    <div class="image-upload-box" id="profile-photo-box">
+                        <input type="file" id="profile-photo-input" accept="image/*" style="display: none;">
+                        <i class="fas fa-user-circle"></i>
+                        <p>Click to upload profile photo</p>
+                        <img id="profile-photo-preview" class="image-preview" src="">
+                    </div>
+                    <button class="save-btn" id="save-profile-photo">Save Profile Photo</button>
+                </div>
+
+                <div class="admin-controls">
+                    <h3>Personal Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label>Patient Name</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-name">John Doe</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Patient ID</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-id">#PT54289</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-age">42 years</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-gender">Male</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Blood Group</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-blood">O+</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Height</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-height">5'9"</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Weight</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-weight">175 lbs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-controls">
+                    <h3>Contact Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-phone">(555) 123-4567</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-email">john.doe@example.com</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-address">123 Main St, Anytown</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Emergency Contact</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-emergency">Jane Doe (555) 987-6543</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-controls">
+                    <h3>Medical Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label>Allergies</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-allergies">Penicillin, Dust Mites</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Medications</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-meds">Lisinopril (10mg daily), Metformin (500mg twice daily)</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Primary Physician</label>
+                            <div class="editable-text" contenteditable="true" data-text-id="patient-physician">Dr. Emily White</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-section-controls">
+                    <button class="save-section-btn" data-section="profile-section">Save Profile Changes</button>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="dashboard-section">
+                <h2 class="section-header">Appointments Management</h2>
+                <button class="add-item-btn" id="add-appointment-btn">Add New Appointment</button>
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                
+                <div id="appointments-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+                    <!-- Appointments will be added here dynamically -->
+                </div>
+                </div>
+                </div>
+            </section>
+
+            <!-- Medical History Section -->
+            <section id="medical-section" class="dashboard-section">
+                <h2 class="section-header">Medical History</h2>
+                
+                <button class="add-item-btn" id="add-medical-btn">Add Medical Record</button>
+                
+                <div id="medical-list" class="item-list">
+                    <!-- Medical records will be added here dynamically -->
+                </div>
+
+            
+            </section>
+
+            <!-- Color Settings Section -->
+            <section id="colors-section" class="dashboard-section">
+                <h2 class="section-header">Color Settings</h2>
+                
+                <div class="admin-controls">
+                    <div class="admin-controls active">
+                    <div class="color-picker-group">
+                            <label for="primaryColor">Primary Color</label>
+                            <input type="color" id="primaryColor" value="#1a73e8">
+                            <input type="text" id="primaryColorHex" value="#1a73e8">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="secondaryColor">Secondary Color</label>
+                            <input type="color" id="secondaryColor" value="#34a853">
+                            <input type="text" id="secondaryColorHex" value="#34a853">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="accentColor">Accent Color</label>
+                            <input type="color" id="accentColor" value="#fbbc05">
+                            <input type="text" id="accentColorHex" value="#fbbc05">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="darkColor">Dark Text/Element Color</label>
+                            <input type="color" id="darkColor" value="#202124">
+                            <input type="text" id="darkColorHex" value="#202124">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="lightColor">Light Background Color</label>
+                            <input type="color" id="lightColor" value="#f8f9fa">
+                            <input type="text" id="lightColorHex" value="#f8f9fa">
+                        </div>
+                        <!-- New color pickers -->
+                        <div class="color-picker-group">
+                            <label for="successColor">Success Color</label>
+                            <input type="color" id="successColor" value="#10B981">
+                            <input type="text" id="successColorHex" value="#10B981">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="warningColor">Warning Color</label>
+                            <input type="color" id="warningColor" value="#F59E0B">
+                            <input type="text" id="warningColorHex" value="#F59E0B">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="dangerColor">Danger Color</label>
+                            <input type="color" id="dangerColor" value="#EF4444">
+                            <input type="text" id="dangerColorHex" value="#EF4444">
+                        </div>
+                        <div class="admin-section-controls">
+                    <button class="save-section-btn" data-section="colors-section">Save Color Settings</button>
+                </div>
+                        </div>
+                </div>
+
+                
+            </section>
+
+            <!-- User View Section -->
+            <section id="user-view-section" class="dashboard-section">
+                <h2 class="section-header">Patient Dashboard (User View)</h2>
+                
+                <!-- This would simulate how the patient dashboard looks to regular users -->
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">Preview of Patient Dashboard</h3>
+                    <div id="user-view-content">
+                        <!-- Content will be dynamically rendered here -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing Appointments -->
+    <div id="appointment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-appointment-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-4" id="appointment-modal-title">Add New Appointment</h2>
+            
+            <form class="modal-form" id="appointment-form">
+                <input type="hidden" id="appointment-id">
+                
+                <div class="form-group">
+                    <label>Doctor Name</label>
+                    <input type="text" id="appointment-doctor" placeholder="Doctor's Name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="appointment-date">
+                </div>
+                
+                <div class="form-group">
+                    <label>Time</label>
+                    <input type="text" id="appointment-time" placeholder="e.g., 10:00 AM">
+                </div>
+                
+                <div class="form-group">
+                    <label>Type</label>
+                    <input type="text" id="appointment-type" placeholder="e.g., General Checkup">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="appointment-status">
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Icon Class</label>
+                    <input type="text" id="appointment-icon" placeholder="e.g., fas fa-user-md">
+                </div>
+                
+                <div class="form-group">
+                    <label>Icon Color (Tailwind class)</label>
+                    <input type="text" id="appointment-icon-color" placeholder="e.g., text-blue-500">
+                </div>
+                
+                <button type="submit">Save Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing Medical Records -->
+    <div id="medical-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-medical-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-4" id="medical-modal-title">Add Medical Record</h2>
+            
+            <form class="modal-form" id="medical-form">
+                <input type="hidden" id="medical-id">
+                
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="medical-date">
+                </div>
+                
+                <div class="form-group">
+                    <label>Record Type</label>
+                    <input type="text" id="medical-type" placeholder="e.g., Annual Checkup">
+                </div>
+                
+                <div class="form-group">
+                    <label>Details</label>
+                    <textarea id="medical-details" rows="3" placeholder="Details of the record"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Doctor/Nurse</label>
+                    <input type="text" id="medical-doctor" placeholder="Doctor/Nurse Name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Icon Class</label>
+                    <input type="text" id="medical-icon" placeholder="e.g., fas fa-file-medical">
+                </div>
+                
+                <div class="form-group">
+                    <label>Icon Color (Tailwind class)</label>
+                    <input type="text" id="medical-icon-color" placeholder="e.g., text-blue-500">
+                </div>
+                
+                <button type="submit">Save Record</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Hamburger Navigation -->
+    <div id="hamburger-modal" class="modal">
+        <div class="hamburger-modal-content">
+            <span class="close-modal" id="close-hamburger-modal">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Dashboard Options</h2>
+            <button id="editMainDashboardBtn">Edit Main Dashboard</button>
+            <button id="editDoctorDashboardBtn">Edit Doctor Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Generic Confirmation Modal -->
+    <div id="confirmation-modal" class="modal">
+        <div class="confirmation-modal-content">
+            <h2 id="confirmation-modal-title"></h2>
+            <p id="confirmation-modal-message"></p>
+            <div class="confirmation-modal-buttons">
+                <button class="confirm-btn" id="confirm-action-btn">Yes</button>
+                <button class="cancel-btn" id="cancel-action-btn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data model for the patient dashboard
+        const patientDashboardData = {
+            profile: {
+                welcomeMessage: "Welcome Back, John Doe!",
+                description: "Your health journey, simplified. Book appointments, view your history, and stay connected.",
+                name: "John Doe",
+                id: "#PT54289",
+                age: "42 years",
+                gender: "Male",
+                bloodGroup: "O+",
+                height: "5'9\"",
+                weight: "175 lbs",
+                phone: "(555) 123-4567",
+                email: "john.doe@example.com",
+                address: "123 Main St, Anytown",
+                emergencyContact: "Jane Doe (555) 987-6543",
+                allergies: "Penicillin, Dust Mites",
+                currentMedications: "Lisinopril (10mg daily), Metformin (500mg twice daily)",
+                primaryPhysician: "Dr. Emily White",
+                profilePhoto: ""
+            },
+            appointments: [
+                {
+                    id: "app1",
+                    doctor: "Dr. Smith",
+                    date: "2023-06-20",
+                    time: "10:00 AM",
+                    type: "General Checkup",
+                    status: "Scheduled",
+                    icon: "fas fa-user-md",
+                    iconColor: "text-blue-500"
+                }
+            ],
+            medicalHistory: [
+                {
+                    id: "med1",
+                    date: "2023-01-15",
+                    type: "Annual Checkup",
+                    details: "No issues found during routine annual physical examination",
+                    doctor: "Dr. Smith",
+                    icon: "fas fa-file-medical",
+                    iconColor: "text-blue-500"
+                },
+                {
+                    id: "med2",
+                    date: "2022-11-10",
+                    type: "Flu Vaccination",
+                    details: "Standard seasonal influenza vaccine administered",
+                    doctor: "Nurse Johnson",
+                    icon: "fas fa-syringe",
+                    iconColor: "text-blue-500"
+                }
+            ],
+            colors: {
+                primary: "#1a73e8",
+                secondary: "#34a853",
+                accent: "#fbbc05",
+                dark: "#202124",
+                light: "#f8f9fa",
+                success: "#10B981",
+                warning: "#F59E0B",
+                danger: "#EF4444"
+            }
+        };
+
+        // DOM Elements
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardSections = document.querySelectorAll('.dashboard-section');
+        const editableTexts = document.querySelectorAll('.editable-text');
+        const profilePhotoBox = document.getElementById('profile-photo-box');
+        const profilePhotoInput = document.getElementById('profile-photo-input');
+        const profilePhotoPreview = document.getElementById('profile-photo-preview');
+        const saveProfilePhotoBtn = document.getElementById('save-profile-photo');
+        const saveSectionButtons = document.querySelectorAll('.save-section-btn');
+        const addAppointmentBtn = document.getElementById('add-appointment-btn');
+        const appointmentsList = document.getElementById('appointments-list');
+        const addMedicalBtn = document.getElementById('add-medical-btn');
+        const medicalList = document.getElementById('medical-list');
+        const appointmentModal = document.getElementById('appointment-modal');
+        const appointmentForm = document.getElementById('appointment-form');
+        const medicalModal = document.getElementById('medical-modal');
+        const medicalForm = document.getElementById('medical-form');
+        const userViewContent = document.getElementById('user-view-content');
+
+        // New DOM Elements for hamburger and back-to-home
+        const hamburgerNavBtn = document.getElementById('hamburgerNavBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn'); // Added logout button
+        const hamburgerModal = document.getElementById('hamburger-modal');
+        const closeHamburgerModal = document.getElementById('close-hamburger-modal');
+        const editMainDashboardBtn = document.getElementById('editMainDashboardBtn');
+        const editDoctorDashboardBtn = document.getElementById('editDoctorDashboardBtn');
+
+        // Confirmation Modal Elements
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const confirmationModalTitle = document.getElementById('confirmation-modal-title');
+        const confirmationModalMessage = document.getElementById('confirmation-modal-message');
+        const confirmActionBtn = document.getElementById('confirm-action-btn');
+        const cancelActionBtn = document.getElementById('cancel-action-btn');
+
+        // Color picker elements
+        const primaryColorInput = document.getElementById('primaryColor');
+        const primaryColorHexInput = document.getElementById('primaryColorHex');
+        const secondaryColorInput = document.getElementById('secondaryColor');
+        const secondaryColorHexInput = document.getElementById('secondaryColorHex');
+        const accentColorInput = document.getElementById('accentColor');
+        const accentColorHexInput = document.getElementById('accentColorHex');
+        const darkColorInput = document.getElementById('darkColor');
+        const darkColorHexInput = document.getElementById('darkColorHex');
+        const lightColorInput = document.getElementById('lightColor');
+        const lightColorHexInput = document.getElementById('lightColorHex');
+        const successColorInput = document.getElementById('successColor');
+        const successColorHexInput = document.getElementById('successColorHex');
+        const warningColorInput = document.getElementById('warningColor');
+        const warningColorHexInput = document.getElementById('warningColorHex');
+        const dangerColorInput = document.getElementById('dangerColor');
+        const dangerColorHexInput = document.getElementById('dangerColorHex');
+
+
+        // Initialize the dashboard
+        function initDashboard() {
+            // Load saved data if available
+            const savedData = localStorage.getItem('patientDashboardData');
+            if (savedData) {
+                Object.assign(patientDashboardData, JSON.parse(savedData));
+            }
+            
+            loadProfileData();
+            renderAppointments();
+            renderMedicalHistory();
+            applyColorSettings();
+            updateUserView();
+        }
+
+        // Load profile data into editable fields
+        function loadProfileData() {
+            document.querySelector('[data-text-id="welcome-message"]').textContent = patientDashboardData.profile.welcomeMessage;
+            document.querySelector('[data-text-id="profile-description"]').textContent = patientDashboardData.profile.description;
+            document.querySelector('[data-text-id="patient-name"]').textContent = patientDashboardData.profile.name;
+            document.querySelector('[data-text-id="patient-id"]').textContent = patientDashboardData.profile.id;
+            document.querySelector('[data-text-id="patient-age"]').textContent = patientDashboardData.profile.age;
+            document.querySelector('[data-text-id="patient-gender"]').textContent = patientDashboardData.profile.gender;
+            document.querySelector('[data-text-id="patient-blood"]').textContent = patientDashboardData.profile.bloodGroup;
+            document.querySelector('[data-text-id="patient-height"]').textContent = patientDashboardData.profile.height;
+            document.querySelector('[data-text-id="patient-weight"]').textContent = patientDashboardData.profile.weight;
+            document.querySelector('[data-text-id="patient-phone"]').textContent = patientDashboardData.profile.phone;
+            document.querySelector('[data-text-id="patient-email"]').textContent = patientDashboardData.profile.email;
+            document.querySelector('[data-text-id="patient-address"]').textContent = patientDashboardData.profile.address;
+            document.querySelector('[data-text-id="patient-emergency"]').textContent = patientDashboardData.profile.emergencyContact;
+            document.querySelector('[data-text-id="patient-allergies"]').textContent = patientDashboardData.profile.allergies;
+            document.querySelector('[data-text-id="patient-meds"]').textContent = patientDashboardData.profile.currentMedications;
+            document.querySelector('[data-text-id="patient-physician"]').textContent = patientDashboardData.profile.primaryPhysician;
+
+            if (patientDashboardData.profile.profilePhoto) {
+                profilePhotoPreview.src = patientDashboardData.profile.profilePhoto;
+                profilePhotoPreview.style.display = 'block';
+            }
+        }
+
+        // Render appointments list
+        function renderAppointments() {
+            appointmentsList.innerHTML = '';
+            
+            patientDashboardData.appointments.forEach(appointment => {
+                const appointmentCard = document.createElement('div');
+                appointmentCard.className = 'item-card';
+                appointmentCard.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="${appointment.icon} ${appointment.iconColor} mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold">${appointment.doctor}</h4>
+                            <p class="text-sm text-gray-600">${appointment.date} at ${appointment.time}</p>
+                            <p class="text-xs text-gray-500">${appointment.type} - ${appointment.status}</p>
+                        </div>
+                    </div>
+                    <div class="item-controls">
+                        <button class="edit-btn" data-id="${appointment.id}"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" data-id="${appointment.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                appointmentsList.appendChild(appointmentCard);
+            });
+
+            // Add event listeners to edit/delete buttons
+            document.querySelectorAll('#appointments-list .edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const appointmentId = e.currentTarget.dataset.id;
+                    editAppointment(appointmentId);
+                });
+            });
+
+            document.querySelectorAll('#appointments-list .delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const appointmentId = e.currentTarget.dataset.id;
+                    deleteAppointment(appointmentId);
+                });
+            });
+        }
+
+        // Render medical history list
+        function renderMedicalHistory() {
+            medicalList.innerHTML = '';
+            
+            patientDashboardData.medicalHistory.forEach(record => {
+                const medicalCard = document.createElement('div');
+                medicalCard.className = 'item-card';
+                medicalCard.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="${record.icon} ${record.iconColor} mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold">${record.type}</h4>
+                            <p class="text-sm text-gray-600">${record.date}</p>
+                            <p class="text-xs text-gray-500">${record.details.substring(0, 50)}${record.details.length > 50 ? '...' : ''}</p>
+                            
+                        </div>
+                    </div>
+                    <div class="item-controls">
+                        <button class="edit-btn" data-id="${record.id}"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" data-id="${record.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                medicalList.appendChild(medicalCard);
+            });
+
+            // Add event listeners to edit/delete buttons
+            document.querySelectorAll('#medical-list .edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const medicalId = e.currentTarget.dataset.id;
+                    editMedicalRecord(medicalId);
+                });
+            });
+
+            document.querySelectorAll('#medical-list .delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const medicalId = e.currentTarget.dataset.id;
+                    deleteMedicalRecord(medicalId);
+                });
+            });
+        }
+
+        // Apply color settings
+        function applyColorSettings() {
+            document.documentElement.style.setProperty('--primary', patientDashboardData.colors.primary);
+            document.documentElement.style.setProperty('--secondary', patientDashboardData.colors.secondary);
+            document.documentElement.style.setProperty('--accent', patientDashboardData.colors.accent);
+            document.documentElement.style.setProperty('--dark', patientDashboardData.colors.dark);
+            document.documentElement.style.setProperty('--light', patientDashboardData.colors.light);
+            document.documentElement.style.setProperty('--success', patientDashboardData.colors.success);
+            document.documentElement.style.setProperty('--warning', patientDashboardData.colors.warning);
+            document.documentElement.style.setProperty('--danger', patientDashboardData.colors.danger);
+            
+            // Set color inputs and hex inputs
+            primaryColorInput.value = patientDashboardData.colors.primary;
+            primaryColorHexInput.value = patientDashboardData.colors.primary;
+            secondaryColorInput.value = patientDashboardData.colors.secondary;
+            secondaryColorHexInput.value = patientDashboardData.colors.secondary;
+            accentColorInput.value = patientDashboardData.colors.accent;
+            accentColorHexInput.value = patientDashboardData.colors.accent;
+            darkColorInput.value = patientDashboardData.colors.dark;
+            darkColorHexInput.value = patientDashboardData.colors.dark;
+            lightColorInput.value = patientDashboardData.colors.light;
+            lightColorHexInput.value = patientDashboardData.colors.light;
+            successColorInput.value = patientDashboardData.colors.success;
+            successColorHexInput.value = patientDashboardData.colors.success;
+            warningColorInput.value = patientDashboardData.colors.warning;
+            warningColorHexInput.value = patientDashboardData.colors.warning;
+            dangerColorInput.value = patientDashboardData.colors.danger;
+            dangerColorHexInput.value = patientDashboardData.colors.danger;
+        }
+
+        // Update the user view preview
+        function updateUserView() {
+            userViewContent.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex flex-col md:flex-row items-center mb-6">
+                        <img src="${patientDashboardData.profile.profilePhoto || 'https://via.placeholder.com/150'}" alt="Profile Photo" class="w-24 h-24 rounded-full object-cover mb-4 md:mb-0 md:mr-6">
+                        <div>
+                            <h2 class="text-2xl font-bold">${patientDashboardData.profile.welcomeMessage}</h2>
+                            <p class="text-gray-600">${patientDashboardData.profile.description}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">Personal Information</h3>
+                            <p>Name: ${patientDashboardData.profile.name}</p>
+                            <p>Patient ID: ${patientDashboardData.profile.id}</p>
+                            <p>Age: ${patientDashboardData.profile.age}</p>
+                            <p>Gender: ${patientDashboardData.profile.gender}</p>
+                            <p>Blood Group: ${patientDashboardData.profile.bloodGroup}</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">Contact Information</h3>
+                            <p>Phone: ${patientDashboardData.profile.phone}</p>
+                            <p>Email: ${patientDashboardData.profile.email}</p>
+                            <p>Address: ${patientDashboardData.profile.address}</p>
+                            <p>Emergency Contact: ${patientDashboardData.profile.emergencyContact}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold mb-4">Upcoming Appointments</h3>
+                        <div class="space-y-3">
+                            ${patientDashboardData.appointments.map(app => `
+                                <div class="flex items-center bg-gray-50 p-3 rounded-lg">
+                                    <i class="${app.icon} ${app.iconColor} mr-3"></i>
+                                    <div>
+                                        <p class="font-medium">Appointment with ${app.doctor}</p>
+                                        <p class="text-sm text-gray-600">${app.date} at ${app.time}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Medical History</h3>
+                        <div class="space-y-3">
+                            ${patientDashboardData.medicalHistory.map(record => `
+                                <div class="flex items-center bg-gray-50 p-3 rounded-lg">
+                                    <i class="${record.icon} ${record.iconColor} mr-3"></i>
+                                    <div>
+                                        <p class="font-medium">${record.type}</p>
+                                        <p class="text-sm text-gray-600">${record.date}</p>
+                                        <p class="text-xs text-gray-500">${record.details.substring(0, 50)}${record.details.length > 50 ? '...' : ''}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Save profile data from editable fields
+        function saveProfileData() {
+            patientDashboardData.profile.welcomeMessage = document.querySelector('[data-text-id="welcome-message"]').textContent;
+            patientDashboardData.profile.description = document.querySelector('[data-text-id="profile-description"]').textContent;
+            patientDashboardData.profile.name = document.querySelector('[data-text-id="patient-name"]').textContent;
+            patientDashboardData.profile.id = document.querySelector('[data-text-id="patient-id"]').textContent;
+            patientDashboardData.profile.age = document.querySelector('[data-text-id="patient-age"]').textContent;
+            patientDashboardData.profile.gender = document.querySelector('[data-text-id="patient-gender"]').textContent;
+            patientDashboardData.profile.bloodGroup = document.querySelector('[data-text-id="patient-blood"]').textContent;
+            patientDashboardData.profile.height = document.querySelector('[data-text-id="patient-height"]').textContent;
+            patientDashboardData.profile.weight = document.querySelector('[data-text-id="patient-weight"]').textContent;
+            patientDashboardData.profile.phone = document.querySelector('[data-text-id="patient-phone"]').textContent;
+            patientDashboardData.profile.email = document.querySelector('[data-text-id="patient-email"]').textContent;
+            patientDashboardData.profile.address = document.querySelector('[data-text-id="patient-address"]').textContent;
+            patientDashboardData.profile.emergencyContact = document.querySelector('[data-text-id="patient-emergency"]').textContent;
+            patientDashboardData.profile.allergies = document.querySelector('[data-text-id="patient-allergies"]').textContent;
+            patientDashboardData.profile.currentMedications = document.querySelector('[data-text-id="patient-meds"]').textContent;
+            patientDashboardData.profile.primaryPhysician = document.querySelector('[data-text-id="patient-physician"]').textContent;
+
+            updateUserView();
+            localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+            alert('Profile changes saved successfully!');
+        }
+
+        // Add new appointment
+        function addAppointment() {
+            document.getElementById('appointment-modal-title').textContent = 'Add New Appointment';
+            document.getElementById('appointment-id').value = '';
+            document.getElementById('appointment-doctor').value = '';
+            document.getElementById('appointment-date').value = '';
+            document.getElementById('appointment-time').value = '';
+            document.getElementById('appointment-type').value = '';
+            document.getElementById('appointment-status').value = 'Scheduled';
+            document.getElementById('appointment-icon').value = 'fas fa-calendar-day';
+            document.getElementById('appointment-icon-color').value = 'text-blue-500';
+            
+            appointmentModal.classList.add('active');
+        }
+
+        // Edit appointment
+        function editAppointment(id) {
+            const appointment = patientDashboardData.appointments.find(a => a.id === id);
+            if (!appointment) return;
+
+            document.getElementById('appointment-modal-title').textContent = 'Edit Appointment';
+            document.getElementById('appointment-id').value = appointment.id;
+            document.getElementById('appointment-doctor').value = appointment.doctor;
+            document.getElementById('appointment-date').value = appointment.date;
+            document.getElementById('appointment-time').value = appointment.time;
+            document.getElementById('appointment-type').value = appointment.type;
+            document.getElementById('appointment-status').value = appointment.status;
+            document.getElementById('appointment-icon').value = appointment.icon;
+            document.getElementById('appointment-icon-color').value = appointment.iconColor;
+            
+            appointmentModal.classList.add('active');
+        }
+
+        // Save appointment
+        function saveAppointment(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('appointment-id').value || `app${Date.now()}`;
+            const doctor = document.getElementById('appointment-doctor').value;
+            const date = document.getElementById('appointment-date').value;
+            const time = document.getElementById('appointment-time').value;
+            const type = document.getElementById('appointment-type').value;
+            const status = document.getElementById('appointment-status').value;
+            const icon = document.getElementById('appointment-icon').value;
+            const iconColor = document.getElementById('appointment-icon-color').value;
+
+            if (!doctor || !date || !time || !type || !status) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const appointment = {
+                id,
+                doctor,
+                date,
+                time,
+                type,
+                status,
+                icon,
+                iconColor
+            };
+
+            // Check if this is an existing appointment
+            const existingIndex = patientDashboardData.appointments.findIndex(a => a.id === id);
+            if (existingIndex >= 0) {
+                patientDashboardData.appointments[existingIndex] = appointment;
+            } else {
+                patientDashboardData.appointments.push(appointment);
+            }
+
+            renderAppointments();
+            updateUserView();
+            appointmentModal.classList.remove('active');
+            localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+        }
+
+        // Delete appointment
+        function deleteAppointment(id) {
+            showConfirmationModal(
+                'Delete Appointment',
+                'Are you sure you want to delete this appointment?',
+                () => {
+                    patientDashboardData.appointments = patientDashboardData.appointments.filter(a => a.id !== id);
+                    renderAppointments();
+                    updateUserView();
+                    localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+                }
+            );
+        }
+
+        // Add new medical record
+        function addMedicalRecord() {
+            document.getElementById('medical-modal-title').textContent = 'Add Medical Record';
+            document.getElementById('medical-id').value = '';
+            document.getElementById('medical-date').value = '';
+            document.getElementById('medical-type').value = '';
+            document.getElementById('medical-details').value = '';
+            document.getElementById('medical-doctor').value = '';
+            document.getElementById('medical-icon').value = 'fas fa-file-medical';
+            document.getElementById('medical-icon-color').value = 'text-blue-500';
+            
+            medicalModal.classList.add('active');
+        }
+
+        // Edit medical record
+        function editMedicalRecord(id) {
+            const record = patientDashboardData.medicalHistory.find(m => m.id === id);
+            if (!record) return;
+
+            document.getElementById('medical-modal-title').textContent = 'Edit Medical Record';
+            document.getElementById('medical-id').value = record.id;
+            document.getElementById('medical-date').value = record.date;
+            document.getElementById('medical-type').value = record.type;
+            document.getElementById('medical-details').value = record.details;
+            document.getElementById('medical-doctor').value = record.doctor;
+            document.getElementById('medical-icon').value = record.icon;
+            document.getElementById('medical-icon-color').value = record.iconColor;
+            
+            medicalModal.classList.add('active');
+        }
+
+        // Save medical record
+        function saveMedicalRecord(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('medical-id').value || `med${Date.now()}`;
+            const date = document.getElementById('medical-date').value;
+            const type = document.getElementById('medical-type').value;
+            const details = document.getElementById('medical-details').value;
+            const doctor = document.getElementById('medical-doctor').value;
+            const icon = document.getElementById('medical-icon').value;
+            const iconColor = document.getElementById('medical-icon-color').value;
+
+            if (!date || !type || !details || !doctor) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const record = {
+                id,
+                date,
+                type,
+                details,
+                doctor,
+                icon,
+                iconColor
+            };
+
+            // Check if this is an existing record
+            const existingIndex = patientDashboardData.medicalHistory.findIndex(m => m.id === id);
+            if (existingIndex >= 0) {
+                patientDashboardData.medicalHistory[existingIndex] = record;
+            } else {
+                patientDashboardData.medicalHistory.push(record);
+            }
+
+            renderMedicalHistory();
+            updateUserView();
+            medicalModal.classList.remove('active');
+            localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+        }
+
+        // Delete medical record
+        function deleteMedicalRecord(id) {
+            showConfirmationModal(
+                'Delete Medical Record',
+                'Are you sure you want to delete this medical record?',
+                () => {
+                    patientDashboardData.medicalHistory = patientDashboardData.medicalHistory.filter(m => m.id !== id);
+                    renderMedicalHistory();
+                    updateUserView();
+                    localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+                }
+            );
+        }
+
+        // Save color settings
+        function saveColorSettings() {
+            patientDashboardData.colors.primary = primaryColorInput.value;
+            patientDashboardData.colors.secondary = secondaryColorInput.value;
+            patientDashboardData.colors.accent = accentColorInput.value;
+            patientDashboardData.colors.dark = darkColorInput.value;
+            patientDashboardData.colors.light = lightColorInput.value;
+            patientDashboardData.colors.success = successColorInput.value;
+            patientDashboardData.colors.warning = warningColorInput.value;
+            patientDashboardData.colors.danger = dangerColorInput.value;
+            
+            applyColorSettings();
+            updateUserView();
+            localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+            alert('Color settings saved successfully!');
+        }
+
+        // Save profile photo
+        function saveProfilePhoto() {
+            const file = profilePhotoInput.files[0];
+            if (!file) {
+                alert('Please select an image first');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                patientDashboardData.profile.profilePhoto = e.target.result;
+                profilePhotoPreview.src = e.target.result;
+                profilePhotoPreview.style.display = 'block';
+                localStorage.setItem('patientDashboardData', JSON.stringify(patientDashboardData));
+                updateUserView();
+                alert('Profile photo saved successfully!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Generic Confirmation Modal Function
+        let confirmCallback = null;
+        function showConfirmationModal(title, message, callback) {
+            confirmationModalTitle.textContent = title;
+            confirmationModalMessage.textContent = message;
+            confirmCallback = callback;
+            confirmationModal.classList.add('active');
+        }
+
+        function hideConfirmationModal() {
+            confirmationModal.classList.remove('active');
+            confirmCallback = null;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Sidebar navigation
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active state
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Hide all sections and show the selected one
+                dashboardSections.forEach(section => section.classList.remove('active'));
+                const targetSection = document.getElementById(this.dataset.section);
+                targetSection.classList.add('active');
+            });
+        });
+
+        // Profile photo upload
+        profilePhotoBox.addEventListener('click', () => profilePhotoInput.click());
+        profilePhotoInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    profilePhotoPreview.src = event.target.result;
+                    profilePhotoPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        saveProfilePhotoBtn.addEventListener('click', saveProfilePhoto);
+
+        // Save buttons
+        saveSectionButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const section = this.dataset.section;
+                
+                switch(section) {
+                    case 'profile-section':
+                        saveProfileData();
+                        break;
+                    case 'appointments-section':
+                        // Appointments are saved immediately when edited/added
+                        break;
+                    case 'medical-section':
+                        // Medical records are saved immediately when edited/added
+                        break;
+                    case 'colors-section':
+                        saveColorSettings();
+                        break;
+                }
+            });
+        });
+
+        // Appointments management
+        addAppointmentBtn.addEventListener('click', addAppointment);
+        appointmentForm.addEventListener('submit', saveAppointment);
+        document.getElementById('close-appointment-modal').addEventListener('click', () => {
+            appointmentModal.classList.remove('active');
+        });
+
+        // Medical records management
+        addMedicalBtn.addEventListener('click', addMedicalRecord);
+        medicalForm.addEventListener('submit', saveMedicalRecord);
+        document.getElementById('close-medical-modal').addEventListener('click', () => {
+            medicalModal.classList.remove('active');
+        });
+
+        // Color picker event listeners
+        primaryColorInput.addEventListener('input', (e) => primaryColorHexInput.value = e.target.value);
+        primaryColorHexInput.addEventListener('input', (e) => primaryColorInput.value = e.target.value);
+        secondaryColorInput.addEventListener('input', (e) => secondaryColorHexInput.value = e.target.value);
+        secondaryColorHexInput.addEventListener('input', (e) => secondaryColorInput.value = e.target.value);
+        accentColorInput.addEventListener('input', (e) => accentColorHexInput.value = e.target.value);
+        accentColorHexInput.addEventListener('input', (e) => accentColorInput.value = e.target.value);
+        darkColorInput.addEventListener('input', (e) => darkColorHexInput.value = e.target.value);
+        darkColorHexInput.addEventListener('input', (e) => darkColorInput.value = e.target.value);
+        lightColorInput.addEventListener('input', (e) => lightColorHexInput.value = e.target.value);
+        lightColorHexInput.addEventListener('input', (e) => lightColorInput.value = e.target.value);
+        successColorInput.addEventListener('input', (e) => successColorHexInput.value = e.target.value);
+        successColorHexInput.addEventListener('input', (e) => successColorInput.value = e.target.value);
+        warningColorInput.addEventListener('input', (e) => warningColorHexInput.value = e.target.value);
+        warningColorHexInput.addEventListener('input', (e) => warningColorInput.value = e.target.value);
+        dangerColorInput.addEventListener('input', (e) => dangerColorHexInput.value = e.target.value);
+        dangerColorHexInput.addEventListener('input', (e) => dangerColorInput.value = e.target.value);
+
+
+        // Modal close when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === appointmentModal) {
+                appointmentModal.classList.remove('active');
+            }
+            if (e.target === medicalModal) {
+                medicalModal.classList.remove('active');
+            }
+            if (e.target === hamburgerModal) {
+                hamburgerModal.classList.remove('active');
+            }
+            if (e.target === confirmationModal) {
+                hideConfirmationModal();
+            }
+        });
+
+        // Admin logout
+        adminLogoutBtn.addEventListener('click', () => {
+            showConfirmationModal(
+                'Logout Confirmation',
+                'Are you sure you want to log out?',
+                () => {
+                    window.location.href = 'Staff-Login.html'; 
+                }
+            );
+        });
+
+        // Hamburger Navigation Button
+        hamburgerNavBtn.addEventListener('click', () => {
+            hamburgerModal.classList.add('active');
+        });
+
+        closeHamburgerModal.addEventListener('click', () => {
+            hamburgerModal.classList.remove('active');
+        });
+
+        editMainDashboardBtn.addEventListener('click', () => {
+            hamburgerModal.classList.remove('active'); // Close hamburger modal first
+            showConfirmationModal(
+                'Navigate to Main Dashboard',
+                'Are you sure you want to navigate to the Main Dashboard Editor? Any unsaved changes will be lost.',
+                () => {
+                    window.location.href = '4Care-Page-Editing.html';
+                }
+            );
+        });
+
+        editDoctorDashboardBtn.addEventListener('click', () => {
+            hamburgerModal.classList.remove('active'); // Close hamburger modal first
+            showConfirmationModal(
+                'Navigate to Doctor Dashboard',
+                'Are you sure you want to navigate to the Doctor Dashboard Editor? Any unsaved changes will be lost.',
+                () => {
+                    window.location.href = 'Doctor-Dashboard-Editing.html'; // Redirect to Doctor-Dashboard-Editing.html
+                }
+            );
+        });
+
+        // Back to Home Button
+        backToHomeBtn.addEventListener('click', () => {
+            showConfirmationModal(
+                'Back to Home Confirmation',
+                'Are you sure you want to go back to the home page? Any unsaved changes will be lost.',
+                () => {
+                    window.location.href = '4Care-Admin.html';
+                }
+            );
+        });
+
+        // Confirmation Modal Button Listeners
+        confirmActionBtn.addEventListener('click', () => {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            hideConfirmationModal();
+        });
+
+        cancelActionBtn.addEventListener('click', () => {
+            hideConfirmationModal();
+        });
+    </script>
+</body>
+</html>

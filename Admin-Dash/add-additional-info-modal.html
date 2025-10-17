@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Additional Info</title>
+    <link rel="stylesheet" href="4Care-Admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .modal-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(0); /* Ensure it's visible */
+            opacity: 1; /* Ensure it's visible */
+            visibility: visible; /* Ensure it's visible */
+        }
+        .modal-content-wrapper {
+            padding: 24px;
+        }
+        .modal-header-new {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .modal-title-new {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a73e8;
+        }
+        .close-modal-btn-new {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            outline: none;
+            transition: color 0.2s ease-in-out;
+        }
+        .close-modal-btn-new:hover {
+            color: #4b5563;
+        }
+        .form-section {
+            background-color: #eef2ff;
+            padding: 16px;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .input-field:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 16px;
+        }
+        .btn-secondary {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            color: #4b5563;
+            background-color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+        }
+        .btn-primary-modal {
+            padding: 8px 24px;
+            background-color: #1a73e8;
+            color: white;
+            font-weight: 500;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .btn-primary-modal:hover {
+            background-color: #34a853;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-container">
+        <div class="modal-content-wrapper">
+            <div class="modal-header-new">
+                <h2 class="modal-title-new">Add Additional Patient Information</h2>
+                <button id="closeAddAdditionalInfoModalBtn" class="close-modal-btn-new">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addAdditionalInfoForm" class="patient-form">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="additionalInfoTitle" class="form-label">Title</label>
+                        <input type="text" id="additionalInfoTitle" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="additionalInfoContent" class="form-label">Content</label>
+                        <textarea id="additionalInfoContent" rows="4" class="input-field" required></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelAddAdditionalInfoForm" class="btn-secondary">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-primary-modal">
+                        Save Information
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // This script will run within the iframe
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('addAdditionalInfoForm');
+            const closeBtn = document.getElementById('closeAddAdditionalInfoModalBtn');
+            const cancelBtn = document.getElementById('cancelAddAdditionalInfoForm');
+
+            // Function to send a message to the parent window
+            const sendMessageToParent = (type, payload = {}) => {
+                window.parent.postMessage({ type, payload }, '*');
+            };
+
+            closeBtn.addEventListener('click', () => sendMessageToParent('closeAddAdditionalInfoModal'));
+            cancelBtn.addEventListener('click', () => sendMessageToParent('closeAddAdditionalInfoModal'));
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const title = document.getElementById('additionalInfoTitle').value;
+                const content = document.getElementById('additionalInfoContent').value;
+
+                if (title && content) {
+                    sendMessageToParent('saveAdditionalInfo', { title, content });
+                    form.reset(); // Clear form after saving
+                } else {
+                    alert('Please fill in all fields.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

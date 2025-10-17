@@ -1,0 +1,4457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Edit</title>
+    <link rel="icon" type="image/x-x-icon" href="../4CARE LOGO.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="MultipleFiles/style.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #34a853;
+            --accent: #fbbc05;
+            --dark: #202124;
+            --light: #f8f9fa;
+            --success: #10B981;  /* New */
+            --warning: #F59E0B;  /* New */
+            --danger: #EF4444;   /* New */
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .main-content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px;
+            gap: 24px;
+            flex-wrap: wrap;
+            flex-grow: 1;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));
+            border-radius: 50px;
+            height: 350px;
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            padding: 0 30px; 
+            position: relative; 
+            text-align: justify;
+            flex: 1;
+            min-width: 500px;
+        }
+
+        #availability-calendar-container {
+            width: 400px;
+            height: 350px;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.2), rgba(52, 168, 83, 0.2));
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            margin-top: 0;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .calendar-header button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #fbc02d;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .calendar-header button:hover {
+            color:#af8322;
+        }
+
+        .calendar-weekdays, .calendar-dates {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .calendar-weekdays div {
+            font-weight: bold;
+            color: #555;
+            padding: 5px 0;
+        }
+
+        .calendar-day {
+            padding: 6px 3px;
+            border-radius: 8px;
+            cursor: default;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: #777;
+        }
+
+        .calendar-day.available-day {
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .calendar-day.available-day:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px(0,0,0,0.2);
+        }
+
+        .calendar-day.selected-day {
+            background-color: var(--accent);
+            color: var(--dark);
+            border: 2px solid var(--dark);
+        }
+
+        .calendar-day.empty-day {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        .available-text {
+            text-align: center;
+            color: rgba(26, 115, 232, 0.9);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .hero-video {
+            position: relative;
+            width: 100%;
+            height: 50vh; 
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));
+        }
+
+        .hero-video video {
+            min-width: 100%;
+            min-height: 50%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        .hero-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            
+        }
+
+        .mobile-menu.active {
+            max-height: 500px; 
+        }
+
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .hero-right-content {
+            position: absolute;
+            right: 0px;
+            top: 51.8%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hero-search-bar {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            width: 700px;
+            margin-right: 30px;
+        }
+
+        .hero-search-bar input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            padding: 5px;
+            font-size: 1rem;
+            color: #202124;
+        }
+
+        .hero-search-bar button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+        }
+
+        .carousel-container {
+            width: 650px;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 50px;
+            position: relative;
+            margin-right: -150px;
+            margin-top: 100px;
+        }
+
+        .carousel-slide {
+            display: flex;
+            width: 75%;
+            height: 75%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+      
+        .appointment-form-modal-content {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            background: white;
+            max-height: 90vh; 
+            overflow-y: auto;
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+        }
+        .appointment-form-modal-content::-webkit-scrollbar {
+            display: none; 
+        }
+
+        .appointment-form-modal-content .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 20px;
+        }
+
+        .appointment-form-modal-content .form-header h2 {
+            color: rgba(26, 115, 232, 0.9);
+            font-size: 2em;
+            margin-bottom: 5px;
+            margin-top: -40px;
+            font-weight: bolder;
+        }
+
+        .appointment-form-modal-content .form-group {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .appointment-form-modal-content .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(27, 0, 12, 0.9);
+            font-weight: 500;
+        }
+
+        .appointment-form-modal-content .input-group {
+            position: relative;
+        }
+
+        .appointment-form-modal-content .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(26, 115, 232, 0.9);
+        }
+
+        .appointment-form-modal-content .form-control {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid rgba(26, 115, 232, 0.9);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            color: #202124;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .appointment-form-modal-content .form-control:focus {
+            border-color: rgba(26, 115, 232, 0.9);
+            box-shadow: 0 0 10px rgba(26, 115, 232, 0.9);
+            color: #202124;
+            outline: none;
+        }
+
+        .appointment-form-modal-content .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .appointment-form-modal-content .form-control.error {
+            border-color: #e74c3c;
+        }
+
+        .appointment-form-modal-content .form-control.success {
+            border-color: #064b23;
+        }
+
+        .appointment-form-modal-content .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .appointment-form-modal-content .time-slot {
+            padding: 10px;
+            border: 2px solid #c9c6c6;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(26, 115, 232, 0.9);
+        }
+
+        .appointment-form-modal-content .time-slot:hover {
+            background: rgba(26, 115, 232, 0.2);
+            border: #202124;
+        }
+
+        .appointment-form-modal-content .time-slot.selected {
+            background: rgba(26, 115, 232, 0.9);
+            color: white;
+            border-color: rgba(26, 115, 232, 0.9);
+        }
+
+        .appointment-form-modal-content .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: rgba(26, 115, 232, 0.9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .appointment-form-modal-content .submit-btn:hover {
+            background: #f8f8f8;
+            color: rgba(26, 115, 232, 0.9);
+            border: #202124;
+            transform: translateY(-2px);
+        }
+
+        .appointment-form-modal-content .success-message {
+            display: none;
+            text-align: center;
+            color: #2ecc71;
+            margin-top: 20px;
+            font-size: 1.1em;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .login-modal-content, .signup-modal-content, .forgot-password-modal-content {
+            width: 100%;
+            max-width: 450px; 
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-modal-content .form-group, .signup-modal-content .form-group, .forgot-password-modal-content .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-modal-content .input-group i, .signup-modal-content .input-group i, .forgot-password-modal-content .input-group i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #cb9112; 
+        }
+
+        .login-modal-content .form-control, .signup-modal-content .form-control, .forgot-password-modal-content .form-control {
+            width: 100%; 
+            padding-left: 40px; 
+            padding-right: 12px; 
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem; 
+            transition: all 0.2s ease-in-out;
+        }
+
+        .login-modal-content .form-control:focus, .signup-modal-content .form-control:focus, .forgot-password-modal-content .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+            outline: none;
+        }
+
+        .login-modal-content .error-message, .signup-modal-content .error-message, .forgot-password-modal-content .error-message {
+            color: #ef4444; 
+            font-size: 0.875rem; 
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .login-modal-content .form-control.error, .signup-modal-content .form-control.error, .forgot-password-modal-content .form-control.error {
+            border-color: #ef4444;
+        }
+
+        .login-modal-content .form-control.success, .signup-modal-content .form-control.success, .forgot-password-modal-content .form-control.success {
+            border-color: #22c55e;
+        }
+
+        .login-modal-content button[type="submit"], .signup-modal-content button[type="submit"], .forgot-password-modal-content button[type="submit"] {
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-modal-content button[type="submit"]:hover, .signup-modal-content button[type="submit"]:hover, .forgot-password-modal-content button[type="submit"]:hover {
+            background-color: #1d4ed8; 
+        }
+
+        .login-modal-content .success-message, .signup-modal-content .success-message, .forgot-password-modal-content .success-message {
+            color: #22c55e;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        #backToTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px; 
+            right: 30px; 
+            z-index: 99; 
+            border: none; 
+            outline: none; 
+            background-color: rgba(26, 115, 232, 0.8); 
+            color: white; 
+            cursor: pointer; 
+            padding: 15px; 
+            border-radius: 50px;
+            font-size: 18px; 
+            transition: background-color 0.3s, opacity 0.3s, transform 0.3s ease; 
+            width: 50px;
+            height: 50px;
+        }
+
+        #backToTopBtn:hover {
+            background-color: rgba(26, 115, 232, 1); 
+            transform: translateY(-3px);
+        }
+
+        #search-container {
+            display: none;
+            width: 100%;
+            padding: 10px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 90;
+            box-sizing: border-box;
+        }
+
+        #search-container.active {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+        }
+
+        #search-container input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #search-container button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+        }
+
+        #search-icon-button {
+            background: none;
+            border: none;
+            color: #333;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 8px 0;
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            box-shadow: none;
+        }
+
+        #search-icon-button:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        #search-icon-button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary); 
+            transition: width 0.3s ease-in-out; 
+        }
+
+        #search-icon-button:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .main-content-wrapper {
+                flex-direction: column;
+                padding: 0;
+                gap: 0;
+            }
+            .hero {
+                border-radius: 0; 
+                margin: 0; 
+                height: 300px;
+                padding: 20px;
+                flex-direction: column; 
+                min-width: unset;
+            }
+            #availability-calendar-container {
+                width: 90%;
+                margin: 20px auto;
+                height: auto;
+            }
+            .hero-content {
+                text-align: center;
+                padding: 2rem 1rem;
+                width: 100%; 
+            }
+            
+            .appointment-form-modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            .hero .container {
+                flex-direction: column; 
+            }
+            .hero-right-content {
+                position: static; 
+                transform: none;
+                margin-top: 20px;
+                width: 100%;
+                align-items: center;
+            }
+            .hero-search-bar {
+                width: 90%; 
+                margin-right: 0;
+            }
+            .carousel-container {
+                display: none;
+                height: 250px; 
+            }
+
+            .mobile-nav-btn {
+                display: block;
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+                margin-top: 10px;
+                border-radius: 9999px;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+            .mobile-nav-btn.book-appointment {
+                background-color: var(--primary);
+                color: white;
+            }
+            .mobile-nav-btn.book-appointment:hover {
+                background-color: #1565c0;
+            }
+            .mobile-nav-btn.login {
+                background-color: var(--accent);
+                color: var(--dark);
+            }
+            .mobile-nav-btn.login:hover {
+                background-color: #fbc02d;
+            }
+
+            .mobile-nav-btn.search-btn {
+                background-color: transparent;
+                border: none;
+                color: #333;
+                box-shadow: none;
+                text-align: left;
+                padding-left: 0;
+                border-bottom: 1px solid #eee;
+                border-radius: 0;
+            }
+
+            .mobile-nav-btn.search-btn:hover {
+                background-color: #f0f0f0;
+                color: var(--primary);
+            }
+
+            .services-grid,
+            .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.gap-6 {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+
+            .appointment-form-modal-content .flex.gap-4 {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .appointment-form-modal-content .form-group.flex-1 {
+                width: 100%;
+            }
+            .appointment-form-modal-content .time-slots {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            .appointment-form-modal-content .form-header h2 {
+                font-size: 1.8em;
+                margin-top: 0;
+            }
+            .appointment-form-modal-content .input-group i {
+                left: 10px;
+            }
+            .appointment-form-modal-content .form-control {
+                padding-left: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .announcement-card {
+                margin-bottom: 1rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .services-grid .service-card {
+                padding: 15px;
+            }
+            .services-grid .service-card .text-4xl {
+                font-size: 2.5rem;
+            }
+            .services-grid .service-card h3 {
+                font-size: 1rem;
+            }
+            .services-grid .service-card p {
+                font-size: 0.8rem;
+            }
+
+            #emergency-hotlines .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            #emergency-hotlines .bg-white {
+                padding: 15px;
+            }
+            #emergency-hotlines .bg-white .text-4xl {
+                font-size: 2.5rem;
+            }
+            #emergency-hotlines .bg-white h3 {
+                font-size: 1rem;
+            }
+            #emergency-hotlines .bg-white p {
+                font-size: 0.9rem;
+            }
+            #emergency-hotlines .bg-white .text-2xl {
+                font-size: 1.2rem; 
+            }
+
+
+            .modal-content {
+                width: 95%;
+                margin: 0 auto;
+            }
+            .search-modal-content input {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            .search-modal-content button {
+                width: 100%;
+            }
+            .appointment-form-modal-content .time-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .login-modal-content, .signup-modal-content, .forgot-password-modal-content {
+                padding: 25px;
+                border-radius: 10px;
+            }
+
+            .hero-video {
+                height: 30vh;
+            }
+            .hero-video-overlay h2 {
+                font-size: 2rem; 
+                color: #1d4ed8;
+            }
+            .hero-video-overlay p {
+                font-size: 0.9rem; 
+                color: #1d4ed8;
+            }
+
+            .hero-search-bar {
+                width: 100%; 
+                margin-right: 0;
+            }
+            .carousel-container {
+                display: none;
+                height: 200px; 
+                border-radius: 20px;
+            }
+            .hero-search-bar {
+                padding: 10px 15px;
+            }
+            .hero-search-bar input {
+                font-size: 0.9rem;
+            }
+
+            footer .grid {
+                grid-template-columns: 1fr; 
+                text-align: center;
+            }
+            footer .flex.space-x-4 {
+                justify-content: center; 
+            }
+
+            .announcement-card.hidden-mobile {
+                display: none; 
+            }
+            .view-all-announcements-btn {
+                display: block; 
+                margin-top: 20px;
+                width: 100%;
+                padding: 12px;
+                background-color: var(--primary);
+                color: white;
+                border-radius: 8px;
+                text-align: center;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+            .view-all-announcements-btn:hover {
+                background-color: #1565c0;
+            }
+            .announcements-modal-content {
+                width: 95%;
+                max-width: 600px;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                background: white;
+                position: relative;
+            }
+            .announcements-modal-content .announcement-card {
+                margin-bottom: 15px; 
+            }
+
+            .services-carousel-wrapper {
+                position: relative;
+                overflow: hidden;
+                padding: 0 20px; 
+            }
+
+            .services-carousel-inner {
+                display: flex;
+                transition: transform 0.5s ease-in-out;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                overflow-x: auto;
+                scrollbar-width: none; 
+                -ms-overflow-style: none; 
+            }
+
+            .services-carousel-inner::-webkit-scrollbar {
+                display: none;
+            }
+
+            .services-carousel-inner .service-card {
+                flex: 0 0 100%; 
+                width: 100%;
+                scroll-snap-align: start; 
+                margin-right: 0;
+                padding: 20px; 
+            }
+
+            .services-carousel-nav {
+                display: flex;
+                justify-content: space-between;
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                transform: translateY(-50%);
+                z-index: 10;
+                pointer-events: none;
+            }
+
+            .services-carousel-nav button {
+                background-color: rgba(255,255,255,0.8);
+                color: rgb(0, 0, 0);
+                border: 1px solid #ddd;
+                padding: 8px 12px;
+                cursor: pointer;
+                border-radius: 50%;
+                font-size: 1.2rem;
+                pointer-events: all;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                margin: 0 10px;
+            }
+
+            .services-carousel-nav button:hover {
+                background-color: transparent;
+                color: #1565c0;
+            }
+
+            .services-carousel-nav button:disabled {
+                color: #ccc;
+                cursor: not-allowed;
+            }
+
+            .services-carousel-pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 15px;
+            }
+
+            .services-carousel-pagination .dot {
+                height: 10px;
+                width: 10px;
+                background-color: #bbb;
+                border-radius: 50%;
+                display: inline-block;
+                margin: 0 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .services-carousel-pagination .dot.active {
+                background-color: var(--primary);
+            }
+            .services-grid {
+                display: grid; 
+            }
+            @media (max-width: 480px) {
+                .services-grid {
+                    display: block; 
+                }
+            }
+        }
+
+        .nav-link {
+            position: relative;
+            color: #333; 
+            text-decoration: none;
+            padding: 8px 0;
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out; 
+        }
+
+        .nav-link:hover {
+            color: var(--primary); 
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary); 
+            transition: width 0.3s ease-in-out; 
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu a.nav-link {
+            display: block;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        .mobile-menu a.nav-link:hover {
+            background-color: #f0f0f0;
+            color: var(--primary);
+        }
+
+        .navbar-custom {
+            border-bottom: 2px solid #e2e8f0;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            z-index: 100;
+        }
+
+        .logo-text {
+            color: var(--primary);
+            font-size: 1.75rem; 
+            font-weight: 900;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            transition: color 0.3s ease;
+        }
+        .logo-text:hover {
+            color: #1565c0; 
+        }
+
+        /* Custom Alert Styles */
+        .custom-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid var(--primary);
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-alert .alert-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .custom-alert h3 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .custom-alert p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .custom-alert button {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .custom-alert button:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+        }
+
+        /* Admin Specific Styles */
+        .admin-controls {
+            display: none;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .admin-controls.active {
+            display: block;
+            margin: 10px;
+            animation: fadeIn 0.5s ease;
+            background-color: var(--light);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+        }
+
+        .admin-controls.active {
+            transform: translateY(-5px);
+        }
+
+        .editable-text {
+            border: 1px solid #c5c4c4;
+            padding: 20px;
+            border-radius: 4px;
+            padding: 5px;
+            min-height: 5em;
+            font-size: 15px;
+        }
+
+        .editable-image-wrapper {
+            position: relative;
+            border: 1px solid #c5c4c4;
+            border-radius: 4px;
+            padding: 20px;
+        }
+
+        .editable-image-wrapper input[type="file"],
+        .editable-image-wrapper input[type="text"] {
+            margin-top: -4px;
+            width: calc(100% - 10px);
+            padding: 10px;
+            border: 1px solid #000000;
+            border-radius: 4px;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .color-picker-group input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .color-picker-group input[type="text"] {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .admin-section-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .admin-section-controls button {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .admin-section-controls button.delete-btn {
+            background-color: #ef4444;
+        }
+
+        .admin-section-controls button:hover {
+            opacity: 0.9;
+        }
+
+        .admin-element-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            justify-content: flex-end;
+        }
+
+        .admin-element-controls button {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .admin-element-controls .edit-btn {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .admin-element-controls .delete-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .admin-element-controls .edit-btn:hover {
+            background-color: #e0a800;
+        }
+
+        .admin-element-controls .delete-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .dashboard-container {
+            display: flex;
+            width: 100%;
+            flex-grow: 1;
+            flex-direction: row; /* Changed to row for left nav */
+        }
+
+        .sidebar {
+            position: fixed; /* Changed from sticky to fixed */
+            width: 250px;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));
+            color: rgb(0, 0, 0);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            top: 0; 
+            bottom: 0; /* Full height */
+            left: 0; /* Fixed position */
+            z-index: 99;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            border-radius: 0px;
+            height: 100vh; 
+        }
+
+        .sidebar a {
+            color: var(--light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            display: block;
+            text-align: left; /* Align text to left */
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.2);
+            color: white; /* Text color change on hover/active */
+        }
+
+        .dashboard-content {
+            margin-left: 250px; /* Compensate for sidebar width */
+            padding: 20px;
+            background-color: #f8f9fa;
+            flex-grow: 1;
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block !important; /* Ensure it overrides other display rules */
+        }
+
+        .save-changes-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            z-index: 999;
+            display: none; /* Hidden by default */
+        }
+
+        .save-changes-btn:hover {
+            background-color: #1565c0;
+            transform: translateX(-50%) translateY(-3px);
+        }
+
+        /* Modal for adding/editing elements */
+        .edit-element-modal-content {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            position: relative;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .edit-element-modal-content .form-group {
+            margin-bottom: 15px;
+        }
+
+        .edit-element-modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .edit-element-modal-content input[type="text"],
+        .edit-element-modal-content textarea,
+        .edit-element-modal-content input[type="date"],
+        .edit-element-modal-content input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .edit-element-modal-content textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .edit-element-modal-content button {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .edit-element-modal-content button:hover {
+            background-color: #1565c0;
+        }
+
+        .edit-element-modal-content .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+
+        .edit-element-modal-content .close-btn:hover {
+            color: #333;
+        }
+
+        .admin-logged-in .save-changes-btn {
+            display: block;
+        }
+
+        .admin-logged-in .admin-controls {
+            display: flex; /* Changed to flex for horizontal nav */
+        }
+
+        .admin-logged-in #openLoginModalBtn,
+        .admin-logged-in #openLoginModalBtnMobile,
+        .admin-logged-in #bookAppointmentNavBtn,
+        .admin-logged-in #bookAppointmentNavBtnMobile,
+        .admin-logged-in #bookAppointmentBtn {
+            display: none;
+        }
+
+        .admin-logged-in #adminLogoutBtn {
+            display:flex;
+        }
+
+        #adminLogoutBtn {
+            display: none;
+            background-color: #dc2626;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        #adminLogoutBtn:hover {
+            background-color: #b91c1c;
+        }
+
+        /* Adjust dashboard container for left nav */
+        .dashboard-container.admin-logged-in {
+            flex-direction: row;
+        }
+        .dashboard-container.admin-logged-in .dashboard-content {
+            padding-left: 20px; /* Add padding to account for sticky nav */
+        }
+
+        /* Ensure user-view sections are hidden when admin sections are active */
+        .dashboard-section:not(.active) .user-view {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%; /* Full width for top nav on smaller screens */
+                height: auto; /* Auto height */
+                flex-direction: column; /* Stack items vertically */
+                align-items: center;
+                padding: 10px;
+                position: static; /* Remove sticky behavior */
+                box-shadow: none; /* Remove shadow */
+            }
+            .sidebar a {
+                width: 100%;
+                text-align: center;
+            }
+            .dashboard-container.admin-logged-in {
+                flex-direction: column; /* Stack vertically on smaller screens */
+            }
+            .dashboard-container.admin-logged-in .dashboard-content {
+                padding-left: 20px; /* Reset padding */
+            }
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        #addAnnouncementBtn {
+            height: 40px;
+            margin-top: -70px;
+            font-weight: bold;
+        }
+
+        #addAnnouncementBtn:hover {
+            color:var(--light);
+            background-color:var(--accent);
+
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            
+            
+        }
+
+        /* Styles for the new dashboard navigation */
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 10px;
+            margin-bottom: 20px; /* Add space below header */
+        }
+
+        .sidebar-header .dashboard-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--light);
+        }
+
+        .sidebar-header .right-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .right-controls {
+            margin-top: 320px;
+            margin-right: 80px;
+        }
+
+        .sidebar-header .hamburger-btn {
+            background: none;
+            border: none;
+            font-size: 5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .hamburger-btn {
+            color: var(--light);
+            font-size: 1.5rem;
+            margin-right: 100px;
+            margin-top: 25px;
+        }
+
+        .hamburger-btn:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-header .hamburger-btn:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-header .back-to-admin-btn {
+            background-color: #60a5fa; /* Tailwind blue-400 */
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-header .back-to-admin-btn:hover {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+        }
+
+        /* New style for the back icon */
+        .back-to-admin-icon {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light);
+            padding: 5px;
+            border-radius: 50%;
+            transition: color 0.2s ease, background-color 0.2s ease;
+            margin-left: -5px;
+            margin-top: 25px;
+        }
+
+        .back-to-admin-icon:hover {
+            color: var(--accent);
+
+        }
+
+        .dashboard-menu-modal-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            position: relative;
+            overflow: hidden;
+            overflow-y: auto;
+        }
+
+        .dashboard-menu-modal-content button {
+            width: 100%;
+            padding: 1px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dashboard-menu-modal-content button.patient-dashboard-btn {
+            background-color: var(--primary);
+            color: white;
+            height: 50px;
+        }
+
+        .dashboard-menu-modal-content button.patient-dashboard-btn:hover {
+            background-color: #1565c0;
+        }
+
+        .dashboard-menu-modal-content button.doctor-dashboard-btn {
+            background-color: var(--secondary);
+            color: white;
+            height: 50px;
+        }
+
+        .dashboard-menu-modal-content button.doctor-dashboard-btn:hover {
+            background-color: #2e8b57;
+        }
+
+        .sidebar-link{
+            width: auto; /* Allow links to take full width of sidebar */
+            gap: 1px;
+        }
+
+        /* Confirmation Modal Styles */
+        .confirmation-modal-content {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            text-align: center;
+        }
+
+        .confirmation-modal-content h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .confirmation-modal-content p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .confirmation-modal-content .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .confirmation-modal-content button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .confirmation-modal-content button.confirm-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .confirmation-modal-content button.confirm-btn:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+        }
+
+        .confirmation-modal-content button.cancel-btn {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        .confirmation-modal-content button.cancel-btn:hover {
+            background-color: #bbb;
+            transform: translateY(-2px);
+        }
+
+        /* New styles for horizontal admin controls */
+        .admin-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust minmax as needed */
+            gap: 10px; /* Space between the boxes */
+            margin-bottom: 20px;
+        }
+
+        .admin-controls-grid .admin-controls {
+            display: flex;
+            flex-direction: column;
+            width: auto; /* Allow grid to manage width */
+            margin: 0; /* Remove individual margins */
+            padding: 20px; /* Adjust padding for better appearance */
+        }
+
+        .admin-controls-grid .admin-controls.active {
+            transform: none; /* Remove translateY from individual boxes */
+        }
+
+        .hero-image-upload-box {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .hero-image-upload-box:hover {
+            border-color: var(--primary);
+            background-color: #f0f8ff;
+        }
+
+        .hero-image-upload-box i {
+            font-size: 3rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .hero-image-upload-box p {
+            color: #777;
+        }
+
+        .hero-image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .save-image-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .save-image-btn:hover {
+            background-color: #1565c0;
+        }
+
+
+        /* New styles for hamburger menu and back-to-home button */
+        .sidebar-bottom-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-bottom-buttons button {
+            width: 100%;
+            padding: 10px 10px;
+            border-radius: 5px;
+            text-align: left;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .sidebar-bottom-buttons button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .hamburger-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hamburger-modal-content button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .hamburger-modal-content button:hover {
+            background-color: #1669c1;
+        }
+
+        .section-header {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+    </style>
+</head>
+<body>
+    
+            <div id="mobile-menu" class="mobile-menu md:hidden bg-white px-6 pb-4">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#emergency-hotlines" class="nav-link">Emergency Hotlines</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="#" id="mobile-search-icon-button" class="mobile-nav-btn search-btn">
+                    <i class="fas fa-search mr-2"></i> Search
+                </a>
+                <a href="#" id="bookAppointmentNavBtnMobile" class="mobile-nav-btn book-appointment">Book Appointment</a>
+                <a href="#" id="openLoginModalBtnMobile" class="mobile-nav-btn login">Log In</a>
+                <button id="adminLogoutBtnMobile" class="mobile-nav-btn bg-red-600 text-white hidden">Log Out (Admin)</button>
+            </div>
+            <div id="search-container" class="hidden">
+                <input type="text" id="popup-search-input" placeholder="Search services...">
+                <button id="popup-search-button"><i class="fas fa-search"></i></button>
+            </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar admin-controls">
+
+            <div class="sidebar-header">
+                <span class="dashboard-title">Edit Main Page</span>
+    
+                <!-- Removed right-controls from here -->
+            </div>
+
+            <a href="#" class="sidebar-link active" data-section="home-edit">Home Page</a>
+            <a href="#" class="sidebar-link" data-section="announcements-edit">Announcements</a>
+            <a href="#" class="sidebar-link" data-section="colors-edit">Color Settings</a>
+            <a href="#" class="sidebar-link" data-section="contact-edit">Contact Info</a>
+            <a href="#" class="sidebar-link" data-section="user-view-section">User View</a> <!-- New button for User View -->
+            
+
+
+            <div class="sidebar-bottom-buttons">
+                <button id="hamburgerNavBtn"><i class="fas fa-bars mr-2"></i> More Options</button>
+                <button id="backToAdminPageIcon"><i class="fas fa-home mr-2"></i> Back to Home</button>
+                <button id="adminLogoutBtnSidebar" class="bg-red-500"><i class="fas fa-sign-out-alt mr-2"></i> Logout</button>
+            </div>
+            <button id="adminLogoutBtn" class="bg-red-600 text-white py-2 px-4 rounded-md">Log Out</button>
+        </div>
+
+        <div class="dashboard-content">
+            <section id="home-edit" class="dashboard-section active">
+                <h2 class="section-header">Home Page</h2>
+                
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                        <div class="form-group mb-5">
+                            <h1 for="heroTitle" class="font-10px font-bold mb-3">Title</h1>
+                            <p id="heroTitle" class="editable-text" contenteditable="true" data-text-id="heroTitle">F. Legarda Health Center</p>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="heroDescription" class="font-10px font-bold mb-3">Description</h1>
+                            <p id="heroDescription" type="text" class="editable-text p-10" contenteditable="true" data-text-id="heroDescription">We are committed to providing quality and affordable healthcare services for the people of Sampaloc, Manila. Our staff is trained to provide high-quality care that meets international standards. We offer a wide range of medical services including family planning, prenatal care, dental hygiene and more!</p>
+                        </div>
+                    </div>
+                    <div class="admin-controls active">
+                        <div class="form-group mb-8">
+                            <h1 for="heroImageUpload" class="font-10px font-bold mb-5" >Hero Image</h1>
+                            <div class="hero-image-upload-box" id="heroImageUploadBox">
+                                <input type="file" id="heroImageUpload" accept="image/*" class="hidden">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload or drag and drop</p>
+                                <img id="heroImagePreview" class="hero-image-preview hidden" src="" alt="Image Preview">
+                            </div>
+                            <button id="saveHeroImageBtn" class="save-image-btn">Save Hero Image</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-controls active">
+                        <div class="form-group mb-4">
+                            <h1 for="heroVideoOverlayTitle" class="font-10px font-bold mb-3"> Hero Video Overlay Title</h1>
+                            <h2 id="heroVideoOverlayTitle" class="editable-text" contenteditable="true" data-text-id="heroVideoOverlayTitle">Your Health, Our Priority</h2>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="heroVideoOverlayDescription" class="font-10px font-bold mb-3">Hero Video Overlay Description</h1>
+                            <p id="heroVideoOverlayDescription" class="editable-text p-10" contenteditable="true" data-text-id="heroVideoOverlayDescription">Providing compassionate and comprehensive healthcare services to our community. Watch to learn more about our commitment to your well-being.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-section-controls">
+                        <button class="save-section-btn" data-section="home-edit">Save Home Page Changes</button>
+                    </div>
+            </section>
+
+            <section id="services-edit" class="dashboard-section">
+                <h2 class="text-2xl font-bold mb-6 text-blue-600">Edit Services</h2>
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                        <div class="admin-section-controls">
+                            <button id="addServiceBtn">Add New Service</button>
+                        </div>
+                        <div id="servicesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Services will be loaded here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="announcements-edit" class="dashboard-section">
+                <h2 class="section-header">Announcements</h2>
+                <div class="admin-section-controls">
+                        <button id="addAnnouncementBtn">Add New Announcement</button>
+                    </div>
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                        
+                        <div id="announcementsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+                            <!-- Announcements will be loaded here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="hotlines-edit" class="dashboard-section">
+                <h2 class="text-2xl font-bold mb-6 text-blue-600">Emergency Hotlines</h2>
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                        <div class="admin-section-controls">
+                            <button id="addHotlineBtn">Add New Hotline</button>
+                        </div>
+                        <div id="hotlinesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Hotlines will be loaded here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="colors-edit" class="dashboard-section">
+                <h2 class="section-header">Color Settings</h2>
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                        <div class="color-picker-group">
+                            <label for="primaryColor">Primary Color</label>
+                            <input type="color" id="primaryColor" value="#1a73e8">
+                            <input type="text" id="primaryColorHex" value="#1a73e8">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="secondaryColor">Secondary Color</label>
+                            <input type="color" id="secondaryColor" value="#34a853">
+                            <input type="text" id="secondaryColorHex" value="#34a853">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="accentColor">Accent Color</label>
+                            <input type="color" id="accentColor" value="#fbbc05">
+                            <input type="text" id="accentColorHex" value="#fbbc05">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="darkColor">Dark Text/Element Color</label>
+                            <input type="color" id="darkColor" value="#202124">
+                            <input type="text" id="darkColorHex" value="#202124">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="lightColor">Light Background Color</label>
+                            <input type="color" id="lightColor" value="#f8f9fa">
+                            <input type="text" id="lightColorHex" value="#f8f9fa">
+                        </div>
+                        <!-- New color pickers -->
+                        <div class="color-picker-group">
+                            <label for="successColor">Success Color</label>
+                            <input type="color" id="successColor" value="#10B981">
+                            <input type="text" id="successColorHex" value="#10B981">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="warningColor">Warning Color</label>
+                            <input type="color" id="warningColor" value="#F59E0B">
+                            <input type="text" id="warningColorHex" value="#F59E0B">
+                        </div>
+                        <div class="color-picker-group">
+                            <label for="dangerColor">Danger Color</label>
+                            <input type="color" id="dangerColor" value="#EF4444">
+                            <input type="text" id="dangerColorHex" value="#EF4444">
+                        </div>
+                        <div class="admin-section-controls">
+                            <button class="save-section-btn" data-section="colors-edit">Save Color Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact-edit" class="dashboard-section">
+                <h2 class="section-header">Edit Contact Information</h2>
+                <div class="admin-controls-grid">
+                    <div class="admin-controls active">
+                        <div class="form-group mb-4">
+                            <h1 for="footerTitle" class="font-10px font-bold mb-5">Title</h1>
+                            <h3 id="footerTitle" class="editable-text" contenteditable="true" data-text-id="footerTitle">4Care: F. Legarda Health Center</h3>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="footerDescription" class="font-10px font-bold mb-3" >Description</h1>
+                            <p id="footerDescription" class="editable-text" contenteditable="true" data-text-id="footerDescription">F. Legarda Health Center is a government owned health center located in Sampaloc, Manila.</p>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="contactAddress" class="font-10px font-bold mb-3">Contact Address</h1>
+                            <p id="contactAddress" class="editable-text" contenteditable="true" data-text-id="contactAddress">457 Gen. E. Quintos Senior, Manila, Philippines</p>
+                        </div>
+                    </div>
+                    <div class="admin-controls active">
+                        <div class="form-group mb-4">
+                            <h1 for="contactPhone" class="font-10px font-bold mb-2">Contact Phone</h1>
+                            <p id="contactPhone" class="editable-text" contenteditable="true" data-text-id="contactPhone">+63 027812456</p>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="contactEmail" class="font-10px font-bold mb-2">Contact Person/Email</h1>
+                            <p id="contactEmail" class="editable-text" contenteditable="true" data-text-id="contactEmail">Belinda Laya</p>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="openingHoursWeekdays" class="font-10px font-bold mb-2">Opening Hours (Monday - Friday)</h1>
+                            <p id="openingHoursWeekdays" class="editable-text" contenteditable="true" data-text-id="openingHoursWeekdays">8AM - 1PM</p>
+                        </div>
+                        <div class="form-group mb-4">
+                            <h1 for="openingHoursWeekend" class="font-10px font-bold mb-2">Opening Hours (Saturday & Sunday)</h1>
+                            <p id="openingHoursWeekend" class="editable-text" contenteditable="true" data-text-id="openingHoursWeekend">Closed</p>
+                        </div>
+                        <div class="admin-section-controls">
+                            <button class="save-section-btn" data-section="contact-edit">Save Contact Info Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- New section for User View -->
+            <section id="user-view-section" class="dashboard-section">
+                <!-- Original content sections (hidden by default, or shown based on admin view) -->
+                <div class="main-content-wrapper user-view-content">
+                    <section id="home" class="hero text-white py-16">
+                        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+                            <div class="hero-content md:w-50 mb-2 md:mb-0">
+                                <h1 class="text-xl md:text-4xl font-bold mb-4" data-text-id="heroTitle">F. Legarda Health Center</h1>
+                                <p class="text-l mb-6" data-text-id="heroDescription">We are committed to providing quality and affordable healthcare services for the people of Sampaloc, Manila. Our staff is trained to provide high-quality care that meets international standards. We offer a wide range of medical services including family planning, prenatal care, dental hygiene and more!</p>
+                            </div>
+                            
+                        </div>
+                    </section>
+
+                    <div id="availability-calendar-container">
+                        <div class="calendar-header">
+                            <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <span id="currentMonthYear"></span>
+                            <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+                        <div class="calendar-dates" id="calendarDates">
+                        </div>
+                        <div class="available-text">Available dates are highlighted in blue.</div>
+                    </div>
+                </div>
+              
+                <section id="announcements" class="py-12 bg-gray-50 user-view-content">
+                    <div class="container mx-auto px-4">
+                        <h2 class="text-3xl font-bold text-center mb-8 text-blue-600 -mt-10">Center Announcements</h2>
+                        
+                        <div id="announcementsDisplay" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Announcements will be displayed here dynamically -->
+                        </div>
+
+                        <button id="viewAllAnnouncementsBtn" class="view-all-announcements-btn md:hidden">View All Announcements</button>
+                    </div>
+                </section>
+
+                <section id="hero-video-section" class="hero-video user-view-content">
+                    <video autoplay muted loop playsinline id="heroVideoDisplay">
+                        <source src="https://www.shutterstock.com/shutterstock/videos/20206021/preview/stock-footage-philippine-general-hospital-pgh-manila-philippines-october-patients-seeking-medical.webm" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="hero-video-overlay">
+                        <h2 class="text-2xl md:text-6xl font-bold mb-4" data-text-id="heroVideoOverlayTitle">Your Health, Our Priority</h2>
+                        <p class="text-lg md:text-xl max-w-2xl" data-text-id="heroVideoOverlayDescription">Providing compassionate and comprehensive healthcare services to our community. Watch to learn more about our commitment to your well-being.</p>
+                        <a href="#services" class="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300">Explore Services</a>
+                    </div>
+                </section>
+
+
+                <section id="map-location" class="py-12 bg-white user-view-content">
+                    <div class="container mx-auto px-4">
+                        <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Find Us on the Map</h2>
+                        <div class="map-container bg-gray-100 rounded-lg shadow-md overflow-hidden" style="height: 450px;">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.6900000000004!2d120.9945!3d14.6090!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c9f1a0b5a0b5%3A0x3397c9f1a0b5a0b5!2sF.%20Legarda%20Health%20Center!5e0!3m2!1sen!2sph!4v1678901234567!5m2!1sen!2sph" 
+                                width="100%" 
+                                height="100%" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                </section>
+
+                <footer id="contact" class="bg-blue-900 text-white py-8 user-view-content">
+                    <div class="container mx-auto px-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div>
+                                <h3 class="text-xl font-bold mb-4" data-text-id="footerTitle">4Care: F. Legarda Health Center</h3>
+                                <p class="mb-4" data-text-id="footerDescription">F. Legarda Health Center is a government owned health center located in Sampaloc, Manila.</p>
+                                <div class="flex space-x-4">
+                                    <a href="#" class="text-white hover:text-yellow-400 transition"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#" class="text-white hover:text-yellow-400 transition"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="text-white hover:text-yellow-400 transition"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                                <p class="mb-2"><i class="fas fa-map-marker-alt mr-2"></i> <span data-text-id="contactAddress">457 Gen. E. Quintos Senior, Manila, Philippines</span></p>
+                                <p class="mb-2"><i class="fas fa-phone mr-2"></i> <span data-text-id="contactPhone">+63 027812456</span></p>
+                                <p class="mb-2"><i class="fas fa-envelope mr-2"></i> <span data-text-id="contactEmail">Belinda Laya</span></p>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-xl font-bold mb-4">Opening Hours</h3>
+                                <p class="mb-2">Monday - Friday: <span data-text-id="openingHoursWeekdays">8AM - 1PM</span></p>
+                                <p>Saturday & Sunday: <span data-text-id="openingHoursWeekend">Closed</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="backToTopBtn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <button id="saveChangesBtn" class="save-changes-btn">Save Changes</button>
+
+    <!-- Modals (Appointment, Login, Signup, Forgot Password, User Agreement, Announcements) remain the same -->
+    <div id="appointmentModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="appointment-form-modal-content">
+            <div class="flex justify-end">
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <form class="appointment-form" id="appointmentFormContent">
+                <div class="form-header">
+                    <h2>Schedule an Appointment</h2>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="form-group flex-1">
+                        <label for="firstName">First Name</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="firstName" class="form-control" placeholder="First name">
+                        </div>
+                        <div class="error-message" id="firstNameError">Please enter your first name.</div>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <label for="middleName">Middle Name (Optional)</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="middleName" class="form-control" placeholder="Middle name">
+                        </div>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <label for="lastName">Last Name</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="lastName" class="form-control" placeholder="Last name">
+                        </div>
+                        <div class="error-message" id="lastNameError">Please enter your last name.</div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="form-group flex-1">
+                        <label for="birthdate">Birthdate</label>
+                        <div class="input-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="birthdate" class="form-control">
+                        </div>
+                        <div class="error-message" id="birthdateError">Please enter a valid birthdate.</div>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <label for="gender">Gender</label>
+                        <div class="input-group">
+                            <i class="fas fa-venus-mars"></i>
+                            <select id="gender" class="form-control">
+                              <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="error-message" id="genderError">Please select a gender.</div>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="phone" class="form-control" placeholder="Phone number" required>
+                        </div>
+                        <div class="error-message" id="phoneError">Please enter a valid phone number.</div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="form-group flex-1">
+                        <label>Is this your first visit?</label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="firstVisit" value="yes" class="form-radio text-blue-600">
+                                <span class="ml-2">Yes</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="firstVisit" value="no" class="form-radio text-blue-600">
+                                <span class="ml-2">No</span> 
+                            </label>
+                        </div>
+                        <div class="error-message" id="firstVisitError">Please select an option.</div>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <label>Appointment Type</label>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="appointmentType" value="followup" class="form-radio text-blue-600">
+                                <span class="ml-2">Follow-up Appointment</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="appointmentType" value="initial" class="form-radio text-blue-600">
+                                <span class="ml-2">Initial Consultation Visit</span>
+                            </label>
+                        </div>
+                        <div class="error-message" id="appointmentTypeError">Please select an appointment type</div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-500 my-3"></div>
+                <h3 class="text-lg font-bold text-blue-600 mb-4">Appointment Information</h3>
+
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:flex-1">
+                
+                <div class="form-group">
+                    <label for="date">Preferred Date</label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input type="date" id="date" class="form-control" min="">
+                    </div>
+                    <div class="error-message" id="dateError">Please select a valid date</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Time</label>
+                    <div class="time-slots" id="timeSlots">
+                        <div class="time-slot" data-time="09:00">9:00 AM</div>
+                        <div class="time-slot" data-time="10:00">10:00 AM</div>
+                        <div class="time-slot" data-time="11:00">11:00 AM</div>
+                        <div class="time-slot" data-time="14:00">2:00 PM</div>
+                    </div>
+                    <div class="error-message" id="timeError">Please select a time slot</div>
+                </div>
+
+                </div> 
+
+                    <div class="md:flex-1">
+                        <div class="form-group">
+                            <label for="symptomsInput">Symptoms/Illnesses</label>
+                            <div class="input-group">
+                                <i class="fas fa-notes-medical"></i>
+                                <input type="text" id="symptomsInput" class="form-control" placeholder="e.g., Headache, Fever, Cough">
+                            </div>
+                            <div class="error-message" id="symptomsError">Please enter your symptoms or illnesses.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Schedule Appointment</button>
+
+                <div class="success-message" id="successMessage">
+                    Your appointment has been scheduled successfully! I'll contact you shortly.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="login-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeLoginModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Login to 4Care</h2>
+            <form id="loginForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="loginEmail" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="loginEmail" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="loginEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="loginPassword" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="********" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="loginPasswordError"></div>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center text-gray-600">
+                        <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded">
+                        <span class="ml-2">Remember me</span>
+                    </label>
+                    <a href="#" id="forgotPasswordLink" class="text-blue-600 hover:underline">Forgot Password?</a>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Login
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-4">Don't have an account? <a href="#" id="openSignupModalLink" class="text-blue-600 hover:underline">Sign Up</a></p>
+                <div class="success-message text-green-600 text-center mt-4 hidden" id="loginSuccessMessage">Login successful! Redirecting...</div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="signupModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="signup-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeSignupModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Sign Up for 4Care</h2>
+            <form id="signupForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="signupFirstName" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="signupFirstName" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="John" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupFirstNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupLastName" class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="signupLastName" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Doe" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupLastNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="signupEmail" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="signupPassword" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="********" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupPasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="signupConfirmPassword" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="********" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupConfirmPasswordError"></div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Sign Up
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-4">Already have an account? <a href="#" id="openLoginModalLink" class="text-blue-600 hover:underline">Log In</a></p>
+                <div class="success-message text-green-600 text-center mt-4 hidden" id="signupSuccessMessage">Registration successful!</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="userAgreementModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl relative max-h-[80vh] overflow-y-auto">
+            <button id="closeUserAgreementBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-600"> User Agreement</h2>
+            <div class="prose max-w-none mb-1">
+                <h3 class="text-1xl font-bold text-left mb-6">Privacy Policy</h3>
+                <p>By creating an account, you agree that we may collect and use your personal information as outlined in our Privacy Policy.</p>
+                
+            
+                <h3 class="text-1xl font-bold text-left mb-6">Terms of Service</h3>
+                <p>You agree to use our services in accordance with all applicable laws and regulations.</p>
+
+                <div class="mt-6 flex items-center">
+                    <input type="checkbox" id="agreeTerms" class="form-checkbox h-5 w-5 text-blue-600">
+                    <label for="agreeTerms" class="ml-2">I have read and agree to the terms and conditions.</label>
+                </div>
+            </div>
+            <div class="flex justify-end gap-4">
+                <button id="declineAgreementBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                    Decline
+                </button>
+                <button id="acceptAgreementBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+                    Accept & Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="forgotPasswordModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="forgot-password-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeForgotPasswordModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Forgot Password?</h2>
+            <p class="text-center text-gray-600 mb-6">Enter your email address below and we'll send you a link to reset your password.</p>
+            <form id="forgotPasswordForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="forgotEmail" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="forgotEmail" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="forgotEmailError"></div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Send Reset Link
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-4">Remember your password? <a href="#" id="backToLoginLink" class="text-blue-600 hover:underline">Log In</a></p>
+                <div class="success-message text-green-600 text-center mt-4 hidden" id="forgotPasswordSuccessMessage">Password reset link sent! Check your email.</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="announcementsModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="announcements-modal-content">
+            <div class="flex justify-end">
+                <button id="closeAnnouncementsModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-6 text-blue-600">All Announcements</h3>
+            <div id="otherAnnouncementsContainer">
+                <!-- All announcements will be displayed here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <div id="signInRequiredAlert" class="custom-alert">
+        <div class="alert-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>Sign-in Required!</h3>
+        <p>Please log in or create an account to book an appointment.</p>
+        <button id="alertOkBtn">OK</button>
+    </div>
+
+    <!-- Modal for adding/editing Announcements -->
+    <div id="editAnnouncementModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="edit-element-modal-content">
+            <button class="close-btn" id="closeEditAnnouncementModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-600" id="editAnnouncementModalTitle">Add New Announcement</h2>
+            <form id="announcementForm">
+                <input type="hidden" id="announcementId">
+                <div class="form-group">
+                    <label for="announcementIcon">Icon Class (e.g., fas fa-calendar-day)</label>
+                    <input type="text" id="announcementIcon" placeholder="e.g., fas fa-calendar-day">
+                </div>
+                <div class="form-group">
+                    <label for="announcementTitle">Title</label>
+                    <input type="text" id="announcementTitle" placeholder="Announcement Title">
+                </div>
+                <div class="form-group">
+                    <label for="announcementDescription">Description</label>
+                    <textarea id="announcementDescription" placeholder="Announcement Description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="announcementDate">Posted Date</label>
+                    <input type="date" id="announcementDate">
+                </div>
+                <button type="submit" class="w-full mt-4" id="saveAnnouncementBtn">Save Announcement</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing Services -->
+    <div id="editServiceModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="edit-element-modal-content">
+            <button class="close-btn" id="closeEditServiceModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-600" id="editServiceModalTitle">Add New Service</h2>
+            <form id="serviceForm">
+                <input type="hidden" id="serviceId">
+                <div class="form-group">
+                    <label for="serviceIcon">Icon Class (e.g., fas fa-heartbeat)</label>
+                    <input type="text" id="serviceIcon" placeholder="e.g., fas fa-heartbeat">
+                </div>
+                <div class="form-group">
+                    <label for="serviceColor">Icon Color (Tailwind class, e.g., text-blue-600)</label>
+                    <input type="text" id="serviceColor" placeholder="e.g., text-blue-600">
+                </div>
+                <div class="form-group">
+                    <label for="serviceTitle">Title</label>
+                    <input type="text" id="serviceTitle" placeholder="Service Title">
+                </div>
+                <div class="form-group">
+                    <label for="serviceDescription">Description</label>
+                    <textarea id="serviceDescription" placeholder="Service Description"></textarea>
+                </div>
+                <button type="submit" class="w-full mt-4" id="saveServiceBtn">Save Service</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding/editing Hotlines -->
+    <div id="editHotlineModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="edit-element-modal-content">
+            <button class="close-btn" id="closeEditHotlineModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-600" id="editHotlineModalTitle">Add New Hotline</h2>
+            <form id="hotlineForm">
+                <input type="hidden" id="hotlineId">
+                <div class="form-group">
+                    <label for="hotlineIcon">Icon Class (e.g., fas fa-phone-alt)</label>
+                    <input type="text" id="hotlineIcon" placeholder="e.g., fas fa-phone-alt">
+                </div>
+                <div class="form-group">
+                    <label for="hotlineColor">Icon Color (Tailwind class, e.g., text-red-600)</label>
+                    <input type="text" id="hotlineColor" placeholder="e.g., text-red-600">
+                </div>
+                <div class="form-group">
+                    <label for="hotlineTitle">Title</label>
+                    <input type="text" id="hotlineTitle" placeholder="Hotline Title">
+                </div>
+                <div class="form-group">
+                    <label for="hotlinePhone">Phone Number</label>
+                    <input type="text" id="hotlinePhone" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <label for="hotlineAvailability">Availability</label>
+                    <input type="text" id="hotlineAvailability" placeholder="e.g., Available 24/7">
+                </div>
+                <div class="form-group">
+                    <label for="hotlineDescription">Description (Optional)</label>
+                    <textarea id="hotlineDescription" placeholder="Hotline Description"></textarea>
+                </div>
+                <button type="submit" class="w-full mt-4" id="saveHotlineBtn">Save Hotline</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Hamburger Navigation -->
+    <div id="dashboardMenuModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="dashboard-menu-modal-content">
+            
+            <button class="close-btn" id="closeDashboardMenuModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-600">Edit Dashboards</h2>
+            <button class="patient-dashboard-btn" id="editPatientDashboardBtn">Edit Patient Dashboard</button>
+            <button class="doctor-dashboard-btn" id="editDoctorDashboardBtn">Edit Doctor Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="confirmation-modal-content">
+            <h2 id="confirmationModalTitle">Confirm Navigation</h2>
+            <p id="confirmationModalMessage">Are you sure you want to leave this page? Any unsaved changes will be lost.</p>
+            <div class="button-group">
+                <button class="confirm-btn" id="confirmNavigationBtn">Yes, Leave</button>
+                <button class="cancel-btn" id="cancelNavigationBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Admin Login/Logout Logic ---
+        const adminUsername = "admin";
+        const adminPassword = "password123"; // In a real app, use secure authentication
+
+        const loginForm = document.getElementById('loginForm');
+        const loginEmailInput = document.getElementById('loginEmail');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn'); // This is the original logout button at the bottom of the sidebar
+        const adminLogoutBtnMobile = document.getElementById('adminLogoutBtnMobile');
+        const adminLogoutBtnSidebar = document.getElementById('adminLogoutBtnSidebar'); // The new logout button beside hamburger
+
+        function setAdminLoggedIn(isLoggedIn) {
+            if (isLoggedIn) {
+                document.body.classList.add('admin-logged-in');
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                // Hide user-facing sections and show admin sections
+                document.querySelectorAll('.user-view-content').forEach(el => el.style.display = 'none'); // Hide user content directly
+                document.querySelectorAll('.dashboard-section').forEach(el => el.style.display = 'none');
+                document.querySelector('.dashboard-container').style.display = 'flex';
+                document.querySelector('.sidebar').classList.add('active');
+                document.getElementById('home-edit').classList.add('active'); // Default to home-edit
+                document.getElementById('saveChangesBtn').style.display = 'block';
+                adminLogoutBtnSidebar.classList.remove('hidden'); // Show the new logout button
+                adminLogoutBtn.classList.add('hidden'); // Hide the old logout button if it's still there
+            } else {
+                document.body.classList.remove('admin-logged-in');
+                localStorage.removeItem('isAdminLoggedIn');
+                // Show user-facing sections and hide admin sections
+                document.querySelectorAll('.user-view-content').forEach(el => el.style.display = ''); // Revert to default display
+                document.querySelectorAll('.dashboard-section').forEach(el => el.style.display = 'none');
+                document.querySelector('.dashboard-container').style.display = 'block'; // Revert to original layout
+                document.querySelector('.sidebar').classList.remove('active');
+                document.getElementById('saveChangesBtn').style.display = 'none';
+                adminLogoutBtnSidebar.classList.add('hidden'); // Hide the new logout button
+                adminLogoutBtn.classList.remove('hidden'); // Show the old logout button if needed (or remove it from HTML)
+            }
+        }
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (loginEmailInput.value === adminUsername && loginPasswordInput.value === adminPassword) {
+                setAdminLoggedIn(true);
+                closeLoginModal();
+                alert("Admin login successful!");
+            } else {
+                alert("Invalid admin credentials.");
+            }
+        });
+
+        // Function to handle logout with confirmation
+        function handleLogout() {
+            showConfirmationModal(
+                'Confirm Logout',
+                'Are you sure you want to log out? You will be redirected to the public view.',
+                'logout' // Special value to indicate logout action
+            );
+        }
+
+        adminLogoutBtn.addEventListener('click', handleLogout);
+        adminLogoutBtnMobile.addEventListener('click', handleLogout);
+        adminLogoutBtnSidebar.addEventListener('click', handleLogout); // Event listener for the new button
+
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+                setAdminLoggedIn(true);
+            }
+        });
+
+        // --- Dashboard Navigation ---
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const dashboardSections = document.querySelectorAll('.dashboard-section');
+        const userViewContentElements = document.querySelectorAll('.user-view-content'); // Select all user view elements
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                dashboardSections.forEach(section => section.classList.remove('active'));
+                
+                const targetSectionId = this.dataset.section;
+                const targetSection = document.getElementById(targetSectionId);
+
+                if (targetSectionId === 'user-view-section') {
+                    // Show user view content and hide all other dashboard sections
+                    userViewContentElements.forEach(el => el.style.display = ''); // Show user content
+                    dashboardSections.forEach(section => {
+                        if (section.id !== 'user-view-section') {
+                            section.style.display = 'none';
+                        }
+                    });
+                    targetSection.classList.add('active'); // Activate the user-view-section wrapper
+                } else {
+                    // Hide user view content and show the selected admin dashboard section
+                    userViewContentElements.forEach(el => el.style.display = 'none'); // Hide user content
+                    targetSection.classList.add('active');
+                }
+            });
+        });
+
+        // --- Data Storage (localStorage simulation) ---
+        let pageContent = JSON.parse(localStorage.getItem('pageContent')) || {
+            texts: {
+                logoText: "4Care",
+                heroTitle: "F. Legarda Health Center",
+                heroDescription: "We are committed to providing quality and affordable healthcare services for the people of Sampaloc, Manila. Our staff is trained to provide high-quality care that meets international standards. We offer a wide range of medical services including family planning, prenatal care, dental hygiene and more!",
+                heroVideoOverlayTitle: "Your Health, Our Priority",
+                heroVideoOverlayDescription: "Providing compassionate and comprehensive healthcare services to our community. Watch to learn more about our commitment to your well-being.",
+                footerTitle: "4Care: F. Legarda Health Center",
+                footerDescription: "F. Legarda Health Center is a government owned health center located in Sampaloc, Manila.",
+                contactAddress: "457 Gen. E. Quintos Senior, Manila, Philippines",
+                contactPhone: "+63 027812456",
+                contactEmail: "Belinda Laya",
+                openingHoursWeekdays: "8AM - 1PM",
+                openingHoursWeekend: "Closed"
+            },
+            images: {
+                logoImage: "4CARE LOGO.png",
+                heroImageDisplay: "heropic2.png"
+            },
+            videos: {
+                heroVideoUrl: "https://www.shutterstock.com/shutterstock/videos/20206021/preview/stock-footage-philippine-general-hospital-pgh-manila-philippines-october-patients-seeking-medical.webm"
+            },
+            colors: {
+                primary: "#1a73e8",
+                secondary: "#34a853",
+                accent: "#fbbc05",
+                dark: "#202124",
+                light: "#f8f9fa",
+                success: "#10B981",  // New
+                warning: "#F59E0B",  // New
+                danger: "#EF4444"    // New
+            },
+            announcements: [
+                { id: 'ann1', icon: 'fas fa-calendar-day', title: 'Updated Hours', description: 'Starting next month, we\'re extending our weekdays hours from 8AM to 4PM to better serve our community.', date: 'June 15, 2025' },
+                { id: 'ann2', icon: 'fas fa-user-md', title: 'New Specialist Joined', description: 'We\'re pleased to welcome Dr. Sarah Johnson, our new pediatric specialist. She\'ll be accepting new patients starting July 1st.', date: 'December 10, 2024' },
+                { id: 'ann3', icon: 'fas fa-syringe', title: 'Anti-Rabies Vaccines Available', description: 'This year\'s anti-rabies vaccines have arrived. Set your appointment to schedule your vaccination.', date: 'January 5, 2025' }
+            ],
+            services: [
+                { id: 'serv1', icon: 'fas fa-heartbeat', color: 'text-blue-600', title: 'Primary Care', description: 'Comprehensive health assessments and preventive care for all ages.' },
+                { id: 'serv2', icon: 'fa-solid fa-person-breastfeeding', color: 'text-green-600', title: 'Pediatrics', description: 'Specialized care for infants, children, and adolescents.' },
+                { id: 'serv3', icon: 'fa-solid fa-syringe', color: 'text-purple-600', title: 'Immediate Care', description: 'Preventive care such as physical examinations, vaccinations, and screening tests, in addition to treating acute illnesses and injuries' },
+                { id: 'serv4', icon: 'fas fa-tooth', color: 'text-yellow-600', title: 'Dental Care', description: 'Oral health services including cleanings and restorative care.' },
+                { id: 'serv5', icon: 'fas fa-x-ray', color: 'text-red-600', title: 'Radiology', description: 'Advanced imaging services including X-rays and ultrasounds.' },
+                { id: 'serv6', icon: 'fas fa-flask', color: 'text-orange-600', title: 'Laboratory Services', description: 'On-site lab tests for quick and accurate diagnoses.' },
+                { id: 'serv7', icon: 'fas fa-notes-medical', color: 'text-cyan-600', title: 'Consultation', description: 'Expert medical advice and personalized treatment plans.' }
+            ],
+            hotlines: [
+                { id: 'hot1', icon: 'fas fa-phone-alt', color: 'text-red-600', title: 'Emergency 911 National Office', phone: '911 / (02) 925-9111', availability: 'Available 24/7', description: 'For all types of emergencies.' },
+                { id: 'hot2', icon: 'fas fa-fire-extinguisher', color: 'text-blue-600', title: 'Bureau of Fire Protection', phone: '(02) 426-0219', availability: 'Available 24/7', description: 'For fire incidents.' },
+                { id: 'hot3', icon: 'fa-solid fa-building-shield', color: 'text-green-600', title: 'Philippine National Police', phone: '(2) 722-0650 or +63917-847-5757', availability: 'Available 24/7', description: '' },
+                { id: 'hot4', icon: 'fas fa-traffic-light', color: 'text-purple-600', title: 'Manila Traffic and Parking Bureau (MTPB)', phone: '8-5279860 or 0932-6622322', availability: 'Available 24/7', description: 'The MTPB is the city\'s organization responsible for traffic management and enforcement.' },
+                { id: 'hot5', icon: 'fa-solid fa-building-flag', color: 'text-yellow-600', title: 'Department of Social Welfare and Development (DSWD)', phone: '+630918-912-2813', availability: 'Available Monday-Friday, 8AM-5PM', description: 'Except holidays' },
+                { id: 'hot6', icon: 'fa-solid fa-house-medical', color: 'text-indigo-600', title: 'F. Legarda Health Center', phone: '+63 027812456', availability: 'Available Monday-Friday, 8AM-1PM', description: 'Our direct line for urgent inquiries during operating hours.' }
+            ]
+        };
+
+        function loadContent() {
+            // Load texts
+            document.querySelectorAll('.editable-text').forEach(el => {
+                const textId = el.dataset.textId;
+                if (pageContent.texts[textId]) {
+                    el.textContent = pageContent.texts[textId];
+                }
+            });
+
+            // Load images
+            // document.getElementById('logoImage').src = pageContent.images.logoImage; // This element is not in the HTML
+            const heroImageDisplay = document.getElementById('heroImageDisplay');
+            if (heroImageDisplay) {
+                heroImageDisplay.src = pageContent.images.heroImageDisplay;
+            }
+            const heroImagePreview = document.getElementById('heroImagePreview');
+            if (heroImagePreview) {
+                heroImagePreview.src = pageContent.images.heroImageDisplay;
+                if (pageContent.images.heroImageDisplay && pageContent.images.heroImageDisplay !== "heropic2.png") { // Check if it's not the default
+                    heroImagePreview.classList.remove('hidden');
+                } else {
+                    heroImagePreview.classList.add('hidden');
+                }
+            }
+
+            // Load video
+            const heroVideoDisplay = document.getElementById('heroVideoDisplay');
+            if (heroVideoDisplay) {
+                const sourceElement = heroVideoDisplay.querySelector('source');
+                if (sourceElement) {
+                    sourceElement.src = pageContent.videos.heroVideoUrl;
+                    heroVideoDisplay.load(); // Reload video to apply new source
+                }
+            }
+            
+
+            // Load colors
+            document.getElementById('primaryColor').value = pageContent.colors.primary;
+            document.getElementById('primaryColorHex').value = pageContent.colors.primary;
+            document.getElementById('secondaryColor').value = pageContent.colors.secondary;
+            document.getElementById('secondaryColorHex').value = pageContent.colors.secondary;
+            document.getElementById('accentColor').value = pageContent.colors.accent;
+            document.getElementById('accentColorHex').value = pageContent.colors.accent;
+            document.getElementById('darkColor').value = pageContent.colors.dark;
+            document.getElementById('darkColorHex').value = pageContent.colors.dark;
+            document.getElementById('lightColor').value = pageContent.colors.light;
+            document.getElementById('lightColorHex').value = pageContent.colors.light;
+            
+            applyColorsToCSS();
+
+            renderAnnouncements();
+            renderServices();
+            renderHotlines();
+        }
+
+        function updateUserView() {
+            // Update texts in user view
+            document.querySelectorAll('.user-view-content [data-text-id]').forEach(el => {
+                const textId = el.dataset.textId;
+                if (pageContent.texts[textId]) {
+                    el.textContent = pageContent.texts[textId];
+                }
+            });
+
+            // Update images in user view
+            // const userViewLogo = document.querySelector('.user-view-content #logoImage'); // This element is not in the HTML
+            // if (userViewLogo) userViewLogo.src = pageContent.images.logoImage;
+            const userViewHeroImage = document.querySelector('.user-view-content #heroImageDisplay');
+            if (userViewHeroImage) userViewHeroImage.src = pageContent.images.heroImageDisplay;
+
+            // Update video in user view
+            const userViewHeroVideo = document.querySelector('.user-view-content #heroVideoDisplay');
+            if (userViewHeroVideo) {
+                const sourceElement = userViewHeroVideo.querySelector('source');
+                if (sourceElement) {
+                    sourceElement.src = pageContent.videos.heroVideoUrl;
+                    userViewHeroVideo.load();
+                }
+            }
+
+            // Apply colors to user view (already handled by applyColorsToCSS which targets :root)
+            applyColorsToCSS();
+
+            // Re-render dynamic content for user view
+            renderAnnouncementsForUserView();
+            renderServicesForUserView();
+            renderHotlinesForUserView();
+        }
+
+
+        function saveContent() {
+            // Save texts
+            document.querySelectorAll('.editable-text').forEach(el => {
+                const textId = el.dataset.textId;
+                pageContent.texts[textId] = el.textContent.trim();
+            });
+
+            // Save images
+            // pageContent.images.logoImage = document.getElementById('logoImage').src; // This element is not in the HTML
+            pageContent.images.heroImageDisplay = document.getElementById('heroImageDisplay').src;
+
+            // Save video (assuming there's an input for it in admin view, if not, this part can be removed)
+            // const heroVideoUrlInput = document.getElementById('heroImageUrl'); // Corrected ID - this element is not in the HTML
+            // if (heroVideoUrlInput) {
+            //     pageContent.videos.heroVideoUrl = heroVideoUrlInput.value;
+            // }
+
+
+            // Save colors
+            pageContent.colors.primary = document.getElementById('primaryColor').value;
+            pageContent.colors.secondary = document.getElementById('secondaryColor').value;
+            pageContent.colors.accent = document.getElementById('accentColor').value;
+            pageContent.colors.dark = document.getElementById('darkColor').value;
+            pageContent.colors.light = document.getElementById('lightColor').value;
+            pageContent.colors.success = document.getElementById('successColor').value; // New
+            pageContent.colors.warning = document.getElementById('warningColor').value; // New
+            pageContent.colors.danger = document.getElementById('dangerColor').value;   // New
+
+            localStorage.setItem('pageContent', JSON.stringify(pageContent));
+            alert('Changes saved successfully!');
+            loadContent(); // Reload admin view to ensure consistency
+            updateUserView(); // Update the user view immediately
+        }
+
+        document.getElementById('saveChangesBtn').addEventListener('click', saveContent);
+
+        // Add event listeners for editable text fields to save on blur/enter
+        document.querySelectorAll('.editable-text').forEach(el => {
+            el.addEventListener('blur', saveContent); // Save when focus leaves the element
+            el.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent new line
+                    el.blur(); // Trigger blur to save content
+                }
+            });
+        });
+
+
+        // --- Color Picker Logic ---
+        const colorInputs = document.querySelectorAll('.color-picker-group input[type="color"]');
+        const hexInputs = document.querySelectorAll('.color-picker-group input[type="text"]');
+
+        function applyColorsToCSS() {
+            const root = document.documentElement;
+            root.style.setProperty('--primary', pageContent.colors.primary);
+            root.style.setProperty('--secondary', pageContent.colors.secondary);
+            root.style.setProperty('--accent', pageContent.colors.accent);
+            root.style.setProperty('--dark', pageContent.colors.dark);
+            root.style.setProperty('--light', pageContent.colors.light);
+            root.style.setProperty('--success', pageContent.colors.success); // New
+            root.style.setProperty('--warning', pageContent.colors.warning); // New
+            root.style.setProperty('--danger', pageContent.colors.danger);   // New
+        }
+
+        colorInputs.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const colorName = e.target.id.replace('Color', '');
+                const hexInput = document.getElementById(`${colorName}ColorHex`);
+                hexInput.value = e.target.value;
+                pageContent.colors[colorName] = e.target.value;
+                applyColorsToCSS();
+            });
+        });
+
+        hexInputs.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const colorName = e.target.id.replace('ColorHex', '');
+                const colorInput = document.getElementById(`${colorName}Color`);
+                const hexValue = e.target.value;
+                if (/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hexValue)) {
+                    colorInput.value = hexValue;
+                    pageContent.colors[colorName] = hexValue;
+                    applyColorsToCSS();
+                }
+            });
+        });
+
+        // --- Image Upload Logic ---
+        // document.getElementById('logoImage').addEventListener('click', function() { // This element is not in the HTML
+        //     const newSrc = prompt("Enter new logo image URL:");
+        //     if (newSrc) {
+        //         this.src = newSrc;
+        //         pageContent.images.logoImage = newSrc;
+        //         saveContent(); // Save changes immediately
+        //     }
+        // });
+
+        const heroImageUploadBox = document.getElementById('heroImageUploadBox');
+        const heroImageUploadInput = document.getElementById('heroImageUpload');
+        const heroImagePreview = document.getElementById('heroImagePreview');
+        const saveHeroImageBtn = document.getElementById('saveHeroImageBtn');
+
+        heroImageUploadBox.addEventListener('click', () => {
+            heroImageUploadInput.click();
+        });
+
+        heroImageUploadInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    heroImagePreview.src = e.target.result;
+                    heroImagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        saveHeroImageBtn.addEventListener('click', () => {
+            if (heroImagePreview.src && heroImagePreview.src !== window.location.href) { // Check if an image is loaded
+                document.getElementById('heroImageDisplay').src = heroImagePreview.src;
+                pageContent.images.heroImageDisplay = heroImagePreview.src;
+                saveContent(); // Save changes to localStorage and update user view
+                alert('Hero image updated successfully!');
+            } else {
+                alert('No image selected to save.');
+            }
+        });
+
+        // document.getElementById('heroImageUrl').addEventListener('input', function() { // This element is not in the HTML
+        //     const url = this.value;
+        //     if (url) {
+        //         document.getElementById('heroImageDisplay').src = url;
+        //         pageContent.images.heroImageDisplay = url;
+        //         saveContent(); // Save changes immediately
+        //     }
+        // });
+
+        // --- Announcement Management ---
+        const announcementsList = document.getElementById('announcementsList');
+        const announcementsDisplay = document.getElementById('announcementsDisplay'); // User view display
+        const otherAnnouncementsContainer = document.getElementById('otherAnnouncementsContainer'); // Modal display
+        const addAnnouncementBtn = document.getElementById('addAnnouncementBtn');
+        const editAnnouncementModal = document.getElementById('editAnnouncementModal');
+        const closeEditAnnouncementModalBtn = document.getElementById('closeEditAnnouncementModalBtn');
+        const announcementForm = document.getElementById('announcementForm');
+        const announcementIdInput = document.getElementById('announcementId');
+        const announcementIconInput = document.getElementById('announcementIcon');
+        const announcementTitleInput = document.getElementById('announcementTitle');
+        const announcementDescriptionInput = document.getElementById('announcementDescription');
+        const announcementDateInput = document.getElementById('announcementDate');
+        const saveAnnouncementBtn = document.getElementById('saveAnnouncementBtn');
+        const editAnnouncementModalTitle = document.getElementById('editAnnouncementModalTitle');
+
+        function renderAnnouncements() {
+            announcementsList.innerHTML = ''; // Admin edit list
+            pageContent.announcements.forEach((ann, index) => {
+                const cardHtml = `
+                    <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 text-blue-600 rounded-full p-3 mr-4">
+                                <i class="${ann.icon} text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">${ann.title}</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">${ann.description}</p>
+                        <div class="text-sm text-gray-500">Posted: ${ann.date}</div>
+                        <div class="admin-element-controls admin-controls active">
+                            <button class="edit-btn" data-id="${ann.id}">Edit</button>
+                            <button class="delete-btn" data-id="${ann.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                announcementsList.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            // Add event listeners for edit/delete buttons
+            announcementsList.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', (e) => openEditAnnouncementModal(e.target.dataset.id));
+            });
+            announcementsList.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => deleteAnnouncement(e.target.dataset.id));
+            });
+        }
+
+        function renderAnnouncementsForUserView() {
+            announcementsDisplay.innerHTML = ''; // User view display
+            otherAnnouncementsContainer.innerHTML = ''; // Modal display
+
+            pageContent.announcements.forEach((ann, index) => {
+                const userCardHtml = `
+                    <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300 ${index >= 3 ? 'hidden-mobile' : ''}">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 text-blue-600 rounded-full p-3 mr-4">
+                                <i class="${ann.icon} text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">${ann.title}</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">${ann.description}</p>
+                        <div class="text-sm text-gray-500">Posted: ${ann.date}</div>
+                    </div>
+                `;
+                announcementsDisplay.insertAdjacentHTML('beforeend', userCardHtml);
+                otherAnnouncementsContainer.insertAdjacentHTML('beforeend', userCardHtml);
+            });
+        }
+
+
+        function openEditAnnouncementModal(id = null) {
+            announcementForm.reset();
+            announcementIdInput.value = '';
+            editAnnouncementModalTitle.textContent = 'Add New Announcement';
+
+            if (id) {
+                const announcement = pageContent.announcements.find(ann => ann.id === id);
+                if (announcement) {
+                    editAnnouncementModalTitle.textContent = 'Edit Announcement';
+                    announcementIdInput.value = announcement.id;
+                    announcementIconInput.value = announcement.icon;
+                    announcementTitleInput.value = announcement.title;
+                    announcementDescriptionInput.value = announcement.description;
+                    announcementDateInput.value = announcement.date;
+                }
+            }
+            editAnnouncementModal.classList.add('active');
+        }
+
+        function closeEditAnnouncementModal() {
+            editAnnouncementModal.classList.remove('active');
+        }
+
+        announcementForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = announcementIdInput.value || `ann${Date.now()}`;
+            const newAnnouncement = {
+                id: id,
+                icon: announcementIconInput.value.trim(),
+                title: announcementTitleInput.value.trim(),
+                description: announcementDescriptionInput.value.trim(),
+                date: announcementDateInput.value
+            };
+
+            if (newAnnouncement.title && newAnnouncement.description && newAnnouncement.date) {
+                const existingIndex = pageContent.announcements.findIndex(ann => ann.id === id);
+                if (existingIndex > -1) {
+                    pageContent.announcements[existingIndex] = newAnnouncement;
+                } else {
+                    pageContent.announcements.push(newAnnouncement);
+                }
+                saveContent(); // This will now also call updateUserView()
+                closeEditAnnouncementModal();
+            } else {
+                alert('Please fill in all required announcement fields.');
+            }
+        });
+
+        function deleteAnnouncement(id) {
+            if (confirm('Are you sure you want to delete this announcement?')) {
+                pageContent.announcements = pageContent.announcements.filter(ann => ann.id !== id);
+                saveContent(); // This will now also call updateUserView()
+            }
+        }
+
+        addAnnouncementBtn.addEventListener('click', () => openEditAnnouncementModal());
+        closeEditAnnouncementModalBtn.addEventListener('click', closeEditAnnouncementModal);
+        editAnnouncementModal.addEventListener('click', (e) => {
+            if (e.target === editAnnouncementModal) closeEditAnnouncementModal();
+        });
+
+        // --- Service Management ---
+        const servicesList = document.getElementById('servicesList'); // Admin edit list
+        const servicesDisplayGrid = document.getElementById('servicesDisplayGrid'); // User view grid (if exists)
+        const servicesCarouselInnerDisplay = document.getElementById('services-carousel-inner-display'); // User view carousel (if exists)
+        const addServiceBtn = document.getElementById('addServiceBtn');
+        const editServiceModal = document.getElementById('editServiceModal');
+        const closeEditServiceModalBtn = document.getElementById('closeEditServiceModalBtn');
+        const serviceForm = document.getElementById('serviceForm');
+        const serviceIdInput = document.getElementById('serviceId');
+        const serviceIconInput = document.getElementById('serviceIcon');
+        const serviceColorInput = document.getElementById('serviceColor');
+        const serviceTitleInput = document.getElementById('serviceTitle');
+        const serviceDescriptionInput = document.getElementById('serviceDescription');
+        const saveServiceBtn = document.getElementById('saveServiceBtn');
+        const editServiceModalTitle = document.getElementById('editServiceModalTitle');
+
+        function renderServices() {
+            servicesList.innerHTML = ''; // Admin edit list
+            pageContent.services.forEach(serv => {
+                const cardHtml = `
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="${serv.color} text-4xl mb-4">
+                            <i class="${serv.icon}"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${serv.title}</h3>
+                        <p class="text-gray-600">${serv.description}</p>
+                        <div class="admin-element-controls admin-controls active">
+                            <button class="edit-btn" data-id="${serv.id}">Edit</button>
+                            <button class="delete-btn" data-id="${serv.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                servicesList.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            servicesList.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', (e) => openEditServiceModal(e.target.dataset.id));
+            });
+            servicesList.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => deleteService(e.target.dataset.id));
+            });
+        }
+
+        function renderServicesForUserView() {
+            // Assuming servicesDisplayGrid and servicesCarouselInnerDisplay exist in user view
+            // Note: servicesDisplayGrid is not present in the provided HTML, so this part might not have a visible effect.
+            const servicesDisplayGridElement = document.getElementById('servicesDisplayGrid');
+            if (servicesDisplayGridElement) servicesDisplayGridElement.innerHTML = '';
+
+            const servicesCarouselInnerDisplayElement = document.getElementById('services-carousel-inner-display');
+            if (servicesCarouselInnerDisplayElement) servicesCarouselInnerDisplayElement.innerHTML = '';
+
+
+            pageContent.services.forEach(serv => {
+                const userCardHtml = `
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="${serv.color} text-4xl mb-4">
+                            <i class="${serv.icon}"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${serv.title}</h3>
+                        <p class="text-gray-600">${serv.description}</p>
+                    </div>
+                `;
+                if (servicesDisplayGridElement) servicesDisplayGridElement.insertAdjacentHTML('beforeend', userCardHtml);
+                if (servicesCarouselInnerDisplayElement) servicesCarouselInnerDisplayElement.insertAdjacentHTML('beforeend', userCardHtml);
+            });
+
+            // Re-initialize carousel after rendering services for user view
+            if (window.innerWidth <= 480) {
+                updateServicesCarousel();
+            }
+        }
+
+
+        function openEditServiceModal(id = null) {
+            serviceForm.reset();
+            serviceIdInput.value = '';
+            editServiceModalTitle.textContent = 'Add New Service';
+
+            if (id) {
+                const service = pageContent.services.find(serv => serv.id === id);
+                if (service) {
+                    editServiceModalTitle.textContent = 'Edit Service';
+                    serviceIdInput.value = service.id;
+                    serviceIconInput.value = service.icon;
+                    serviceColorInput.value = service.color;
+                    serviceTitleInput.value = service.title;
+                    serviceDescriptionInput.value = service.description;
+                }
+            }
+            editServiceModal.classList.add('active');
+        }
+
+        function closeEditServiceModal() {
+            editServiceModal.classList.remove('active');
+        }
+
+        serviceForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = serviceIdInput.value || `serv${Date.now()}`;
+            const newService = {
+                id: id,
+                icon: serviceIconInput.value.trim(),
+                color: serviceColorInput.value.trim(),
+                title: serviceTitleInput.value.trim(),
+                description: serviceDescriptionInput.value.trim()
+            };
+
+            if (newService.icon && newService.color && newService.title && newService.description) {
+                const existingIndex = pageContent.services.findIndex(serv => serv.id === id);
+                if (existingIndex > -1) {
+                    pageContent.services[existingIndex] = newService;
+                } else {
+                    pageContent.services.push(newService);
+                }
+                saveContent(); // This will now also call updateUserView()
+                closeEditServiceModal();
+            } else {
+                alert('Please fill in all required service fields.');
+            }
+        });
+
+        function deleteService(id) {
+            if (confirm('Are you sure you want to delete this service?')) {
+                pageContent.services = pageContent.services.filter(serv => serv.id !== id);
+                saveContent(); // This will now also call updateUserView()
+            }
+        }
+
+        addServiceBtn.addEventListener('click', () => openEditServiceModal());
+        closeEditServiceModalBtn.addEventListener('click', closeEditServiceModal);
+        editServiceModal.addEventListener('click', (e) => {
+            if (e.target === editServiceModal) closeEditServiceModal();
+        });
+
+        // --- Hotline Management ---
+        const hotlinesList = document.getElementById('hotlinesList'); // Admin edit list
+        const hotlinesDisplay = document.getElementById('hotlinesDisplay'); // User view display (if exists)
+        const addHotlineBtn = document.getElementById('addHotlineBtn');
+        const editHotlineModal = document.getElementById('editHotlineModal');
+        const closeEditHotlineModalBtn = document.getElementById('closeEditHotlineModalBtn');
+        const hotlineForm = document.getElementById('hotlineForm');
+        const hotlineIdInput = document.getElementById('hotlineId');
+        const hotlineIconInput = document.getElementById('hotlineIcon');
+        const hotlineColorInput = document.getElementById('hotlineColor');
+        const hotlineTitleInput = document.getElementById('hotlineTitle');
+        const hotlinePhoneInput = document.getElementById('hotlinePhone');
+        const hotlineAvailabilityInput = document.getElementById('hotlineAvailability');
+        const hotlineDescriptionInput = document.getElementById('hotlineDescription');
+        const saveHotlineBtn = document.getElementById('saveHotlineBtn');
+        const editHotlineModalTitle = document.getElementById('editHotlineModalTitle');
+
+        function renderHotlines() {
+            hotlinesList.innerHTML = ''; // Admin edit list
+            pageContent.hotlines.forEach(hot => {
+                const cardHtml = `
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <div class="${hot.color} text-4xl mb-4">
+                            <i class="${hot.icon}"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${hot.title}</h3>
+                        <p class="text-gray-600 text-2xl font-semibold">${hot.phone}</p>
+                        <p class="text-gray-500 text-sm">${hot.availability}</p>
+                        ${hot.description ? `<p class="text-gray-500 text-sm mt-1">${hot.description}</p>` : ''}
+                        <div class="admin-element-controls admin-controls active">
+                            <button class="edit-btn" data-id="${hot.id}">Edit</button>
+                            <button class="delete-btn" data-id="${hot.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                hotlinesList.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            hotlinesList.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', (e) => openEditHotlineModal(e.target.dataset.id));
+            });
+            hotlinesList.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => deleteHotline(e.target.dataset.id));
+            });
+        }
+
+        function renderHotlinesForUserView() {
+            // Assuming hotlinesDisplay exists in user view
+            const hotlinesDisplayElement = document.getElementById('hotlinesDisplay');
+            if (hotlinesDisplayElement) hotlinesDisplayElement.innerHTML = '';
+
+            pageContent.hotlines.forEach(hot => {
+                const userCardHtml = `
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <div class="${hot.color} text-4xl mb-4">
+                            <i class="${hot.icon}"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${hot.title}</h3>
+                        <p class="text-gray-600 text-2xl font-semibold">${hot.phone}</p>
+                        <p class="text-gray-500 text-sm">${hot.availability}</p>
+                        ${hot.description ? `<p class="text-gray-500 text-sm mt-1">${hot.description}</p>` : ''}
+                    </div>
+                `;
+                if (hotlinesDisplayElement) hotlinesDisplayElement.insertAdjacentHTML('beforeend', userCardHtml);
+            });
+        }
+
+
+        function openEditHotlineModal(id = null) {
+            hotlineForm.reset();
+            hotlineIdInput.value = '';
+            editHotlineModalTitle.textContent = 'Add New Hotline';
+
+            if (id) {
+                const hotline = pageContent.hotlines.find(hot => hot.id === id);
+                if (hotline) {
+                    editHotlineModalTitle.textContent = 'Edit Hotline';
+                    hotlineIdInput.value = hotline.id;
+                    hotlineIconInput.value = hotline.icon;
+                    hotlineColorInput.value = hotline.color;
+                    hotlineTitleInput.value = hotline.title;
+                    hotlinePhoneInput.value = hotline.phone;
+                    hotlineAvailabilityInput.value = hotline.availability;
+                    hotlineDescriptionInput.value = hotline.description;
+                }
+            }
+            editHotlineModal.classList.add('active');
+        }
+
+        function closeEditHotlineModal() {
+            editHotlineModal.classList.remove('active');
+        }
+
+        hotlineForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = hotlineIdInput.value || `hot${Date.now()}`;
+            const newHotline = {
+                id: id,
+                icon: hotlineIconInput.value.trim(),
+                color: hotlineColorInput.value.trim(),
+                title: hotlineTitleInput.value.trim(),
+                phone: hotlinePhoneInput.value.trim(),
+                availability: hotlineAvailabilityInput.value.trim(),
+                description: hotlineDescriptionInput.value.trim()
+            };
+
+            if (newHotline.icon && newHotline.color && newHotline.title && newHotline.phone && newHotline.availability) {
+                const existingIndex = pageContent.hotlines.findIndex(hot => hot.id === id);
+                if (existingIndex > -1) {
+                    pageContent.hotlines[existingIndex] = newHotline;
+                } else {
+                    pageContent.hotlines.push(newHotline);
+                }
+                saveContent(); // This will now also call updateUserView()
+                closeEditHotlineModal();
+            } else {
+                alert('Please fill in all required hotline fields.');
+            }
+        });
+
+        function deleteHotline(id) {
+            if (confirm('Are you sure you want to delete this hotline?')) {
+                pageContent.hotlines = pageContent.hotlines.filter(hot => hot.id !== id);
+                saveContent(); // This will now also call updateUserView()
+            }
+        }
+
+        addHotlineBtn.addEventListener('click', () => openEditHotlineModal());
+        closeEditHotlineModalBtn.addEventListener('click', closeEditHotlineModal);
+        editHotlineModal.addEventListener('click', (e) => {
+            if (e.target === editHotlineModal) closeEditHotlineModal();
+        });
+
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContent(); // Load admin view content
+            updateUserView(); // Load user view content initially
+            // Hide user view by default if admin is logged in
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+                userViewContentElements.forEach(el => el.style.display = 'none'); // Hide user content directly
+                document.querySelector('.dashboard-container').classList.add('admin-logged-in'); // Add class for layout adjustment
+            }
+        });
+
+
+        // --- Original Script (modified to integrate with admin features) ---
+
+        const mobileMenuButton = document.getElementById('mobile-menu-button'); // This element does not exist in the HTML
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // mobileMenuButton.addEventListener('click', () => { // mobileMenuButton does not exist
+        //     mobileMenu.classList.toggle('active');
+        //     const icon = mobileMenuButton.querySelector('i');
+        //     if (mobileMenu.classList.contains('active')) {
+        //         icon.classList.remove('fa-bars');
+        //         icon.classList.add('fa-times');
+        //     } else {
+        //         icon.classList.remove('fa-times');
+        //         icon.classList.add('fa-bars');
+        //     }
+        // });
+
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.classList.contains('mobile-nav-btn')) {
+                    mobileMenu.classList.remove('active');
+                    // mobileMenuButton.querySelector('i').classList.remove('fa-times'); // mobileMenuButton does not exist
+                    // mobileMenuButton.querySelector('i').classList.add('fa-bars'); // mobileMenuButton does not exist
+                }
+            });
+        });
+
+        const bookAppointmentBtn = document.getElementById('bookAppointmentBtn');
+        const bookAppointmentNavBtn = document.getElementById('bookAppointmentNavBtn'); // This element does not exist in the HTML
+        const bookAppointmentNavBtnMobile = document.getElementById('bookAppointmentNavBtnMobile'); 
+        const appointmentModal = document.getElementById('appointmentModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const signInRequiredAlert = document.getElementById('signInRequiredAlert');
+        const alertOkBtn = document.getElementById('alertOkBtn');
+
+        function showSignInRequiredAlert() {
+            signInRequiredAlert.classList.add('show');
+        }
+
+        function hideSignInRequiredAlert() {
+            signInRequiredAlert.classList.remove('show');
+        }
+
+        function openAppointmentModal(e) {
+            e.preventDefault(); 
+            // Only show alert if not admin
+            if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+                showSignInRequiredAlert(); 
+            } else {
+                appointmentModal.classList.add('active'); // If admin, directly open appointment modal
+            }
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                // mobileMenuButton.querySelector('i').classList.remove('fa-times'); // mobileMenuButton does not exist
+                // mobileMenuButton.querySelector('i').classList.add('fa-bars'); // mobileMenuButton does not exist
+            }
+        }
+
+        bookAppointmentBtn.addEventListener('click', openAppointmentModal);
+        // bookAppointmentNavBtn.addEventListener('click', openAppointmentModal); // This element doesn't exist in the HTML
+        bookAppointmentNavBtnMobile.addEventListener('click', openAppointmentModal);
+
+        alertOkBtn.addEventListener('click', () => {
+            hideSignInRequiredAlert();
+            openLoginModal();
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            appointmentModal.classList.remove('active');
+        });
+
+        appointmentModal.addEventListener('click', (event) => {
+            if (event.target === appointmentModal) {
+                appointmentModal.classList.remove('active');
+            }
+        });
+
+        const carouselContainer = document.querySelector('.carousel-container');
+        const carouselSlide = document.getElementById('hero-carousel-slide');
+        const carouselImages = carouselSlide.querySelectorAll('img');
+        let currentImageIndex = 0;
+        let imageWidth = 0; 
+
+        function updateImageWidth() {
+            if (carouselImages.length > 0 && carouselContainer) {
+                imageWidth = carouselContainer.clientWidth;
+                carouselSlide.style.transition = 'none'; 
+                carouselSlide.style.transform = `translateX(${-currentImageIndex * imageWidth}px)`;
+                setTimeout(() => {
+                    carouselSlide.style.transition = 'transform 0.5s ease-in-out'; 
+                }, 50);
+            }
+        }
+
+        function showNextImage() {
+            currentImageIndex++;
+            if (currentImageIndex >= carouselImages.length) {
+                currentImageIndex = 0;
+            }
+            carouselSlide.style.transform = `translateX(${-currentImageIndex * imageWidth}px)`;
+        }
+
+        let carouselInterval;
+
+        function startCarousel() {
+            updateImageWidth(); 
+            carouselInterval = setInterval(showNextImage, 3000);
+        }
+
+        window.addEventListener('resize', updateImageWidth);
+        window.addEventListener('load', startCarousel);
+
+
+        const searchIconButton = document.getElementById('search-icon-button');
+        const mobileSearchIconButton = document.getElementById('mobile-search-icon-button'); 
+        const searchContainer = document.getElementById('search-container');
+        const popupSearchInput = document.getElementById('popup-search-input');
+        const popupSearchButton = document.getElementById('popup-search-button');
+
+        function toggleSearchContainer() {
+            searchContainer.classList.toggle('active');
+            if (searchContainer.classList.contains('active')) {
+                popupSearchInput.focus();
+            } else {
+                popupSearchInput.value = '';
+            }
+        }
+
+        if (searchIconButton) {
+            searchIconButton.addEventListener('click', toggleSearchContainer);
+        }
+        if (mobileSearchIconButton) {
+            mobileSearchIconButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleSearchContainer();
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                    // mobileMenuButton.querySelector('i').classList.remove('fa-times'); // mobileMenuButton does not exist
+                    // mobileMenuButton.querySelector('i').classList.add('fa-bars'); // mobileMenuButton does not exist
+                }
+            });
+        }
+
+        function performPopupSearch() {
+            const query = popupSearchInput.value.trim();
+            if (query) {
+                console.log('Searching from navigation search bar:', query);
+                alert(`Searching for: "${query}"`);
+                toggleSearchContainer();
+            } else {
+                alert('Please enter a search term.');
+            }
+        }
+
+        popupSearchButton.addEventListener('click', performPopupSearch);
+        popupSearchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                performPopupSearch();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            const isClickInsideNav = event.target.closest('.navbar-custom');
+            const isClickOnSearchButton = event.target.closest('#search-icon-button') || event.target.closest('#mobile-search-icon-button');
+            
+            if (searchContainer.classList.contains('active') && !isClickInsideNav && !isClickOnSearchButton) {
+                searchContainer.classList.remove('active');
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').min = today;
+
+            const form = document.getElementById('appointmentFormContent');
+            const firstNameInput = document.getElementById('firstName');
+            const middleNameInput = document.getElementById('middleName');
+            const lastNameInput = document.getElementById('lastName');
+            const birthdateInput = document.getElementById('birthdate');
+            const genderSelect = document.getElementById('gender');
+            const phoneInput = document.getElementById('phone');
+            const firstVisitRadios = document.querySelectorAll('input[name="firstVisit"]');
+            const appointmentTypeRadios = document.querySelectorAll('input[name="appointmentType"]');
+            const dateInput = document.getElementById('date');
+            const timeSlots = document.querySelectorAll('.time-slot');
+            const symptomsInput = document.getElementById('symptomsInput');
+            const successMessage = document.getElementById('successMessage');
+
+            const namePattern = /^[a-zA-Z\s]{2,50}$/;
+            const phonePattern = /^\d{10,15}$/;
+
+            timeSlots.forEach(slot => {
+                slot.addEventListener('click', () => {
+                    timeSlots.forEach(s => s.classList.remove('selected'));
+                    slot.classList.add('selected');
+                    document.getElementById('timeError').style.display = 'none';
+                });
+            });
+
+            function validateInput(input, pattern, errorId) {
+                const errorElement = document.getElementById(errorId);
+                const isValid = pattern.test(input.value.trim());
+                
+                if (isValid) {
+                    input.classList.remove('error');
+                    input.classList.add('success');
+                    errorElement.style.display = 'none';
+                } else {
+                    input.classList.remove('success');
+                    input.classList.add('error');
+                    errorElement.style.display = 'block';
+                    errorElement.style.opacity = '1';
+                }
+                
+                return isValid;
+            }
+
+            function validateSelect(selectElement, errorId) {
+                const errorElement = document.getElementById(errorId);
+                const isValid = selectElement.value !== '';
+                if (isValid) {
+                    selectElement.classList.remove('error');
+                    selectElement.classList.add('success');
+                    errorElement.style.display = 'none';
+                } else {
+                    selectElement.classList.remove('success');
+                    selectElement.classList.add('error');
+                    errorElement.style.display = 'block';
+                    errorElement.style.opacity = '1';
+                }
+                return isValid;
+            }
+
+            function validateRadio(radioElements, errorId) {
+                const errorElement = document.getElementById(errorId);
+                const isChecked = Array.from(radioElements).some(radio => radio.checked);
+                if (isChecked) {
+                    errorElement.style.display = 'none';
+                } else {
+                    errorElement.style.display = 'block';
+                    errorElement.style.opacity = '1';
+                }
+                return isChecked;
+            }
+
+
+            firstNameInput.addEventListener('input', () => {
+                validateInput(firstNameInput, namePattern, 'firstNameError');
+            });
+
+            lastNameInput.addEventListener('input', () => {
+                validateInput(lastNameInput, namePattern, 'lastNameError');
+            });
+
+            birthdateInput.addEventListener('change', () => {
+                const birthdateError = document.getElementById('birthdateError');
+                const selectedDate = new Date(birthdateInput.value);
+                const today = new Date();
+                today.setHours(0,0,0,0); 
+                
+                if (selectedDate > today) {
+                    birthdateInput.classList.add('error');
+                    birthdateError.style.display = 'block';
+                    birthdateError.style.opacity = '1';
+                    birthdateError.textContent = 'Birthdate cannot be in the future.';
+                } else if (birthdateInput.value === '') {
+                    birthdateInput.classList.add('error');
+                    birthdateError.style.display = 'block';
+                    birthdateError.style.opacity = '1';
+                    birthdateError.textContent = 'Please enter your birthdate.';
+                }
+                else {
+                    birthdateInput.classList.remove('error');
+                    birthdateError.style.display = 'none';
+                }
+            });
+
+            genderSelect.addEventListener('change', () => { 
+                validateSelect(genderSelect, 'genderError');
+            });
+
+            phoneInput.addEventListener('input', () => {
+                validateInput(phoneInput, phonePattern, 'phoneError');
+            });
+
+            firstVisitRadios.forEach(radio => { 
+                radio.addEventListener('change', () => {
+                    validateRadio(firstVisitRadios, 'firstVisitError');
+                });
+            });
+
+            appointmentTypeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    validateRadio(appointmentTypeRadios, 'appointmentTypeError');
+                });
+            });
+
+            dateInput.addEventListener('change', () => {
+                const dateError = document.getElementById('dateError');
+                const selectedDate = new Date(dateInput.value);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                if (selectedDate < today) {
+                    dateInput.classList.add('error');
+                    dateError.style.display = 'block';
+                    dateError.style.opacity = '1';
+                } else {
+                    dateInput.classList.remove('error');
+                    dateError.style.display = 'none';
+                }
+            });
+
+            symptomsInput.addEventListener('input', () => {
+                const symptomsError = document.getElementById('symptomsError');
+                if (symptomsInput.value.trim() === '') {
+                    symptomsInput.classList.add('error');
+                    symptomsError.style.display = 'block';
+                    symptomsError.style.opacity = '1';
+                } else {
+                    symptomsInput.classList.remove('error');
+                    symptomsInput.classList.add('success');
+                    symptomsError.style.display = 'none';
+                }
+            });
+
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const isFirstNameValid = validateInput(firstNameInput, namePattern, 'firstNameError');
+                const isLastNameValid = validateInput(lastNameInput, namePattern, 'lastNameError');
+                const isBirthdateValid = birthdateInput.value !== '' && new Date(birthdateInput.value) <= new Date(new Date().setHours(0,0,0,0));
+                const isGenderValid = validateSelect(genderSelect, 'genderError');
+                const isPhoneValid = validateInput(phoneInput, phonePattern, 'phoneError');
+                const isFirstVisitValid = validateRadio(firstVisitRadios, 'firstVisitError'); 
+                const isAppointmentTypeValid = validateRadio(appointmentTypeRadios, 'appointmentTypeError'); 
+                const isDateValid = dateInput.value !== '' && new Date(dateInput.value) >= new Date(new Date().setHours(0,0,0,0));
+                const isTimeSelected = document.querySelector('.time-slot.selected') !== null;
+                const isSymptomsValid = symptomsInput.value.trim() !== ''; 
+
+                if (!isBirthdateValid) {
+                    const birthdateError = document.getElementById('birthdateError');
+                    birthdateInput.classList.add('error');
+                    birthdateError.style.display = 'block';
+                    birthdateError.style.opacity = '1';
+                    if (birthdateInput.value === '') {
+                        birthdateError.textContent = 'Please enter your birthdate.';
+                    } else {
+                        birthdateError.textContent = 'Birthdate cannot be in the future.';
+                    }
+                }
+
+                if (!isDateValid) {
+                    document.getElementById('dateError').style.display = 'block';
+                    document.getElementById('dateError').style.opacity = '1';
+                }
+
+                if (!isTimeSelected) {
+                    document.getElementById('timeError').style.display = 'block';
+                    document.getElementById('timeError').style.opacity = '1';
+                }
+
+                if (!isSymptomsValid) {
+                    document.getElementById('symptomsError').style.display = 'block';
+                    document.getElementById('symptomsError').style.opacity = '1';
+                }
+
+
+                if (isFirstNameValid && isLastNameValid && isBirthdateValid && isGenderValid && isPhoneValid && isFirstVisitValid && isAppointmentTypeValid && isDateValid && isTimeSelected && isSymptomsValid) {
+                    const submitBtn = form.querySelector('.submit-btn');
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    submitBtn.disabled = true;
+
+                    const formData = {
+                        firstName: firstNameInput.value.trim(),
+                        middleName: middleNameInput.value.trim(),
+                        lastName: lastNameInput.value.trim(),
+                        birthdate: birthdateInput.value,
+                        gender: genderSelect.value,
+                        phone: phoneInput.value.trim(),
+                        firstVisit: document.querySelector('input[name="firstVisit"]:checked')?.value,
+                        appointmentType: document.querySelector('input[name="appointmentType"]:checked')?.value,
+                        date: dateInput.value,
+                        time: document.querySelector('.time-slot.selected').dataset.time,
+                        symptoms: symptomsInput.value.trim()
+                    };
+
+                    console.log('Appointment Data:', formData); 
+
+                    setTimeout(() => {
+                        form.reset();
+                        timeSlots.forEach(slot => slot.classList.remove('selected'));
+                        document.querySelectorAll('.form-control').forEach(input => {
+                            input.classList.remove('success', 'error');
+                        });
+                        firstVisitRadios.forEach(radio => radio.checked = false);
+                        appointmentTypeRadios.forEach(radio => radio.checked = false);
+                        symptomsInput.classList.remove('success', 'error');
+                        
+                        successMessage.style.display = 'block';
+                        submitBtn.innerHTML = 'Schedule Appointment';
+                        submitBtn.disabled = false;
+
+                        setTimeout(() => {
+                            successMessage.style.display = 'none';
+                            appointmentModal.classList.remove('active');
+                        }, 3000); 
+                    }, 2000);
+                } else {
+                    form.classList.add('shake');
+                    setTimeout(() => form.classList.remove('shake'), 400);
+                }
+            });
+        });
+
+        const openLoginModalBtn = document.getElementById('openLoginModalBtn');
+        const openLoginModalBtnMobile = document.getElementById('openLoginModalBtnMobile'); 
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
+        const loginEmailError = document.getElementById('loginEmailError');
+        const loginPasswordError = document.getElementById('loginPasswordError');
+        const loginSuccessMessage = document.getElementById('loginSuccessMessage');
+        const openSignupModalLink = document.getElementById('openSignupModalLink'); 
+        const openLoginModalLink = document.getElementById('openLoginModalLink');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink'); 
+
+        const signupModal = document.getElementById('signupModal');
+        const closeSignupModalBtn = document.getElementById('closeSignupModalBtn');
+        const signupForm = document.getElementById('signupForm');
+        const signupFirstNameInput = document.getElementById('signupFirstName');
+        const signupLastNameInput = document.getElementById('signupLastName');
+        const signupEmailInput = document.getElementById('signupEmail');
+        const signupPasswordInput = document.getElementById('signupPassword');
+        const signupConfirmPasswordInput = document.getElementById('signupConfirmPassword');
+        const signupFirstNameError = document.getElementById('signupFirstNameError');
+        const signupLastNameError = document.getElementById('signupLastNameError');
+        const signupEmailError = document.getElementById('signupEmailError');
+        const signupPasswordError = document.getElementById('signupPasswordError');
+        const signupConfirmPasswordError = document.getElementById('signupConfirmPasswordError');
+        const signupSuccessMessage = document.getElementById('signupSuccessMessage');
+
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const closeForgotPasswordModalBtn = document.getElementById('closeForgotPasswordModalBtn');
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        const forgotEmailInput = document.getElementById('forgotEmail');
+        const forgotEmailError = document.getElementById('forgotEmailError');
+        const forgotPasswordSuccessMessage = document.getElementById('forgotPasswordSuccessMessage');
+        const backToLoginLink = document.getElementById('backToLoginLink');
+
+
+        function openLoginModal(e) {
+            if (e) e.preventDefault(); 
+            loginModal.classList.add('active');
+            signupModal.classList.remove('active');
+            forgotPasswordModal.classList.remove('active');
+            loginEmailInput.focus(); 
+            if (mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                // mobileMenuButton.querySelector('i').classList.remove('fa-times'); // mobileMenuButton does not exist
+                // mobileMenuButton.querySelector('i').classList.add('fa-bars'); // mobileMenuButton does not exist
+            }
+        }
+
+        function closeLoginModal() {
+            loginModal.classList.remove('active');
+            loginForm.reset();
+            loginEmailInput.classList.remove('error', 'success');
+            loginPasswordInput.classList.remove('error', 'success');
+            loginEmailError.style.display = 'none';
+            loginPasswordError.style.display = 'none';
+            loginSuccessMessage.style.display = 'none';
+        }
+
+        function openSignupModal(e) {
+            if (e) e.preventDefault();
+            signupModal.classList.add('active');
+            loginModal.classList.remove('active');
+            forgotPasswordModal.classList.remove('active'); 
+            signupFirstNameInput.focus(); 
+        }
+
+        function closeSignupModal() {
+            signupModal.classList.remove('active');
+            signupForm.reset();
+            signupFirstNameInput.classList.remove('error', 'success');
+            signupLastNameInput.classList.remove('error', 'success');
+            signupEmailInput.classList.remove('error', 'success');
+            signupPasswordInput.classList.remove('error', 'success');
+            signupConfirmPasswordInput.classList.remove('error', 'success');
+            signupFirstNameError.style.display = 'none';
+            signupLastNameError.style.display = 'none';
+            signupEmailError.style.display = 'none';
+            signupPasswordError.style.display = 'none';
+            signupConfirmPasswordError.style.display = 'none';
+            signupSuccessMessage.style.display = 'none';
+        }
+
+        function openForgotPasswordModal(e) {
+            if (e) e.preventDefault();
+            forgotPasswordModal.classList.add('active');
+            loginModal.classList.remove('active'); 
+            forgotEmailInput.focus();
+        }
+
+        function closeForgotPasswordModal() {
+            forgotPasswordModal.classList.remove('active');
+            forgotPasswordForm.reset();
+            forgotEmailInput.classList.remove('error', 'success');
+            forgotEmailError.style.display = 'none';
+            forgotPasswordSuccessMessage.style.display = 'none';
+        }
+
+
+        openLoginModalBtn.addEventListener('click', openLoginModal);
+
+        if (openLoginModalBtnMobile) {
+            openLoginModalBtnMobile.addEventListener('click', openLoginModal);
+        }
+
+        closeLoginModalBtn.addEventListener('click', closeLoginModal);
+
+        loginModal.addEventListener('click', (event) => {
+            if (event.target === loginModal) {
+                closeLoginModal();
+            }
+        });
+
+        openSignupModalLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            userAgreementModal.classList.add('active');
+        }); 
+        closeSignupModalBtn.addEventListener('click', closeSignupModal);
+        signupModal.addEventListener('click', (event) => {
+            if (event.target === signupModal) {
+                closeSignupModal();
+            }
+        });
+        openLoginModalLink.addEventListener('click', openLoginModal);
+
+        forgotPasswordLink.addEventListener('click', openForgotPasswordModal);
+        closeForgotPasswordModalBtn.addEventListener('click', closeForgotPasswordModal);
+        forgotPasswordModal.addEventListener('click', (event) => {
+            if (event.target === forgotPasswordModal) {
+                closeForgotPasswordModal();
+            }
+        });
+        backToLoginLink.addEventListener('click', openLoginModal);
+
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordPattern = /^.{6,}$/; 
+
+        function validateLoginInput(input, pattern, errorElement) {
+            const isValid = pattern.test(input.value.trim());
+            if (isValid) {
+                input.classList.remove('error');
+                input.classList.add('success');
+                errorElement.style.display = 'none';
+            } else {
+                input.classList.remove('success');
+                input.classList.add('error');
+                errorElement.style.display = 'block';
+                errorElement.textContent = input.id === 'loginEmail' ? 'Please enter a valid email address.' : 'Password must be at least 6 characters.';
+            }
+            return isValid;
+        }
+
+        loginEmailInput.addEventListener('input', () => {
+            validateLoginInput(loginEmailInput, emailPattern, loginEmailError);
+        });
+
+        loginPasswordInput.addEventListener('input', () => {
+            validateLoginInput(loginPasswordInput, passwordPattern, loginPasswordError);
+        });
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const isEmailValid = validateLoginInput(loginEmailInput, emailPattern, loginEmailError);
+            const isPasswordValid = validateLoginInput(loginPasswordInput, passwordPattern, loginPasswordError);
+
+            if (isEmailValid && isPasswordValid) {
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+
+                    console.log('Login attempt with:', loginEmailInput.value, loginPasswordInput.value);
+
+                    loginSuccessMessage.textContent = 'Login successful! Redirecting...';
+                    loginSuccessMessage.style.display = 'block';
+                    loginSuccessMessage.classList.remove('text-red-500');
+                    loginSuccessMessage.classList.add('text-green-600');
+
+                    submitBtn.innerHTML = 'Login';
+                    submitBtn.disabled = false;
+
+                    closeLoginModal();
+                    // If admin, don't open appointment modal, handle admin view
+                    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+                        appointmentModal.classList.add('active');
+                    }
+
+                }, 1500); 
+                loginForm.classList.add('shake');
+                setTimeout(() => loginForm.classList.remove('shake'), 400);
+            }
+        });
+
+        signupFirstNameInput.addEventListener('input', () => {
+            validateInput(signupFirstNameInput, namePattern, 'signupFirstNameError');
+        });
+        signupLastNameInput.addEventListener('input', () => {
+            validateInput(signupLastNameInput, namePattern, 'signupLastNameError');
+        });
+        signupEmailInput.addEventListener('input', () => {
+            validateInput(signupEmailInput, emailPattern, 'signupEmailError');
+        });
+        signupPasswordInput.addEventListener('input', () => {
+            validateInput(signupPasswordInput, passwordPattern, 'signupPasswordError');
+            if (signupConfirmPasswordInput.value !== '') {
+                validateConfirmPassword();
+            }
+        });
+        signupConfirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+        function validateConfirmPassword() {
+            const isValid = signupConfirmPasswordInput.value === signupPasswordInput.value && signupConfirmPasswordInput.value !== '';
+            if (isValid) {
+                signupConfirmPasswordInput.classList.remove('error');
+                signupConfirmPasswordInput.classList.add('success');
+                signupConfirmPasswordError.style.display = 'none';
+            } else {
+                signupConfirmPasswordInput.classList.remove('success');
+                signupConfirmPasswordInput.classList.add('error');
+                signupConfirmPasswordError.textContent = 'Passwords do not match.';
+                signupConfirmPasswordError.style.display = 'block';
+            }
+            return isValid;
+        }
+
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const isFirstNameValid = validateInput(signupFirstNameInput, namePattern, 'signupFirstNameError');
+            const isLastNameValid = validateInput(signupLastNameInput, namePattern, 'signupLastNameError');
+            const isEmailValid = validateInput(signupEmailInput, emailPattern, 'signupEmailError');
+            const isPasswordValid = validateInput(signupPasswordInput, passwordPattern, 'signupPasswordError');
+            const isConfirmPasswordValid = validateConfirmPassword();
+
+            if (isFirstNameValid && isLastNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid) {
+                const submitBtn = signupForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    console.log('Signup attempt with:', signupFirstNameInput.value, signupLastNameInput.value, signupEmailInput.value);
+
+                    signupSuccessMessage.textContent = 'Registration successful! You can now log in.';
+                    signupSuccessMessage.style.display = 'block';
+                    signupSuccessMessage.classList.remove('text-red-500');
+                    signupSuccessMessage.classList.add('text-green-600');
+
+                    submitBtn.innerHTML = 'Sign Up';
+                    submitBtn.disabled = false;
+
+                    setTimeout(() => {
+                        closeSignupModal();
+                        openLoginModal(); 
+                    }, 2000);
+
+                }, 1500); 
+            } else {
+                signupForm.classList.add('shake');
+                setTimeout(() => signupForm.classList.remove('shake'), 400);
+            }
+        });
+
+        forgotEmailInput.addEventListener('input', () => {
+            validateInput(forgotEmailInput, emailPattern, 'forgotEmailError');
+        });
+
+        forgotPasswordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const isForgotEmailValid = validateInput(forgotEmailInput, emailPattern, 'forgotEmailError');
+
+            if (isForgotEmailValid) {
+                const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    console.log('Password reset request for:', forgotEmailInput.value);
+                    forgotPasswordSuccessMessage.textContent = 'Password reset link sent! Check your email.';
+                    forgotPasswordSuccessMessage.style.display = 'block';
+                    forgotPasswordSuccessMessage.classList.remove('text-red-500');
+                    forgotPasswordSuccessMessage.classList.add('text-green-600');
+
+                    submitBtn.innerHTML = 'Send Reset Link';
+                    submitBtn.disabled = false;
+
+                    setTimeout(() => {
+                        closeForgotPasswordModal();
+                        openLoginModal(); 
+                    }, 3000);
+                }, 1500);
+            } else {
+                forgotPasswordForm.classList.add('shake');
+                setTimeout(() => forgotPasswordForm.classList.remove('shake'), 400);
+            }
+        });
+
+
+        let backToTopBtn = document.getElementById("backToTopBtn");
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        }
+
+        function topFunction() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+                    
+            });
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        const viewAllAnnouncementsBtn = document.getElementById('viewAllAnnouncementsBtn');
+        const announcementsModal = document.getElementById('announcementsModal');
+        const closeAnnouncementsModalBtn = document.getElementById('closeAnnouncementsModalBtn');
+
+        if (viewAllAnnouncementsBtn) {
+            viewAllAnnouncementsBtn.addEventListener('click', () => {
+                announcementsModal.classList.add('active');
+            });
+        }
+
+        if (closeAnnouncementsModalBtn) {
+            closeAnnouncementsModalBtn.addEventListener('click', () => {
+                announcementsModal.classList.remove('active');
+            });
+        }
+
+        if (announcementsModal) {
+            announcementsModal.addEventListener('click', (event) => {
+                if (event.target === announcementsModal) {
+                    announcementsModal.classList.remove('active');
+                }
+            });
+        }
+
+        const servicesCarouselInner = document.getElementById('services-carousel-inner-display'); // Changed ID
+        const servicesPrevBtn = document.getElementById('services-prev-btn');
+        const servicesNextBtn = document.getElementById('services-next-btn');
+        const servicesPagination = document.getElementById('services-pagination');
+        let serviceCards = []; 
+        let currentServiceIndex = 0;
+
+        function updateServicesCarousel() {
+
+            serviceCards = servicesCarouselInner ? Array.from(servicesCarouselInner.querySelectorAll('.service-card')) : [];
+
+            if (!servicesCarouselInner || serviceCards.length === 0) {
+                if (servicesPrevBtn) servicesPrevBtn.style.display = 'none';
+                if (servicesNextBtn) servicesNextBtn.style.display = 'none';
+                if (servicesPagination) servicesPagination.style.display = 'none';
+                return;
+            } else {
+                if (servicesPrevBtn) servicesPrevBtn.style.display = 'flex';
+                if (servicesNextBtn) servicesNextBtn.style.display = 'flex';
+                if (servicesPagination) servicesPagination.style.display = 'flex';
+            }
+
+            const cardWidth = serviceCards[0].offsetWidth;
+            servicesCarouselInner.style.transform = `translateX(${-currentServiceIndex * cardWidth}px)`;
+            updatePagination();
+            updateNavigationButtons(); 
+        }
+
+        function showNextService() {
+            if (currentServiceIndex < serviceCards.length - 1) {
+                currentServiceIndex++;
+            }
+            updateServicesCarousel();
+        }
+
+        function showPrevService() {
+            if (currentServiceIndex > 0) {
+                currentServiceIndex--;
+            }
+            updateServicesCarousel();
+        }
+
+        function updateNavigationButtons() {
+            if (servicesPrevBtn) {
+                servicesPrevBtn.disabled = currentServiceIndex === 0;
+            }
+            if (servicesNextBtn) {
+                servicesNextBtn.disabled = currentServiceIndex === serviceCards.length - 1;
+            }
+        }
+
+        function updatePagination() {
+            if (!servicesPagination) return;
+            servicesPagination.innerHTML = '';
+            serviceCards.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                if (index === currentServiceIndex) {
+                    dot.classList.add('active');
+                }
+                dot.addEventListener('click', () => {
+                    currentServiceIndex = index;
+                    updateServicesCarousel();
+                });
+                servicesPagination.appendChild(dot);
+            });
+        }
+
+        if (servicesPrevBtn) {
+            servicesPrevBtn.addEventListener('click', showNextService);
+        }
+        if (servicesNextBtn) {
+            servicesNextBtn.addEventListener('click', showPrevService);
+        }
+
+        window.addEventListener('load', () => {
+            if (window.innerWidth <= 480) { 
+                updateServicesCarousel();
+            }
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth <= 480) {
+                updateServicesCarousel();
+            }
+        });
+
+        let servicesAutoSlideInterval;
+        function startServicesAutoSlide() {
+            if (window.innerWidth <= 480) {
+                if (serviceCards.length > 1) {
+                    servicesAutoSlideInterval = setInterval(() => {
+
+                        if (currentServiceIndex === serviceCards.length - 1) {
+                            currentServiceIndex = 0;
+                        } else {
+                            currentServiceIndex++;
+                        }
+                        updateServicesCarousel();
+                    }, 5000);
+                }
+            }
+        }
+
+        function stopServicesAutoSlide() {
+            clearInterval(servicesAutoSlideInterval);
+        }
+
+        window.addEventListener('load', startServicesAutoSlide);
+        if (servicesCarouselInner) {
+            servicesCarouselInner.addEventListener('mouseenter', stopServicesAutoSlide);
+            servicesCarouselInner.addEventListener('mouseleave', startServicesAutoSlide);
+            servicesPrevBtn.addEventListener('click', () => { stopServicesAutoSlide(); startServicesAutoSlide(); });
+            servicesNextBtn.addEventListener('click', () => { stopServicesAutoSlide(); startServicesAutoSlide(); });
+        }
+        window.addEventListener('resize', () => {
+            stopServicesAutoSlide();
+            startServicesAutoSlide();
+        });
+
+    
+        const userAgreementModal = document.getElementById('userAgreementModal');
+        const closeUserAgreementBtn = document.getElementById('closeUserAgreementBtn');
+        const agreeTermsCheckbox = document.getElementById('agreeTerms');
+        const acceptAgreementBtn = document.getElementById('acceptAgreementBtn');
+        const declineAgreementBtn = document.getElementById('declineAgreementBtn');
+
+        function showUserAgreement(e) {
+            e.preventDefault();
+            userAgreementModal.classList.add('active');
+        }
+
+        function closeUserAgreement() {
+            userAgreementModal.classList.remove('active');
+        }
+
+        document.getElementById('openSignupModalLink').addEventListener('click', showUserAgreement);
+
+        agreeTermsCheckbox.addEventListener('change', (e) => {
+            acceptAgreementBtn.disabled = !e.target.checked;
+        });
+
+        acceptAgreementBtn.addEventListener('click', () => {
+            closeUserAgreement();
+            document.getElementById('signupModal').classList.add('active');
+        });
+
+        declineAgreementBtn.addEventListener('click', closeUserAgreement);
+        closeUserAgreementBtn.addEventListener('click', closeUserAgreement);
+
+    
+    </script>
+    <script>
+        const calendarDates = document.getElementById('calendarDates');
+        const currentMonthYearSpan = document.getElementById('currentMonthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const appointmentDateInput = document.getElementById('date');
+
+        let currentDate = new Date();
+        let selectedCalendarDay = null;
+
+        function generateCalendar() {
+            calendarDates.innerHTML = '';
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            currentMonthYearSpan.textContent = new Date(year, month).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const firstWeekday = firstDayOfMonth.getDay();
+
+            for (let i = 0; i < firstWeekday; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.classList.add('calendar-day', 'empty-day');
+                calendarDates.appendChild(emptyDay);
+            }
+
+            const availableDates = new Set();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = new Date(year, month, i);
+                if (day.getDay() >= 1 && day.getDay() <= 5 && day >= today) {
+                    availableDates.add(i);
+                }
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('calendar-day');
+                dayElement.textContent = i;
+
+                if (availableDates.has(i)) {
+                    dayElement.classList.add('available-day');
+                    dayElement.dataset.date = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    dayElement.addEventListener('click', () => {
+                        if (selectedCalendarDay) {
+                            selectedCalendarDay.classList.remove('selected-day');
+                        }
+                        dayElement.classList.add('selected-day');
+                        selectedCalendarDay = dayElement;
+
+                        if (appointmentDateInput) {
+                            appointmentDateInput.value = dayElement.dataset.date;
+                        }
+                    });
+                } else {
+                    dayElement.classList.add('empty-day');
+                }
+                calendarDates.appendChild(dayElement);
+            }
+        }
+
+        function showNextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar();
+        }
+
+        function showPrevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar();
+        }
+
+        prevMonthBtn.addEventListener('click', showPrevMonth);
+        nextMonthBtn.addEventListener('click', showNextMonth);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            generateCalendar();
+        });
+
+        // New JavaScript for Hamburger Navigation
+        const hamburgerNavBtn = document.getElementById('hamburgerNavBtn');
+        const dashboardMenuModal = document.getElementById('dashboardMenuModal');
+        const closeDashboardMenuModalBtn = document.getElementById('closeDashboardMenuModalBtn');
+        const backToAdminPageIcon = document.getElementById('backToAdminPageIcon'); // Changed to icon
+        const editPatientDashboardBtn = document.getElementById('editPatientDashboardBtn');
+        const editDoctorDashboardBtn = document.getElementById('editDoctorDashboardBtn');
+
+        // Confirmation Modal Elements
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationModalTitle = document.getElementById('confirmationModalTitle');
+        const confirmationModalMessage = document.getElementById('confirmationModalMessage');
+        const confirmNavigationBtn = document.getElementById('confirmNavigationBtn');
+        const cancelNavigationBtn = document.getElementById('cancelNavigationBtn');
+
+        let pendingNavigationUrl = '';
+
+        function showConfirmationModal(title, message, action) { // Changed 'url' to 'action'
+            confirmationModalTitle.textContent = title;
+            confirmationModalMessage.textContent = message;
+            pendingNavigationUrl = action; // Store the action (URL or 'logout')
+            confirmationModal.classList.add('active');
+        }
+
+        function hideConfirmationModal() {
+            confirmationModal.classList.remove('active');
+            pendingNavigationUrl = '';
+        }
+
+        hamburgerNavBtn.addEventListener('click', () => {
+            dashboardMenuModal.classList.add('active');
+        });
+
+        closeDashboardMenuModalBtn.addEventListener('click', () => {
+            dashboardMenuModal.classList.remove('active');
+        });
+
+        dashboardMenuModal.addEventListener('click', (event) => {
+            if (event.target === dashboardMenuModal) {
+                dashboardMenuModal.classList.remove('active');
+            }
+        });
+
+        // Updated event listener for the new icon with confirmation
+        backToAdminPageIcon.addEventListener('click', () => {
+            showConfirmationModal(
+                'Return to Admin Dashboard',
+                'Are you sure you want to return to the main Admin Dashboard? Any unsaved changes will be lost.',
+                '4Care-Admin.html'
+            );
+        });
+
+        editPatientDashboardBtn.addEventListener('click', () => {
+            showConfirmationModal(
+                'Edit Patient Dashboard',
+                'Are you sure you want to navigate to the Patient Dashboard editing page? Any unsaved changes will be lost.',
+                'Patient-Dashboard-Editing.html'
+            );
+        });
+
+        editDoctorDashboardBtn.addEventListener('click', () => {
+            showConfirmationModal(
+                'Edit Doctor Dashboard',
+                'Are you sure you want to navigate to the Doctor Dashboard editing page? Any unsaved changes will be lost.',
+                'Doctor-Dashboard-Editing.html'
+            );
+        });
+
+        confirmNavigationBtn.addEventListener('click', () => {
+            if (pendingNavigationUrl === 'logout') {
+                setAdminLoggedIn(false);
+                alert("Admin logged out.");
+                location.reload(); 
+            } else if (pendingNavigationUrl) {
+                window.location.href = pendingNavigationUrl;
+            }
+            hideConfirmationModal();
+        });
+
+        cancelNavigationBtn.addEventListener('click', () => {
+            hideConfirmationModal();
+        });
+
+        confirmationModal.addEventListener('click', (event) => {
+            if (event.target === confirmationModal) {
+                hideConfirmationModal();
+            }
+        });
+    </script>
+</body>
+</html>
