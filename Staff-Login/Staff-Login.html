@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>4Care | Staff Login</title>
+  <link rel="icon" type="image/x-icon" href="../4CARE LOGO.png">
+  <link rel="stylesheet" href="Staff-Login.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+<body>
+  <div id="loginModal" class="modal active" aria-modal="true" role="dialog" aria-labelledby="loginTitle">
+    <div class="modal-content-wrapper"> 
+      <div class="solid-background-section">
+        <div class="video-overlay">
+          <h3>Welcome, 4Care Staff!</h3>
+          <p>Your dedication drives quality healthcare in the Philippines. Log in to continue your vital work.</p>
+        </div>
+      </div>
+      <div class="login-form-section">
+        <h2 id="loginTitle" class="text-3xl font-bold text-center mb-6 text-blue-600">Login to 4Care</h2>
+        <form id="loginForm" novalidate>
+          <div class="form-group input-group">
+            <label for="loginEmail">Email Address</label>
+            <input
+              type="email"
+              id="loginEmail"
+              name="loginEmail"
+              placeholder="Enter your email"
+              required
+              autocomplete="username"
+            />
+            <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2"></i>
+            <div class="error-message" id="loginEmailError">Please enter a valid email address.</div>
+          </div>
+          <div class="form-group input-group">
+            <label for="loginPassword">Password</label>
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="loginPassword"
+              name="loginPassword"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+            />
+            <div class="error-message" id="loginPasswordError">Password must be at least 6 characters.</div>
+          </div>
+          <div class="form-group">
+            <label>Login As</label>
+            <div class="flex gap-3 mt-2 role-selection">
+              <input type="hidden" id="loginRole" name="loginRole" required>
+              <div class="role-option" data-value="doctor" onclick="selectRole(this, 'doctor')">
+                <i class="fas fa-user-md"></i> Doctor
+              </div>
+              <div class="role-option" data-value="admin" onclick="selectRole(this, 'admin')">
+                <i class="fas fa-user-shield"></i> Admin
+              </div>
+            </div>
+            <div class="error-message" id="loginRoleError">Please select your role.</div>
+          </div>
+          <div class="flex items-center justify-between text-sm mb-4">
+            <label class="flex items-center text-gray-600">
+              <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded" />
+              <span class="ml-2">Remember me</span>
+            </label>
+            <a href="#" id="forgotPasswordLink" class="text-blue-600 hover:underline">Forgot Password?</a>
+          </div>
+          <button type="submit">Login</button>
+          <div class="error-message" id="loginGeneralError" style="display: none;">Wrong credentials. Please check your username and password.</div>
+          <p class="modal-footer mt-4">
+            Don't have an account?
+            <a href="#" id="openSignupModalLink" onclick="showTermsFirst(event)">Sign Up</a>
+          </p>
+          <div class="success-message" id="loginSuccessMessage">Login successful! Redirecting...</div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign Up Modal -->
+  <div id="signupModal" class="modal" aria-modal="true" role="dialog" aria-labelledby="signupTitle" tabindex="-1">
+    <div class="modal-content" role="document">
+      <button class="close-btn" id="closeSignupModalBtn" aria-label="Close sign up modal">&times;</button>
+      <h2 id="signupTitle" class="text-3xl font-bold text-center mb-6 text-blue-600">Sign Up for 4Care</h2>
+      <form id="signupForm" novalidate>
+        <div class="form-row">
+          <div class="form-group input-group">
+            <label for="signupFirstName">First Name</label>
+            <i class="fas fa-user"></i>
+            <input type="text" id="signupFirstName" name="signupFirstName" placeholder="Enter first name" required autocomplete="given-name" />
+            <div class="error-message" id="signupFirstNameError">Please enter a valid first name.</div>
+          </div>
+          <div class="form-group input-group">
+            <label for="signupLastName">Last Name</label>
+            <i class="fas fa-user"></i>
+            <input type="text" id="signupLastName" name="signupLastName" placeholder="Enter last name" required autocomplete="family-name" />
+            <div class="error-message" id="signupLastNameError">Please enter a valid last name.</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group input-group">
+            <label for="signupEmail">Email Address</label>
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="signupEmail" name="signupEmail" placeholder="email@example.com" required autocomplete="email" />
+            <div class="error-message" id="signupEmailError">Please enter a valid email address.</div>
+          </div>
+          <div class="form-group input-group">
+            <label for="signupContactNumber">Contact Number</label>
+            <i class="fas fa-phone"></i>
+            <input type="tel" id="signupContactNumber" name="signupContactNumber" placeholder="e.g., +1234567890" required autocomplete="tel" />
+            <div class="error-message" id="signupContactNumberError">Please enter a valid contact number.</div>
+          </div>
+        </div>
+
+        <div class="form-group input-group">
+          <label for="signupHomeAddress">Home Address</label>
+          <i class="fas fa-home"></i>
+          <input type="text" id="signupHomeAddress" name="signupHomeAddress" placeholder="Enter your home address" required autocomplete="street-address" />
+            <div class="error-message" id="signupHomeAddressError">Please enter your home address.</div>
+        </div>
+
+        <div class="form-group input-group">
+          <label for="signupPosition">Position</label>
+          <i class="fas fa-briefcase"></i>
+          <select id="signupPosition" name="signupPosition" required>
+            <option value="">Select your position</option>
+            <option value="doctor">Doctor</option>
+            <option value="admin">Administrator</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="error-message" id="signupPositionError">Please select your position.</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group input-group">
+            <label for="signupPassword">Password</label>
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signupPassword" name="signupPassword" placeholder="Create password" required autocomplete="new-password" />
+            <div class="error-message" id="signupPasswordError">Password must be at least 6 characters.</div>
+          </div>
+          <div class="form-group input-group">
+            <label for="signupConfirmPassword">Confirm Password</label>
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signupConfirmPassword" name="signupConfirmPassword" placeholder="Confirm password" required autocomplete="new-password" />
+            <div class="error-message" id="signupConfirmPasswordError">Passwords do not match.</div>
+          </div>
+        </div>
+
+        <div class="flex items-start mb-4">
+          <input type="checkbox" id="userAgreement" class="form-checkbox h-4 w-4 text-blue-600 rounded mt-1">
+          <label for="userAgreement" class="ml-2 text-sm">
+            I agree to the <a href="#" id="termsLink" class="text-blue-600 hover:underline">Terms of Service</a> and 
+            <a href="#" id="privacyLink" class="text-blue-600 hover:underline">Privacy Policy</a>
+            <div class="error-message" id="agreementError">You must accept the terms to continue</div>
+          </label>
+        </div>
+        <button type="submit" id="signupSubmit" disabled>Sign Up</button>
+        <p class="modal-footer mt-4">
+          Already have an account?
+          <a href="#" id="openLoginModalLink">Log In</a>
+        </p>
+        <div class="success-message" id="signupSuccessMessage">Registration successful!</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal" aria-modal="true" role="dialog" aria-labelledby="forgotPasswordTitle" tabindex="-1">
+    <div class="modal-content" role="document">
+      <button class="close-btn" id="closeForgotPasswordModalBtn" aria-label="Close forgot password modal">&times;</button>
+      <h2 id="forgotPasswordTitle" class="text-3xl font-bold text-center mb-6 text-blue-600">Forgot Password?</h2>
+      <p class="text-center text-gray-600 mb-6">
+        Enter your email address below and we'll send you a link to reset your password.
+      </p>
+      <form id="forgotPasswordForm" novalidate>
+        <div class="form-group input-group">
+          <label for="forgotEmail">Email Address</label>
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="forgotEmail" name="forgotEmail" placeholder="email@example.com" required autocomplete="email" />
+          <div class="error-message" id="forgotEmailError">Please enter a valid email address.</div>
+        </div>
+        <button type="submit">Send Reset Link</button>
+        <p class="modal-footer mt-4">
+          Remember your password?
+          <a href="#" id="backToLoginLink">Log In</a>
+        </p>
+        <div class="success-message" id="forgotPasswordSuccessMessage">Password reset link sent! Check your email.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Terms Modal -->
+  <div id="termsModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="close-btn" id="closeTermsModalBtn">&times;</button>
+      <h2 class="text-2xl font-bold mb-4">Terms of Service</h2>
+      <div class="max-h-[60vh] overflow-y-auto pr-4 mb-4">
+        <h3 class="font-bold text-lg mb-2">Privacy Policy</h3>
+        <p class="mb-4">By creating an account, you agree that we may collect and use your personal information as outlined in our Privacy Policy.</p>
+        
+        <h3 class="font-bold text-lg mb-2">Terms of Service</h3>
+        <p class="mb-4">You agree to use our services in accordance with all applicable laws and regulations.</p>
+        
+        <div class="flex items-center mt-6">
+          <input type="checkbox" id="termsAgreement" class="form-checkbox h-5 w-5 text-blue-600">
+          <label for="termsAgreement" class="ml-2 font-medium">I have read and agree to the terms and conditions.</label>
+        </div>
+      </div>
+      <button id="continueToSignup" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+        I Agree
+      </button>
+    </div>
+  </div>
+
+  <!-- Privacy Modal -->
+  <div id="privacyModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="close-btn" id="closePrivacyModalBtn">&times;</button>
+      <h2 class="text-2xl font-bold mb-4">Privacy Policy</h2>
+      <div class="max-h-[60vh] overflow-y-auto pr-4 mb-4">
+        <p>Your privacy policy content would go here...</p>
+      </div>
+      <button id="closePrivacyModalBtn2" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+        Close
+      </button>
+    </div>
+  </div>
+
+
+  <script src="Staff-Login.js?v=3"></script>
+  </body>
+</html>

@@ -1,0 +1,328 @@
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, rgba(53, 124, 216, 0.9), rgba(238, 239, 238, 0.8), rgba(53, 124, 216, 0.9));
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal base styles */
+    .modal {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 100;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px; 
+      position: relative;
+      overflow-y: auto;
+      max-height: 90vh; 
+    }
+
+    #signupModal .modal-content {
+      max-width: 700px; 
+      max-height: 70vh; 
+    }
+
+    #signupModal .modal-content::-webkit-scrollbar {
+      width: 8px; 
+    }
+
+    #signupModal .modal-content::-webkit-scrollbar-track {
+      background: transparent; 
+    }
+
+    #signupModal .modal-content::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0); 
+    }
+
+    #signupModal .modal-content {
+      scrollbar-width: thin; 
+      scrollbar-color: transparent transparent; 
+    }
+
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .close-btn:hover {
+      color: #111827;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      color: #111827;
+      position: relative;
+      text-indent: 35px;
+      height: 50px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 10px;
+      top: 70%;
+      transform: translateY(-50%);
+      color: #2563eb;
+      pointer-events: none;
+      font-size: 1.2rem;
+      z-index: 10;
+    }
+
+    .error-message {
+      color: #ef4444;
+      margin-top: -30px;
+      display: none;
+      margin-left: 24px;
+      padding: 4px 0;
+    }
+
+    input.error,
+    select.error {
+      border-color: #ef4444;
+    }
+
+    input.success,
+    select.success {
+      border-color: #22c55e;
+    }
+
+    button[type='submit'] {
+      background-color: #2563eb;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border: none;
+    }
+
+    button[type='submit']:hover {
+      background-color: #1d4ed8;
+    }
+
+    .success-message {
+      color: #22c55e;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(34, 197, 94, 0.1);
+      text-align: center;
+      display: none;
+      font-weight: 600;
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-5px);
+      }
+      75% {
+        transform: translateX(5px);
+      }
+    }
+
+
+    .role-selection {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .role-option {
+      flex: 1;
+      padding: 12px 8px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #6b7280;
+    }
+
+    .role-option:hover {
+      border-color: #2563eb;
+    }
+
+    .role-option.active {
+      background-color: #eff6ff;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    /* Links */
+    .modal-footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .modal-footer a {
+      color: #2563eb;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: text-decoration 0.3s ease;
+    }
+
+    .modal-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Added for 2-column layout */
+    .form-row {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .form-row > .form-group {
+      flex: 1;
+    }
+
+
+    #loginModal .modal-content-wrapper {
+      display: flex;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 900px; 
+      overflow: hidden; 
+    }
+
+    /* New style for solid background section */
+    #loginModal .solid-background-section {
+      flex: 1;
+      position: relative;
+      border-top-left-radius: 15px;
+      border-bottom-left-radius: 15px;
+      min-height: 500px; 
+      overflow: hidden;
+      background-color: #2563eb; /* Solid blue background */
+      display: flex; /* Ensure content is centered */
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Removed video specific styles */
+    /* #loginModal .video-background-section video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; 
+      z-index: 1;
+    } */
+
+    #loginModal .video-overlay {
+      position: relative; /* Changed to relative as it's now inside solid-background-section */
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      text-align: center;
+      padding: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    #loginModal .video-overlay h3 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 15px; 
+      letter-spacing: 1px;
+    }
+
+    #loginModal .video-overlay p {
+      font-size: 1.3rem; 
+      line-height: 1.6;
+      max-width: 80%; 
+    }
+
+    #loginModal .login-form-section {
+      flex: 1;
+      padding: 40px;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #loginModal .modal-content {
+      padding: 0;
+      max-width: none;
+      max-height: none;
+      overflow: visible;
+    }
