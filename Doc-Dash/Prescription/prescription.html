@@ -1,0 +1,77 @@
+<link rel="stylesheet" href="prescription.css">
+<script src="prescription-form.js"></script>
+        
+        
+        <div class="content-section" id="upload-prescription-section" >
+            <div class="dashboard-card" style="width: 95%; margin-right: 0;">
+            <div class="form-section">
+        <h3>Create Prescription</h3>
+
+        <form id="prescriptionForm">
+            <!-- Patient Selection -->
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="patientId">Patient ID:</label>
+                    <input type="text" id="patientId" placeholder="#000000" pattern="[#][0-9]{6}" maxlength="7">
+                </div>
+                <div class="form-group half">
+                    <label for="patientName">Full Name:</label>
+                    <input type="text" id="patientName" placeholder="Search patient...">
+                </div>
+            </div>
+
+            <!-- Medications Section -->
+            <div class="medications-section">
+                <div class="section-header">
+                    <h4>Medications</h4>
+                    <button type="button" id="addMedicationBtn" class="btn-add-medication">
+                        <i class="fas fa-plus"></i> Add Medication
+                    </button>
+                </div>
+                
+                <div id="medicationsContainer">
+                    <!-- First medication row (default) -->
+                    <div class="medication-row" data-medication-id="1">
+                        <div class="medication-header">
+                            <span class="medication-number">Medication 1</span>
+                            <button type="button" class="btn-remove-medication" onclick="removeMedication(this)" style="display: none;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group quarter">
+                                <label>Medication:</label>
+                                <input type="text" name="medication[]" placeholder="Enter medication name" required>
+                            </div>
+                            <div class="form-group quarter">
+                                <label>Dosage:</label>
+                                <input type="text" name="dosage[]" placeholder="e.g., 500mg" required>
+                            </div>
+                            <div class="form-group quarter">
+                                <label>Frequency:</label>
+                                <input type="text" name="frequency[]" placeholder="e.g., 3x a day" required>
+                            </div>
+                            <div class="form-group quarter">
+                                <label>Duration:</label>
+                                <input type="text" name="duration[]" placeholder="e.g., 7 days">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="savePrescription" class="btn-save">Save Prescription</button>
+                <button type="button" id="clearForm" class="btn-clear">Clear Form</button>
+            </div>
+        </form>
+        </div>
+        </div>
+        </div>
+
+
+        <style>
+
+            
+        </style>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4Care - Doctor Dashboard Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 4Care Doctor Dashboard Test</h1>
+        <p>This page helps you test the doctor dashboard and logout functionality.</p>
+        
+        <div class="status info">
+            <strong>Current URL:</strong> <code id="currentUrl"></code><br>
+            <strong>Expected Doctor Dashboard:</strong> <code>4Care-Doc.html</code><br>
+            <strong>Expected Logout Redirect:</strong> <code>/4care/Staff-Login/Staff-Login.html</code>
+        </div>
+        
+        <h2>🧪 Test Options:</h2>
+        
+        <a href="4Care-Doc.html" class="test-button">
+            🏥 Go to Doctor Dashboard
+        </a>
+        
+        <a href="../Staff-Login/Staff-Login.html" class="test-button">
+            🔐 Go to Staff Login
+        </a>
+        
+        <a href="logout_test.html" class="test-button">
+            🚪 Test Logout Functionality
+        </a>
+        
+        <div class="status warning">
+            <strong>⚠️ Important Notes:</strong><br>
+            • Make sure XAMPP is running<br>
+            • Ensure the database is properly set up<br>
+            • Check that all PHP files are accessible<br>
+            • Verify session management is working
+        </div>
+        
+        <div class="status success">
+            <strong>✅ Fixed Issues:</strong><br>
+            • Logout now redirects to Staff-Login page<br>
+            • Session data is properly cleared<br>
+            • All logout implementations are consistent<br>
+            • Created redirect page for wrong URLs
+        </div>
+        
+        <h2>🔍 Troubleshooting:</h2>
+        <div class="status info">
+            <strong>If you get 404 errors:</strong><br>
+            1. Check that XAMPP Apache is running<br>
+            2. Verify files are in the correct directory<br>
+            3. Make sure the URL path is correct<br>
+            4. Check browser console for JavaScript errors
+        </div>
+        
+        <div class="status info">
+            <strong>If logout doesn't work:</strong><br>
+            1. Check browser console for errors<br>
+            2. Verify JavaScript is enabled<br>
+            3. Test with the logout test page<br>
+            4. Check session management
+        </div>
+    </div>
+
+    <script>
+        // Show current URL
+        document.getElementById('currentUrl').textContent = window.location.href;
+        
+        // Check if we're on the right page
+        if (window.location.pathname.includes('4Care-Page.html')) {
+            document.body.innerHTML = `
+                <div class="test-container">
+                    <div class="status warning">
+                        <strong>⚠️ Wrong URL Detected!</strong><br>
+                        You're trying to access <code>4Care-Page.html</code> which doesn't exist.<br>
+                        Redirecting to the correct doctor dashboard...
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                window.location.href = '4Care-Doc.html';
+            }, 2000);
+        }
+        
+        // Test session functionality
+        function testSession() {
+            try {
+                sessionStorage.setItem('test', 'value');
+                const testValue = sessionStorage.getItem('test');
+                sessionStorage.removeItem('test');
+                
+                if (testValue === 'value') {
+                    console.log('✅ Session storage is working');
+                } else {
+                    console.log('❌ Session storage issue');
+                }
+            } catch (e) {
+                console.log('❌ Session storage error:', e);
+            }
+        }
+        
+        // Run session test on load
+        testSession();
+    </script>
+</body>
+</html>

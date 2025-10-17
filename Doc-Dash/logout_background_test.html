@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Logout Background Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            display: flex; 
+            min-height: 100vh;
+            background-color: rgba(212, 209, 209, 0.1);
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Ensure background stays visible when modal is active */
+        body.modal-active {
+            background-color: rgba(212, 209, 209, 0.1) !important;
+            background-attachment: fixed !important;
+            background-image: none !important;
+        }
+        
+        .test-container {
+            flex: 1;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .test-button {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px;
+            transition: background 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #1557b0;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(2px);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        
+        .modal-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 0;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Doctor Logout Background Test</h1>
+        <p>This page tests if the background stays visible when the logout modal is open.</p>
+        
+        <div class="status info">
+            <strong>Test Instructions:</strong><br>
+            1. Click "Test Logout Modal" below<br>
+            2. Check if the background remains visible behind the modal<br>
+            3. The background should stay the same gray color as before
+        </div>
+        
+        <button class="test-button" onclick="openLogoutModal()">
+            🚪 Test Logout Modal
+        </button>
+        
+        <div class="status success">
+            <strong>✅ Expected Result:</strong><br>
+            When the modal opens, you should still see the gray background behind it, just like in the admin dashboard.
+        </div>
+        
+        <div id="testResults"></div>
+    </div>
+    
+    <!-- Logout Modal -->
+    <div class="modal-overlay" id="logoutModalOverlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Confirm Logout</h2>
+                <button onclick="closeLogoutModal()" style="background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size: 50px; color: #1a73e8; margin-bottom: 20px;">🚪</div>
+                <p>Are you sure you want to log out?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeLogoutModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmLogout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLogoutModal() {
+            const modal = document.getElementById('logoutModalOverlay');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-active');
+            
+            // Show test result
+            document.getElementById('testResults').innerHTML = `
+                <div class="status info">
+                    <strong>Modal Opened!</strong><br>
+                    Check if the background is still visible behind the modal.<br>
+                    Body classes: <code>${document.body.className}</code>
+                </div>
+            `;
+        }
+        
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModalOverlay');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            document.body.classList.remove('modal-active');
+            
+            document.getElementById('testResults').innerHTML = `
+                <div class="status success">
+                    <strong>Modal Closed!</strong><br>
+                    Background should be back to normal.
+                </div>
+            `;
+        }
+        
+        function confirmLogout() {
+            document.getElementById('testResults').innerHTML = `
+                <div class="status success">
+                    <strong>Logout Confirmed!</strong><br>
+                    This would normally redirect to the Staff-Login page.
+                </div>
+            `;
+            
+            setTimeout(() => {
+                closeLogoutModal();
+            }, 2000);
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('logoutModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLogoutModal();
+            }
+        });
+        
+        // Show initial status
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('testResults').innerHTML = `
+                <div class="status info">
+                    <strong>Ready to Test!</strong><br>
+                    Current body classes: <code>${document.body.className}</code><br>
+                    Background color: <code>rgba(212, 209, 209, 0.1)</code>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

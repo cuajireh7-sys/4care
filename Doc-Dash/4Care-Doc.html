@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>4Care | Doctor</title>
+    <link rel="icon" type="image/x-icon" href="../4CARE LOGO.png">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="4Care-Doc.css?v=<?php echo time(); ?>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Force toggle switch colors with maximum specificity */
+        .status-toggle .switch.modern input:not(:checked) + .slider {
+            background-color: #ccc !important;
+        }
+        .status-toggle .switch.modern input:checked + .slider {
+            background-color: #34a853 !important;
+        }
+        .status-toggle input:not(:checked) + .slider {
+            background-color: #ccc !important;
+        }
+        .status-toggle input:checked + .slider {
+            background-color: #34a853 !important;
+        }
+        
+        /* Target specific toggle IDs */
+        #dashboardStatusToggleSwitch:not(:checked) + .slider {
+            background-color: #ccc !important;
+        }
+        #dashboardStatusToggleSwitch:checked + .slider {
+            background-color: #34a853 !important;
+        }
+        #statusToggleSwitch:not(:checked) + .slider {
+            background-color: #ccc !important;
+        }
+        #statusToggleSwitch:checked + .slider {
+            background-color: #34a853 !important;
+        }
+        
+        /* Force all sliders to gray by default */
+        .slider {
+            background-color: #ccc !important;
+        }
+        
+        /* Only make green when explicitly checked */
+        input:checked + .slider {
+            background-color: #34a853 !important;
+        }
+        
+        /* Nuclear option - force all unchecked toggles to gray */
+        input[type="checkbox"]:not(:checked) + .slider,
+        input[type="checkbox"]:not(:checked) + span.slider,
+        .switch input:not(:checked) + .slider,
+        .status-toggle input:not(:checked) + .slider {
+            background-color: #ccc !important;
+            background: #ccc !important;
+        }
+        
+        /* Force checked toggles to green */
+        input[type="checkbox"]:checked + .slider,
+        input[type="checkbox"]:checked + span.slider,
+        .switch input:checked + .slider,
+        .status-toggle input:checked + .slider {
+            background-color: #34a853 !important;
+            background: #34a853 !important;
+        }
+
+    </style>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet'/>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+    <script>
+        // Immediate fix for toggle colors - runs as soon as possible
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, fixing toggle colors immediately...');
+            
+            function fixToggleColorsNow() {
+                const allSliders = document.querySelectorAll('.slider');
+                console.log('Found sliders:', allSliders.length);
+                
+                allSliders.forEach((slider, index) => {
+                    const toggle = slider.previousElementSibling;
+                    if (toggle && toggle.type === 'checkbox') {
+                        console.log(`Slider ${index}: toggle checked = ${toggle.checked}`);
+                        
+                        if (toggle.checked) {
+                            slider.style.setProperty('background-color', '#34a853', 'important');
+                            console.log(`Set slider ${index} to GREEN`);
+                        } else {
+                            slider.style.setProperty('background-color', '#ccc', 'important');
+                            console.log(`Set slider ${index} to GRAY`);
+                        }
+                    }
+                });
+                
+                // Also update status badges
+                updateStatusBadgesNow();
+            }
+            
+            function updateStatusBadgesNow() {
+                console.log('Updating status badges immediately...');
+                
+                // Get the current status from the dashboard toggle
+                const dashboardToggle = document.getElementById('dashboardStatusToggleSwitch');
+                const profileToggle = document.getElementById('statusToggleSwitch');
+                
+                // Get the status badges
+                const dashboardBadge = document.getElementById('dashboardOnlineStatus');
+                const profileBadge = document.getElementById('profileOnlineStatus');
+                
+                // Determine current status (prefer dashboard toggle if available)
+                let isOnline = false;
+                if (dashboardToggle) {
+                    isOnline = dashboardToggle.checked;
+                } else if (profileToggle) {
+                    isOnline = profileToggle.checked;
+                }
+                
+                console.log('Current status is online:', isOnline);
+                
+                // Update dashboard badge
+                if (dashboardBadge) {
+                    if (isOnline) {
+                        dashboardBadge.textContent = 'Online';
+                        dashboardBadge.className = 'online-status online';
+                        console.log('Set dashboard badge to Online');
+                    } else {
+                        dashboardBadge.textContent = 'Offline';
+                        dashboardBadge.className = 'online-status offline';
+                        console.log('Set dashboard badge to Offline');
+                    }
+                }
+                
+                // Update profile badge
+                if (profileBadge) {
+                    if (isOnline) {
+                        profileBadge.textContent = 'Online';
+                        profileBadge.className = 'online-status online';
+                        console.log('Set profile badge to Online');
+                    } else {
+                        profileBadge.textContent = 'Offline';
+                        profileBadge.className = 'online-status offline';
+                        console.log('Set profile badge to Offline');
+                    }
+                }
+            }
+            
+            // Run immediately
+            fixToggleColorsNow();
+            
+            // Run again after a short delay
+            setTimeout(fixToggleColorsNow, 100);
+            setTimeout(fixToggleColorsNow, 500);
+            setTimeout(fixToggleColorsNow, 1000);
+        });
+    </script>
+
+<body>
+    <div class="nav-container">
+        <div class="logo-container">
+            <div>
+                <div class="title-name">4Care</div>
+                <div class="title-below">F. Legarda Health Center</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navi-container">
+        <div class="nav-menu">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <i class="fas fa-home"></i> <span data-translate="dashboard">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="doctor-schedules">
+                <i class="fas fa-user-clock"></i> <span data-translate="doctorSchedules">Doctor Schedules</span>
+            </a>
+            <a href="#" class="nav-item" data-section="patients">
+                <i class="fas fa-users"></i> <span data-translate="patients">Patients</span>
+            </a>
+            <a href="#" class="nav-item" data-section="forms">
+                <i class="fa-solid fa-file"></i> <span data="translate="forms">Forms </span>
+            </a>
+            <a href="#" class="nav-item" data-section="new-patient-registration">
+                <i class="fas fa-user-plus"></i> <span data-translate="newPatient">New Patient</span>
+            </a>
+            <a href="#" class="nav-item" data-section="upload-prescription">
+                <i class="fas fa-file-upload"></i> <span data-translate="uploadPrescription">Upload Prescription</span>
+            </a>
+            <a href="#" class="nav-item" data-section="inventory">
+                <i class="fas fa-boxes"></i> <span data-translate="inventory">Inventory</span>
+            </a>
+            <a href="#" class="nav-item" data-section="profile">
+                <i class="fas fa-user-circle"></i> <span data-translate="profile">Profile</span>
+            </a>
+        </div>
+
+        <div class="nav-footer">
+            <a href="#" class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i> <span data-translate="settings">Settings</span>
+            </a>
+            <a href="#" class="nav-item" id="logoutButton">
+                <i class="fas fa-sign-out-alt"></i> <span data-translate="logout">Logout</span>
+            </a>
+        </div>
+    </div> 
+
+    
+    <div class="modal-overlay" id="logoutModalOverlay">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Confirm Logout</h2>
+                    <button id="closeLogoutModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <i class="fas fa-sign-out-alt" style="font-size: 50px; color: #1a73e8; margin-bottom: 20px;"></i>
+                    <p style="font-size: 16px; margin-bottom: 25px;">Are you sure you want to log out?</p>
+                    <div class="form-actions" style="justify-content: center;">
+                        <button type="button" id="cancelLogout" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="button" id="confirmLogout" class="btn-primary-modal">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-section active" id="dashboard-section">
+
+            <div class="card-row">
+                <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                    <h3>Patient this Month</h3>
+                    <p id="doctorPatientsThisMonth">24</p>
+                </div>
+
+                <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                    <h3>Registered Patient</h3>
+                    <p id="doctorRegisteredPatients">156</p>
+                </div>
+
+                <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                    <h3>New Records</h3>
+                     <p>10</p>
+                </div>
+            </div>
+            
+
+            <div class="dashboard-card hero-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.1), rgba(52, 168, 83, 0.1)); border-left: 5px solid #1a73e8;">
+                <div class="doctor-profile-container">
+                    <div class="doctor-profile-image">
+                        <img id="loggedInDoctorImage" src="https://st2.depositphotos.com/1006318/5909/v/450/depositphotos_59095203-stock-illustration-medical-doctor-profile.jpg" alt="Logged-in Doctor">
+                        <div class="online-status" id="dashboardOnlineStatus">Offline</div>
+                    </div>
+                    <div class="doctor-profile-info">
+                        <h2 id="loggedInDoctorName">Loading…</h2>
+                        <p class="specialization" id="loggedInDoctorPosition"></p>
+                        <p class="email" id="loggedInDoctorEmail"></p>
+                        <div class="status-toggle">
+                            <span>Hospital Status: <strong id="dashboardHospitalStatusText">Offline</strong></span>
+                            <label class="switch modern">
+                                <input type="checkbox" id="dashboardStatusToggleSwitch">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card" style="width: 95%; margin-right: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Follow-Ups</h2>
+                    <button class="btn btn-primary" id="addFollowUpBtn"><i class="fas fa-calendar-plus" style="margin-right:6px;"></i>Add Follow-Up</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="followUpsTable">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Patient Name</th>
+                                <th>Details</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="followUpsTableBody">
+                            <!-- Populated by dashboard.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Follow-Up Modal -->
+        <div class="modal-overlay" id="addFollowUpModalOverlay">
+            <div class="modal-container" style="max-width: 600px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Add Follow-Up</h2>
+                        <button id="closeAddFollowUpModalBtn" class="close-modal-btn-new"><i class="fas fa-times"></i></button>
+                    </div>
+                    <form id="addFollowUpForm" class="patient-form">
+                        <input type="hidden" id="followUpIndex" value="">
+                        <input type="hidden" id="followUpId" value="">
+                        <div class="form-section">
+                            <h3 class="form-section-title"><i class="fas fa-user"></i>Select Patient</h3>
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group">
+                                    <label for="followUpPatientId" class="form-label">Patient ID *</label>
+                                    <select id="followUpPatientId" class="input-field" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="followUpPatientName" class="form-label">Patient Name</label>
+                                    <input type="text" id="followUpPatientName" class="input-field" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="followUpPatientEmail" class="form-label">Patient Email (from signup)</label>
+                                    <select id="followUpPatientEmail" class="input-field"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="followUpDoctorId" class="form-label">Doctor *</label>
+                                    <select id="followUpDoctorId" class="input-field" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3 class="form-section-title"><i class="fas fa-notes-medical"></i>Follow-Up Details</h3>
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group">
+                                    <label for="followUpDetails" class="form-label">Details *</label>
+                                    <textarea id="followUpDetails" class="input-field" rows="3" required placeholder="Reason / instructions"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="followUpDate" class="form-label">Date *</label>
+                                    <input type="date" id="followUpDate" class="input-field" required>
+                                </div>
+                                <input type="hidden" id="followUpStatus" value="Pending">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="cancelAddFollowUpBtn">Cancel</button>
+                            <button type="submit" class="btn-primary-modal" id="saveFollowUpBtn">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+            <div class="modal-overlay" id="viewEditPatientModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new" id="viewEditModalTitle">View Patient Details</h2>
+                    <button id="closeViewEditModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="viewEditPatientForm" class="patient-form">
+                    <input type="hidden" id="viewEditPatientId">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-circle"></i>
+                            Personal Information
+                        </h3>
+                        
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="viewEditFirstName" class="form-label">First Name *</label>
+                                <input type="text" id="viewEditFirstName" name="firstName" required 
+                                    class="input-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditLastName" class="form-label">Last Name *</label>
+                                <input type="text" id="viewEditLastName" name="lastName" required 
+                                    class="input-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditDob" class="form-label">Date of Birth *</label>
+                                <input type="date" id="viewEditDob" name="dob" required 
+                                    class="input-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditGender" class="form-label">Gender *</label>
+                                <select id="viewEditGender" name="gender" required 
+                                    class="input-field" disabled>
+                                    <option value="">Select Gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="O">Other</option>
+                                    <option value="N">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-address-book"></i>
+                            Contact Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="viewEditEmail" class="form-label">Email Address</label>
+                                <input type="email" id="viewEditEmail" name="email" 
+                                    class="input-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditPhone" class="form-label">Phone Number</label>
+                                <input type="tel" id="viewEditPhone" name="phone" required 
+                                    class="input-field" readonly
+                                    pattern="[0-9]{10,15}">
+                                <p class="input-hint">Format: 1234567890 (10-15 digits)</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditAddress" class="form-label">Address</label>
+                                <textarea id="viewEditAddress" name="address" rows="2" required 
+                                    class="input-field" readonly></textarea>
+                            </div>
+                            
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group">
+                                    <label for="viewEditCity" class="form-label">City</label>
+                                    <input type="text" id="viewEditCity" name="city" required 
+                                        class="input-field" readonly>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="viewEditZipCode" class="form-label">Zip/Postal Code</label>
+                                    <input type="text" id="viewEditZipCode" name="zipCode" required 
+                                        class="input-field" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditCountry" class="form-label">Country</label>
+                                <select id="viewEditCountry" name="country" required 
+                                    class="input-field" disabled>
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="IN">India</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="PH">Philippines</option>
+                                    <option value="oth">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-heartbeat"></i>
+                            Medical Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="viewEditBloodType" class="form-label">Blood Type</label>
+                                <select id="viewEditBloodType" name="bloodType" 
+                                    class="input-field" disabled>
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditAllergies" class="form-label">Allergies</label>
+                                <textarea id="viewEditAllergies" name="allergies" rows="2" 
+                                    class="input-field" readonly
+                                    placeholder="List any known allergies"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditConditions" class="form-label">Medical Conditions</label>
+                                <textarea id="viewEditConditions" name="conditions" rows="2" 
+                                    class="input-field" readonly
+                                    placeholder="List any existing medical conditions"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditMedications" class="form-label">Current Medications</label>
+                                <textarea id="viewEditMedications" name="medications" rows="2" 
+                                    class="input-field" readonly
+                                    placeholder="List current medications"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Emergency Contact
+                        </h3>
+                        
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="viewEditEmergencyName" class="form-label">Name</label>
+                                <input type="text" id="viewEditEmergencyName" name="emergencyName" required 
+                                    class="input-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditEmergencyRelationship" class="form-label">Relationship</label>
+                                <input type="text" id="viewEditEmergencyRelationship" name="emergencyRelationship" required 
+                                    class="input-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="viewEditEmergencyPhone" class="form-label">Phone Number</label>
+                                <input type="tel" id="viewEditEmergencyPhone" name="emergencyPhone" required 
+                                    class="input-field" readonly
+                                    pattern="[0-9]{10,15}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="editPatientDetailsBtn" class="btn-secondary">
+                            <i class="fas fa-edit"></i> Edit Details
+                        </button>
+                        <button type="submit" id="savePatientDetailsBtn" class="btn-primary-modal" style="display: none;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== FORMS SECTION ===================== -->
+
+
+<!-- Removed broken includes: forms.js/forms.css (handled by additional.js and 4Care-Doc.css) -->
+<div class="content-section" id="forms-section">
+
+     <!-- Form Buttons -->
+   <button class="btn btn-primary form-btn" data-form="pediatric">Pediatric Record Form</button>
+   <button class="btn btn-primary form-btn" data-form="children">Record for Children Form</button>
+   <button class="btn btn-primary form-btn" data-form="ncd">Integrated NCD Risk Management Form</button>
+   <button class="btn btn-primary form-btn" data-form="heeadsss">HEEADSSS Health Assessment Form</button>
+   <!-- Form Container -->
+ <div id="form-container" class="dashboard-card" style="display: none;">
+   <h1 class="section-title">Patient Record Forms</h1>
+   <div class="form-group" style="max-width: 400px;">
+     <label for="searchPatientInput" class="form-label">Search Patient Name</label>
+     <input type="text" id="searchPatientInput" class="input-field" placeholder="Enter patient name...">
+   </div>
+
+   <div id="patientResults" style="margin-top: 10px;"></div>
+
+   <div id="patientInfo" style="display: none; margin-top: 20px;">
+     <h3 class="form-section-title"><i class="fas fa-user-circle"></i> Personal Information</h3>
+     <p><strong>Name:</strong> <span id="selectedPatientName"></span></p>
+     <p><strong>Age:</strong> <span id="selectedPatientAge"></span></p>
+     <p><strong>Gender:</strong> <span id="selectedPatientGender"></span></p>
+     <p><strong>Barangay:</strong> <span id="selectedPatientBarangay"></span></p>
+
+     <div style="margin-top: 12px;">
+       <button id="loadPreviousBtn" class="btn" style="display: none; margin-right: 8px;">Load previous form</button>
+       <button id="clearSavedBtn" class="btn" style="display: none;">Clear saved</button>
+     </div>
+
+     <hr style="margin: 15px 0;">
+     <div id="specificFormContainer"></div>
+   </div>
+ </div>
+ 
+ 
+
+
+</div>
+
+        <div class="content-section" id="new-patient-registration-section">
+                <h1 class="section-title">New Patient Registration</h1>
+            <div class="dashboard-card" style="width: 95%; margin-right: 0;">
+                <form id="newPatientForm" class="patient-form" action="Back-end/api/save-patient.php" method="POST">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-circle"></i>
+                            Personal Information
+                        </h3>
+                        
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group" style="--order: 1">
+                                <label class="form-label">Patient ID</label>
+                                <input type="text" id="newPatientVisibleId" class="input-field no-voice" value="#00000" readonly>
+                            </div>
+
+                            <div class="form-group" style="--order: 1">
+                                <label for="newPatientFirstName" class="form-label">First Name *</label>
+                                <input type="text" id="newPatientFirstName" name="firstName" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 2">
+                                <label for="newPatientLastName" class="form-label">Last Name *</label>
+                                <input type="text" id="newPatientLastName" name="lastName" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 3">
+                                <label for="newPatientDob" class="form-label">Date of Birth *</label>
+                                <input type="date" id="newPatientDob" name="dob" required 
+                                    class="input-field no-voice">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 4">
+                                <label for="newPatientGender" class="form-label">Gender *</label>
+                                <select id="newPatientGender" name="gender" required 
+                                    class="input-field">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    <option value="Prefer not to say">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-address-book"></i>
+                            Contact Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group" style="--order: 5">
+                                <label for="newPatientEmail" class="form-label">Email Address</label>
+                                <input type="email" id="newPatientEmail" name="email" 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group" style="--order: 6">
+                                    <label for="newPatientPhone" class="form-label">Phone Number *</label>
+                                    <input type="tel" id="newPatientPhone" name="phone" required 
+                                        class="input-field" placeholder="09XX-XXX-XXXX"
+                                        pattern="[0-9]{11}">
+                                    <p class="input-hint">Format: 09XX-XXX-XXXX</p>
+                                </div>
+                                
+                                <div class="form-group" style="--order: 7">
+                                    <label for="newPatientBarangay" class="form-label">Barangay *</label>
+                                    <select id="newPatientBarangay" name="barangay" required 
+                                        class="input-field">
+                                        <option value="">Select Barangay</option>
+                                        <option value="545">545</option>
+                                        <option value="546">546</option>
+                                        <option value="547">547</option>
+                                        <option value="548">548</option>
+                                        <option value="549">549</option>
+                                        <option value="550">550</option>
+                                        <option value="551">551</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 8">
+                                <label for="newPatientAddress" class="form-label">Address *</label>
+                                <textarea id="newPatientAddress" name="address" rows="2" required 
+                                    class="input-field"></textarea>
+                            </div>
+                            
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group" style="--order: 9">
+                                    <label for="newPatientCity" class="form-label">City *</label>
+                                    <input type="text" id="newPatientCity" name="city" required 
+                                        class="input-field">
+                                </div>
+                                
+                                <div class="form-group" style="--order: 10">
+                                    <label for="newPatientZipCode" class="form-label">Zip/Postal Code *</label>
+                                    <input type="text" id="newPatientZipCode" name="zipCode" required 
+                                        class="input-field">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-heartbeat"></i>
+                            Medical Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group" style="--order: 11">
+                                <label for="newPatientBloodType" class="form-label">Blood Type</label>
+                                <select id="newPatientBloodType" name="bloodType" 
+                                    class="input-field">
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 12">
+                                <label for="newPatientAllergies" class="form-label">Allergies</label>
+                                <textarea id="newPatientAllergies" name="allergies" rows="2" 
+                                    class="input-field"
+                                    placeholder="List any known allergies"></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 13">
+                                <label for="newPatientConditions" class="form-label">Medical Conditions</label>
+                                <textarea id="newPatientConditions" name="conditions" rows="2" 
+                                    class="input-field"
+                                    placeholder="List any existing medical conditions"></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 14">
+                                <label for="newPatientMedications" class="form-label">Current Medications</label>
+                                <textarea id="newPatientMedications" name="medications" rows="2" 
+                                    class="input-field"
+                                    placeholder="List current medications"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Emergency Contact
+                        </h3>
+                        
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group" style="--order: 15">
+                                <label for="newPatientEmergencyName" class="form-label">Name *</label>
+                                <input type="text" id="newPatientEmergencyName" name="emergencyName" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 16">
+                                <label for="newPatientEmergencyRelationship" class="form-label">Relationship *</label>
+                                <input type="text" id="newPatientEmergencyRelationship" name="emergencyRelationship" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 17">
+                                <label for="newPatientEmergencyPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" id="newPatientEmergencyPhone" name="emergencyPhone" required 
+                                    class="input-field"
+                                    pattern="[0-9]{10,15}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="reset" class="btn-secondary">
+                            Clear Form
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save New Patient
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="content-section" id="upload-prescription-section">
+
+            <h1 class="section-title">Prescription</h1>
+                            <iframe id="doctorDashboardIframe" class="doc-calendar" src="Prescription/prescription.html"></iframe>
+                </div>
+
+            
+
+        <!-- File View Modal - Matching Patient Dashboard Style -->
+        <div id="fileViewModal" class="modal">
+            <div class="appointment-details-modal-content">
+                <div class="flex justify-end">
+                    <button id="closeFileViewModalBtn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <h2 id="fileViewModalTitle">View Prescription</h2>
+                <div id="fileContent" class="mt-4 text-center">
+                    <!-- Content will be loaded here (e.g., an image or PDF iframe) -->
+                    <p class="text-gray-600">Loading file...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Send Prescription Modal -->
+        <div id="sendPrescriptionModal" class="modal">
+            <div class="appointment-details-modal-content">
+                <div class="flex justify-end">
+                    <button id="closeSendPrescriptionModalBtn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <h2>Send Prescription to Patient</h2>
+                <div class="mt-4">
+                    <div class="mb-4">
+                        <p><strong>Patient:</strong><span id="sendPatientName"></span></p>
+                        <p><strong>Current Email:</strong><span id="sendCurrentEmail"></span></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="sendPrescriptionEmail" class="form-label">Select Patient Email *</label>
+                        <select id="sendPrescriptionEmail" class="input-field" required>
+                            <option value="">-- Select Patient Email --</option>
+                            <!-- Email options will be populated here -->
+                        </select>
+                        <p class="input-hint">Choose the email address to send the prescription to</p>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelSendPrescriptionBtn" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="button" id="confirmSendPrescriptionBtn" class="btn-primary-modal">
+                            <i class="fas fa-paper-plane" style="margin-right: 5px;"></i>
+                            Send Prescription
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sent Prescription Modal -->
+        <div id="sentPrescriptionModal" class="modal">
+            <div class="appointment-details-modal-content">
+                <div class="flex justify-end">
+                    <button id="closeSentPrescriptionModalBtn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <h2>Prescription Sent</h2>
+                <div class="mt-4">
+                    <div class="mb-4 text-center">
+                        <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+                        <p><strong>Patient:</strong> <span id="sentPatientName"></span></p>
+                        <p><strong>Sent to:</strong> <span id="sentToEmail"></span></p>
+                        <p class="text-green-600 mt-4">✓ Prescription has been successfully sent to the patient's account</p>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="closeSentPrescriptionBtn" class="btn-primary-modal">
+                            <i class="fas fa-check" style="margin-right: 5px;"></i>
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="appointments-section">
+            <div class="dashboard-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 5;">Appointment Calendar & Doctors on Duty</h2>
+                    <button class="btn btn-primary" id="addDoctorScheduleBtn">
+                        <i class="fas fa-plus"></i> Schedule a Doctor
+                    </button>
+                </div>
+                <div class="calendar-and-doctors-container">
+                    <!-- Custom calendar for appointments -->
+                    <div class="calendar-container">
+                        <div id="appointments-calendar-container">
+                            <div class="calendar-header">
+                                <button id="appointmentsPrevMonth"><i class="fas fa-chevron-left"></i></button>
+                                <span id="appointmentsCurrentMonthYear"></span>
+                                <button id="appointmentsNextMonth"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-weekdays">
+                                <div>Sun</div>
+                                <div>Mon</div>
+                                <div>Tue</div>
+                                <div>Wed</div>
+                                <div>Thu</div>
+                                <div>Fri</div>
+                                <div>Sat</div>
+                            </div>
+                            <div class="calendar-dates" id="appointmentsCalendarDates">
+                                <!-- Dates will be dynamically generated here -->
+                            </div>
+                            <!-- Replaced current time with time buttons -->
+                            <div class="time-slots" id="appointmentTimeSlots">
+                                <button class="time-btn">07:00</button>
+                                <button class="time-btn">08:00</button>
+                                <button class="time-btn">09:00</button>
+                                <button class="time-btn">10:00</button>
+                                <button class="time-btn">11:00</button>
+                                <button class="time-btn">12:00</button>
+                                <!-- Add more time buttons as needed -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doctors on Duty Card -->
+                    <div class="doctors-on-duty-card">
+                        <h3>Doctors on Duty Today</h3>
+                        <div class="doctors-on-duty-list">
+                            <ul>
+                                <li><strong>Dr. Smith</strong> - General Medicine (8:00 AM - 5:00 PM)</li>
+                                <li><strong>Dr. Johnson</strong> - Pediatrics (9:00 AM - 6:00 PM)</li>
+                                <li><strong>Dr. Williams</strong> - Emergency (24/7)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Overview Table -->
+            <div class="table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Appointment Overview</h2>
+                    <button class="btn btn-primary" id="viewAllAppointmentsBtn">
+                        <i class="fas fa-eye"></i> View All Appointments
+                    </button>
+                </div>
+                <table class="data-table" id="appointmentOverviewTable">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Appointment Type</th>
+                            <th>Patient Name</th>
+                            <th>Assigned Doctor</th>
+                            <th>Approved By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Appointments will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-section" id="doctor-schedules-section">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:40px;margin-bottom: -80px;">
+            </div>
+            <iframe id="doctorDashboardIframe" class="doc-calendar" src="Doctor-Calendar.html"></iframe>
+        </div>
+
+        <div class="modal-overlay" id="doctorAppointmentModalOverlay">
+            <div class="modal-container" style="max-width: 600px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Doctor Appointment Details</h2>
+                        <button id="closeDoctorAppointmentModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label"><strong>Date:</strong></label>
+                            <p id="doctorApptDate"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Time Slot:</strong></label>
+                            <p id="doctorApptTimeSlot"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Patient:</strong></label>
+                            <p id="doctorApptPatient"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Issue:</strong></label>
+                            <p id="doctorApptIssue"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="closeDoctorAppointmentModalFooterBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="patients-section">
+            <div class="patients-content-container">
+                <div class="patients-list-column">
+                    <h3>All Patients</h3>
+                    <div class="search-bar-container">
+                        <input type="text" id="patientSearchInput" placeholder="Search patients...">
+                        <i class="fas fa-search search-icon" id="patientSearchIcon"></i>
+                    </div>
+                    <div class="patient-card-grid" id="patientCardGrid">
+                    </div>
+                </div>
+
+                <div class="patient-details-column" id="patientDetailsColumn" style="display: none;">
+                    <h2 class="section-title" id="patientDetailsTitle">Patient Details</h2>
+                    <div class="patient-profile-details form-grid md-cols-2" id="patientProfileDetails">
+                        <div class="detail-item">
+                            <strong>Full Name:</strong>
+                            <p id="patientDetailName"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Date of Birth:</strong>
+                            <p id="patientDetailDob"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Gender:</strong>
+                            <p id="patientDetailGender"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Email:</strong>
+                            <p id="patientDetailEmail"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Phone:</strong>
+                            <p id="patientDetailPhone"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Address:</strong>
+                            <p id="patientDetailAddress"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Barangay:</strong>
+                            <p id="patientDetailBarangay"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Blood Type:</strong>
+                            <p id="patientDetailBloodType"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Allergies:</strong>
+                            <p id="patientDetailAllergies"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Medical Conditions:</strong>
+                            <p id="patientDetailConditions"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Current Medications:</strong>
+                            <p id="patientDetailMedications"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Emergency Contact Name:</strong>
+                            <p id="patientDetailEmergencyName"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Emergency Contact Relationship:</strong>
+                            <p id="patientDetailEmergencyRelationship"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Emergency Contact Phone:</strong>
+                            <p id="patientDetailEmergencyPhone"></p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Separate Health Timeline Container -->
+            <div class="health-timeline-container" id="healthTimelineContainer" style="display: none;">
+                <h2 class="section-title">Health Timeline</h2>
+                <div class="health-timeline-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="timeline-event">Type of Checkup</label>
+                            <select id="timeline-event" class="input-field">
+                                <option value="">-- Select Type --</option>
+                                <option>Consultation</option>
+                                <option>Dental</option>
+                                <option>Immunization</option>
+                                <option>Animal Bite Treatment</option>
+                                <option>TB Prevention & Treatment</option>
+                                <option>Post Partrum / Newborn</option>
+                                <option>Covid Vaccination</option>
+                                <option>Milk Letting</option>
+                                <option>Provision of Essential Medicines</option>
+                                <option>Risk Assessment & WHODAS</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeline-doctor">Doctor</label>
+                            <select id="timeline-doctor" class="input-field">
+                                <option value="">-- Select Doctor --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeline-date">Date</label>
+                            <input type="date" id="timeline-date" class="input-field">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeline-description">Description</label>
+                            <textarea id="timeline-description" class="input-field" rows="2" placeholder="Enter description"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="saveTimelineBtn">
+                        <i class="fas fa-save"></i> Save Timeline
+                    </button>
+                </div>
+                
+                <!-- Health Timeline Display -->
+                <div class="health-timeline-display">
+                    <h4>Health Timeline</h4>
+                    <ul id="patientDetailHealthTimeline" class="health-timeline-list"></ul>
+                </div>
+
+                <!-- Prescriptions Display -->
+                <div class="prescriptions-display" style="margin-top: 20px;">
+                    <h4><i class="fas fa-prescription-bottle-alt"></i> Prescriptions</h4>
+                    <div id="patientDetailPrescriptions" class="prescriptions-container">
+                        <!-- Prescriptions will be loaded here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content-section" id="inventory-section">
+            <div class="dashboard-card">
+                <div class="card-row">
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                        <h3>Total Items</h3>
+                        <p id="docInvTotalItems">56</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                        <h3>Low Stock Items</h3>
+                        <p id="docInvLowStock">8</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                        <h3>Expiring Soon</h3>
+                        <p id="docInvExpiring">5</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Inventory Items</h2>
+                    <div>
+                        <div class="search-bar-container">
+                            <input type="text" id="inventorySearchInput" placeholder="Search inventory items...">
+                            <i class="fas fa-search search-icon" id="inventorySearchIcon"></i>
+                        </div>
+                    </div>
+                </div>
+                <table class="data-table" id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 42%;">Item Name</th>
+                            <th style="width: 18%;">Quantity</th>
+                            <th style="width: 15%;">Unit</th>
+                            <th style="width: 25%;">Date Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-section" id="profile-section">
+            <h1 class="section-title">My Profile</h1>
+            <div class="profile-section-content">
+                <div class="doctor-profile-container">
+                    <div class="doctor-profile-image">
+                        <img id="profileDoctorImage" src="https://st2.depositphotos.com/1006318/5909/v/450/depositphotos_59095203-stock-illustration-medical-doctor-profile.jpg" alt="Doctor Profile">
+                        <div class="online-status" id="profileOnlineStatus">Offline</div>
+                    </div>
+                    <div class="doctor-profile-info">
+                        <h2 id="profileDoctorName">Dr. Alice Smith</h2>
+                        <p class="specialization" id="profileDoctorPosition">General Medicine</p>
+                        <p class="email" id="profileDoctorEmail">doctor@4care.com</p>
+                        <div class="status-toggle">
+                            <span>Hospital Status: <strong id="hospitalStatusText">Offline</strong></span>
+                            <label class="switch modern">
+                                <input type="checkbox" id="statusToggleSwitch">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-details-grid">
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-id-badge"></i> Employee ID:</strong>
+                        <p id="profileEmployeeId">DOC-001</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-user-md"></i> Specialization:</strong>
+                        <p id="profileSpecialization">General Medicine</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-id-card"></i> License Number:</strong>
+                        <p id="profileLicenseNumber">MD-123456</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-birthday-cake"></i> Date of Birth:</strong>
+                        <p id="profileDob">1980-05-15</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-phone"></i> Phone Number:</strong>
+                        <p id="profilePhone">+1 (555) 123-4567</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-map-marker-alt"></i> Address:</strong>
+                        <p id="profileAddress">123 Health St, Medical City</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-briefcase"></i> Years of Experience:</strong>
+                        <p id="profileExperience">15 Years</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-calendar-alt"></i> Joined Date:</strong>
+                        <p id="profileJoinedDate">2008-09-01</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-graduation-cap"></i> Education:</strong>
+                        <p id="profileEducation">MD, University of Health Sciences</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-hospital"></i> Department:</strong>
+                        <p id="profileDepartment">General Medicine</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-clock"></i> Shift:</strong>
+                        <p id="profileShift">Morning (8 AM - 4 PM)</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-envelope"></i> Email:</strong>
+                        <p id="profileEmail">doctor@4care.com</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-calendar-plus"></i> Account Created:</strong>
+                        <p id="profileCreatedAt">2025-10-13</p>
+                    </div>
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-calendar-check"></i> Last Updated:</strong>
+                        <p id="profileUpdatedAt">2025-10-13</p>
+                    </div>
+                </div>
+                
+                <!-- Additional Details Section -->
+                <div class="profile-details-grid" style="margin-top: 30px;">
+                    <h3 style="grid-column: 1 / -1; margin-bottom: 20px; color: #1a73e8;">Additional Information</h3>
+                    
+                    <!-- Certifications -->
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-certificate"></i> Certifications:</strong>
+                        <div id="profileCertifications">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Emergency Contacts -->
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Emergency Contact:</strong>
+                        <div id="profileEmergencyContacts">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Work History -->
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-briefcase"></i> Current Position:</strong>
+                        <div id="profileCurrentWork">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- All Phone Numbers -->
+                    <div class="profile-detail-item">
+                        <strong><i class="fas fa-phone-alt"></i> All Phone Numbers:</strong>
+                        <div id="profileAllPhones">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="settings-section">
+            <h1 class="section-title">Settings</h1>
+            <div class="settings-section-content">
+                <div class="settings-option">
+                    <h4 class="settings-option-title"><i class="fas fa-bell"></i> Notification Preferences</h4>
+                    <p>Manage how you receive notifications.</p>
+                    <div class="form-group">
+                        <label class="switch modern">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <label for="emailNotifications">Email Notifications</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch modern">
+                            <input type="checkbox" id="smsNotifications">
+                            <span class="slider round"></span>
+                        </label>
+                        <label for="smsNotifications">SMS Notifications</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch modern">
+                            <input type="checkbox" id="pushNotifications" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <label for="pushNotifications">Push Notifications</label>
+                    </div>
+                </div>
+
+                <div class="settings-option">
+                    <h4 class="settings-option-title"><i class="fas fa-lock"></i> Account Security</h4>
+                    <p>Update your password and security settings.</p>
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="password" id="currentPassword" class="input-field" style="padding-right: 38px;">
+                            <button type="button" class="password-toggle" data-target="currentPassword" aria-label="Show password" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none; padding: 0; height: auto; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="password" id="newPassword" class="input-field" style="padding-right: 38px;">
+                            <button type="button" class="password-toggle" data-target="newPassword" aria-label="Show password" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none; padding: 0; height: auto; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password</label>
+                        <div style="position: relative; display: inline-block;">
+                            <input type="password" id="confirmNewPassword" class="input-field" style="padding-right: 38px;">
+                            <button type="button" class="password-toggle" data-target="confirmNewPassword" aria-label="Show password" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: transparent; border: none; box-shadow: none; padding: 0; height: auto; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="updatePasswordBtn">Update Password</button>
+                </div>
+
+
+                <div class="settings-option">
+                    <h4 class="settings-option-title"><i class="fas fa-palette"></i> Theme</h4>
+                    <p>Choose your preferred theme for the application interface.</p>
+                    <div class="form-group">
+                        <label for="themeSelect">Select Theme</label>
+                        <select id="themeSelect" class="input-field" disabled>
+                            <option value="light" selected>Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="system">System Default</option>
+                        </select>
+                        <small class="text-muted">Theme switching is currently disabled</small>
+                    </div>
+                </div>
+
+                <div class="settings-option">
+                    <h4 class="settings-option-title"><i class="fas fa-language"></i> <span data-translate="language">Language</span></h4>
+                    <p data-translate="selectPreferredLanguage">Select your preferred language for the application.</p>
+                    <div class="form-group">
+                        <label for="languageSelect" data-translate="selectLanguage">Select Language</label>
+                        <div class="language-switcher">
+                            <select id="languageSelect" class="input-field">
+                                <option value="en">🇬🇧 English</option>
+                                <option value="es">🇪🇸 Spanish</option>
+                                <option value="fr">🇫🇷 French</option>
+                                <option value="de">🇩🇪 German</option>
+                            </select>
+                        </div>
+                        <div class="language-indicator" id="languageIndicator">
+                            <span class="flag-icon en"></span>
+                            <span id="currentLanguage">English</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right sidebar removed to give full width to forms -->
+
+    
+    <div class="modal-overlay" id="newPatientDetailsModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">New Patient Details</h2>
+                    <button id="closeNewPatientDetailsModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-circle"></i>
+                            Personal Information
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label class="form-label"><strong>Patient Name:</strong></label>
+                                <p id="newPatientName"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Date of Birth:</strong></label>
+                                <p id="newPatientDob"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Gender:</strong></label>
+                                <p id="newPatientGender"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Phone:</strong></label>
+                                <p id="newPatientPhone"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Address:</strong></label>
+                                <p id="newPatientAddress"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Barangay:</strong></label>
+                                <p id="newPatientBarangay"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Blood Type:</strong></label>
+                                <p id="newPatientBloodType"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><strong>Registration Date:</strong></label>
+                                <p id="newPatientRegistrationDate"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer display:none">
+                    <button type="button" class="btn-secondary" id="closeNewPatientDetailsModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="patientModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Add New Patient</h2>
+                    <button id="closePatientModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="patientForm" class="patient-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-circle"></i>
+                            Personal Information
+                        </h3>
+                        
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group" style="--order: 1">
+                                <label for="firstName" class="form-label">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 2">
+                                <label for="lastName" class="form-label">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 3">
+                                <label for="dob" class="form-label">Date of Birth *</label>
+                                <input type="date" id="dob" name="dob" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 4">
+                                <label for="gender" class="form-label">Gender *</label>
+                                <select id="gender" name="gender" required 
+                                    class="input-field">
+                                    <option value="">Select Gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="O">Other</option>
+                                    <option value="N">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-address-book"></i>
+                            Contact Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group" style="--order: 5">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" id="email" name="email" 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 6">
+                                <label for="phone" class="form-label">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" required 
+                                    class="input-field"
+                                    pattern="[0-9]{10,15}">
+                                <p class="input-hint">Format: 1234567890 (10-15 digits)</p>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 7">
+                                <label for="address" class="form-label">Address *</label>
+                                <textarea id="address" name="address" rows="2" required 
+                                    class="input-field"></textarea>
+                            </div>
+                            
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group" style="--order: 8">
+                                    <label for="city" class="form-label">City *</label>
+                                    <input type="text" id="city" name="city" required 
+                                        class="input-field">
+                                </div>
+                                
+                                <div class="form-group" style="--order: 9">
+                                    <label for="zipCode" class="form-label">Zip/Postal Code *</label>
+                                    <input type="text" id="zipCode" name="zipCode" required 
+                                        class="input-field">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 10">
+                                <label for="country" class="form-label">Country *</label>
+                                <select id="country" name="country" required 
+                                    class="input-field">
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="IN">India</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="PH">Philippines</option>
+                                    <option value="oth">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-heartbeat"></i>
+                            Medical Information
+                        </h3>
+                        
+                        <div class="form-grid">
+                            <div class="form-group" style="--order: 11">
+                                <label for="bloodType" class="form-label">Blood Type</label>
+                                <select id="bloodType" name="bloodType" 
+                                    class="input-field">
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 12">
+                                <label for="allergies" class="form-label">Allergies</label>
+                                <textarea id="allergies" name="allergies" rows="2" 
+                                    class="input-field"
+                                    placeholder="List any known allergies"></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 13">
+                                <label for="conditions" class="form-label">Medical Conditions</label>
+                                <textarea id="conditions" name="conditions" rows="2" 
+                                    class="input-field"
+                                    placeholder="List any existing medical conditions"></textarea>
+                            </div>
+                            
+                            <div class="form-group" style="--order: 14">
+                                <label for="medications" class="form-label">Current Medications</label>
+                                <textarea id="medications" name="medications" rows="2" 
+                                    class="input-field"
+                                    placeholder="List current medications"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Emergency Contact
+                        </h3>
+                        
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group" style="--order: 15">
+                                <label for="emergencyName" class="form-label">Name *</label>
+                                <input type="text" id="emergencyName" name="emergencyName" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 16">
+                                <label for="emergencyRelationship" class="form-label">Relationship *</label>
+                                <input type="text" id="emergencyRelationship" name="emergencyRelationship" required 
+                                    class="input-field">
+                            </div>
+                            
+                            <div class="form-group" style="--order: 17">
+                                <label for="emergencyPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" id="emergencyPhone" name="emergencyPhone" required 
+                                    class="input-field"
+                                    pattern="[0-9]{10,15}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancelPatientForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Patient
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    <div class="modal-overlay" id="addInventoryItemModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Add New Inventory Item</h2>
+                    <button id="closeAddInventoryItemModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addInventoryItemForm" class="patient-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-boxes"></i>
+                            Item Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="itemName" class="form-label">Item Name *</label>
+                                <input type="text" id="itemName" name="itemName" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemQuantity" class="form-label">Quantity *</label>
+                                <input type="number" id="itemQuantity" name="itemQuantity" required min="0" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemUnit" class="form-label">Unit *</label>
+                                <input type="text" id="itemUnit" name="itemUnit" placeholder="e.g., Packs, Bottles, Units" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemSupplier" class="form-label">Supplier</label>
+                                <input type="text" id="itemSupplier" name="itemSupplier" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemExpiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" id="itemExpiryDate" name="itemExpiryDate" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemLocation" class="form-label">Storage Location</label>
+                                <input type="text" id="itemLocation" name="itemLocation" class="input-field">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelAddInventoryItemForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editInventoryItemModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Edit Inventory Item</h2>
+                    <button id="closeEditInventoryItemModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="editInventoryItemForm" class="patient-form">
+                    <input type="hidden" id="editItemId" name="itemId">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-boxes"></i>
+                            Item Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="editItemName" class="form-label">Item Name *</label>
+                                <input type="text" id="editItemName" name="itemName" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemQuantity" class="form-label">Quantity *</label>
+                                <input type="number" id="editItemQuantity" name="itemQuantity" required min="0" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemUnit" class="form-label">Unit *</label>
+                                <input type="text" id="editItemUnit" name="itemUnit" placeholder="e.g., Packs, Bottles, Units" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemSupplier" class="form-label">Supplier</label>
+                                <input type="text" id="editItemSupplier" name="itemSupplier" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemExpiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" id="editItemExpiryDate" name="itemExpiryDate" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemLocation" class="form-label">Storage Location</label>
+                                <input type="text" id="editItemLocation" name="itemLocation" class="input-field">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelEditInventoryItemForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-overlay" id="addAppointmentModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Schedule New Appointment</h2>
+                    <button id="closeAddAppointmentModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addAppointmentForm" class="patient-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-calendar-check"></i>
+                            Appointment Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="appointmentPatientName" class="form-label">Patient Name</label>
+                                <input type="text" id="appointmentPatientName" name="appointmentPatientName" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentDoctor" class="form-label">Doctor</label>
+                                <input type="text" id="appointmentDoctor" name="appointmentDoctor" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentDate" class="form-label">Date</label>
+                                <input type="date" id="appointmentDate" name="appointmentDate" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentTime" class="form-label">Time</label>
+                                <input type="time" id="appointmentTime" name="appointmentTime" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentReason" class="form-label">Reason for Visit</label>
+                                <textarea id="appointmentReason" name="appointmentReason" required class="input-field"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentStatus" class="form-label">Status</label>
+                                <select id="appointmentStatus" name="appointmentStatus" required class="input-field">
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentApprovedBy" class="form-label">Assisted By</label>
+                                <input type="text" id="appointmentApprovedBy" name="appointmentApprovedBy" class="input-field">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelAddAppointmentForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Schedule Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="viewAppointmentModalOverlay">
+            <div class="modal-container">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Appointment Details</h2>
+                        <button id="closeViewAppointmentModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-info-circle"></i>
+                                General Information
+                            </h3>
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group">
+                                    <label class="form-label">Date/Time:</label>
+                                    <p id="viewApptDateTime" class="input-field" style="border: none; padding: 0;"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Appointment Type:</label>
+                                    <p id="viewApptType" class="input-field" style="border: none; padding: 0;"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Patient Name:</label>
+                                    <p id="viewApptPatientName" class="input-field" style="border: none; padding: 0;"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Assigned Doctor:</label>
+                                    <p id="viewApptDoctor" class="input-field" style="border: none; padding: 0;"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Approved By:</label>
+                                    <p id="viewApptApprovedBy" class="input-field" style="border: none; padding: 0;"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Status:</label>
+                                    <p id="viewApptStatus" class="input-field" style="border: none; padding: 0;"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-notes-medical"></i>
+                                Reason for Visit
+                            </h3>
+                            <div class="form-group">
+                                <p id="viewApptReason" class="input-field" style="border: none; padding: 0;"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer form-actions">
+                        <button type="button" class="btn-secondary" id="closeViewAppointmentModalFooterBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="doctorAppointmentModalOverlay">
+            <div class="modal-container" style="max-width: 600px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Doctor Appointment Details</h2>
+                        <button id="closeDoctorAppointmentModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label"><strong>Date:</strong></label>
+                            <p id="doctorApptDate"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Time Slot:</strong></label>
+                            <p id="doctorApptTimeSlot"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Patient:</strong></label>
+                            <p id="doctorApptPatient"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Issue:</strong></label>
+                            <p id="doctorApptIssue"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="closeDoctorAppointmentModalFooterBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal-overlay" id="activityDetailsModalOverlay">
+            <div class="modal-container" style="max-width: 600px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Activity Details</h2>
+                        <button id="closeActivityDetailsModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label"><strong>Timestamp:</strong></label>
+                            <p id="activityDetailTimestamp"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>User:</strong></label>
+                            <p id="activityDetailUser"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Action:</strong></label>
+                            <p id="activityDetailAction"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Details:</label>
+                            <p id="activityDetailDetails"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="closeActivityDetailsModalFooterBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="announcementModalOverlay">
+            <div class="modal-container">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new" id="announcementModalTitle">Add New Announcement</h2>
+                        <button id="closeAnnouncementModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="announcementForm" class="patient-form">
+                        <input type="hidden" id="announcementId">
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-bullhorn"></i>
+                                Announcement Details
+                            </h3>
+                            <div class="form-group">
+                                <label for="announcementTitle" class="form-label">Title *</label>
+                                <input type="text" id="announcementTitle" name="announcementTitle" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="announcementContent" class="form-label">Content *</label>
+                                <textarea id="announcementContent" name="announcementContent" rows="5" required class="input-field"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="announcementDate" class="form-label">Date *</label>
+                                <input type="date" id="announcementDate" name="announcementDate" required class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="announcementAuthor" class="form-label">Author</label>
+                                <input type="text" id="announcementAuthor" name="announcementAuthor" class="input-field">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="cancelAnnouncementForm" class="btn-secondary">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-primary-modal">
+                                Save Announcement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="confirmDeleteModalOverlay">
+            <div class="modal-container" style="max-width: 400px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Confirm Deletion</h2>
+                        <button id="closeConfirmDeleteModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="padding: 20px; text-align: center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 50px; color: #dc3545; margin-bottom: 20px;"></i>
+                        <p style="font-size: 16px; margin-bottom: 25px;">Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
+                        <div class="form-actions" style="justify-content: center;">
+                            <button type="button" id="cancelDeleteBtn" class="btn-secondary">
+                                Cancel
+                            </button>
+                            <button type="button" id="confirmDeleteBtn" class="btn-danger">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="confirmActionModalOverlay">
+            <div class="modal-container" style="max-width: 400px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new" id="confirmActionModalTitle">Confirm Action</h2>
+                        <button id="closeConfirmActionModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="padding: 20px; text-align: center;">
+                        <i class="fas fa-question-circle" style="font-size: 50px; color: #1a73e8; margin-bottom: 20px;"></i>
+                        <p style="font-size: 16px; margin-bottom: 25px;" id="confirmActionMessage"></p>
+                        <div class="form-actions" style="justify-content: center;">
+                            <button type="button" id="cancelConfirmActionBtn" class="btn-secondary">
+                                Cancel
+                            </button>
+                            <button type="button" id="confirmActionButton" class="btn-primary-modal">
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="healthTimelineModalOverlay">
+            <div class="modal-container" style="max-width: 900px;">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new">Edit Health Timeline for <span id="healthTimelinePatientName"></span></h2>
+                        <button id="closeHealthTimelineModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="healthTimelineForm" class="patient-form">
+                        <input type="hidden" id="healthTimelinePatientId">
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-history"></i>
+                                Timeline Entries
+                            </h3>
+                            <div id="healthTimelineEntriesContainer">
+                            </div>
+                            <button type="button" class="btn btn-primary" id="addTimelineEntryBtn" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Add New Entry
+                            </button>
+                        </div>
+                        <div class="form-actions health-timeline-actions">
+                            <button type="button" id="cancelHealthTimelineBtn" class="btn-secondary">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-primary-modal">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Illness Details Modal -->
+        <div class="modal-overlay" id="illnessDetailsModalOverlay">
+            <div class="modal-container">
+                <div class="modal-content-wrapper">
+                    <div class="modal-header-new">
+                        <h2 class="modal-title-new" id="illnessDetailsModalTitle"></h2>
+                        <button id="closeIllnessDetailsModalBtn" class="close-modal-btn-new">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="illnessDetailsList">
+                            <!-- Illness details will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script src="Back-end/js/utils.js"></script>
+<script src="Back-end/js/nav.js"></script>
+    <script src="Back-end/js/dashboard.js"></script>
+    <script src="Back-end/js/followups.js"></script>
+<script src="Back-end/js/patients.js"></script>
+<script src="Back-end/js/appointments.js"></script>
+<script src="Back-end/js/inventory.js"></script>
+<script src="Back-end/js/new-patient.js"></script>
+<script src="Back-end/js/prescriptions.js"></script>
+<script src="Back-end/js/init.js"></script>
+<script src="Back-end/js/doctor-profile.js"></script>
+<script src="voice.js"></script>
+<script src="additional.js"></script>
+<script>
+// Load doctor information on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadDoctorInfo();
+    
+    // Initialize doctor profile manager
+    if (typeof DoctorProfileManager !== 'undefined') {
+        new DoctorProfileManager();
+    }
+    
+    // Initialize language switcher
+    initializeLanguageSwitcher();
+    
+    // Initialize dashboard status toggle
+    initializeDashboardStatusToggle();
+    
+    // Initialize profile status toggle
+    initializeProfileStatusToggle();
+    
+    // Load new patients
+    if (typeof window.DocDash !== 'undefined' && window.DocDash.loadNewPatients) {
+        window.DocDash.loadNewPatients();
+    }
+    
+    // Force correct toggle colors
+    forceToggleColors();
+    
+    // Add event listeners to force colors on toggle changes
+    setTimeout(() => {
+        const allToggles = document.querySelectorAll('input[type="checkbox"]');
+        allToggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                console.log('Toggle changed, forcing colors...');
+                setTimeout(forceToggleColors, 10);
+            });
+        });
+    }, 1000);
+});
+
+function loadDoctorInfo() {
+    fetch('/4care/Doc-Dash/Back-end/api/get-doctor-profile.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const doctor = data.data;
+                console.log('Doctor data received:', doctor);
+                
+                // Update profile section doctor name
+                const profileNameElement = document.getElementById('profileDoctorName');
+                if (profileNameElement) {
+                    profileNameElement.textContent = doctor.name || 'Dr. jireh Smith';
+                }
+                
+                // Update profile section doctor position
+                const profilePositionElement = document.getElementById('profileDoctorPosition');
+                if (profilePositionElement) {
+                    profilePositionElement.textContent = doctor.specialization_name || doctor.specialization || 'General Medicine';
+                }
+                
+                // Update profile section doctor email
+                const profileEmailElement = document.getElementById('profileDoctorEmail');
+                if (profileEmailElement) {
+                    profileEmailElement.textContent = doctor.email || 'doctor@4care.com';
+                }
+                
+                // Update all profile detail fields
+                const profileEmployeeIdElement = document.getElementById('profileEmployeeId');
+                if (profileEmployeeIdElement) {
+                    profileEmployeeIdElement.textContent = doctor.employee_id || 'DOC-001';
+                }
+                
+                const profileSpecializationElement = document.getElementById('profileSpecialization');
+                if (profileSpecializationElement) {
+                    profileSpecializationElement.textContent = doctor.specialization || 'General Medicine';
+                }
+                
+                const profileLicenseElement = document.getElementById('profileLicenseNumber');
+                if (profileLicenseElement) {
+                    profileLicenseElement.textContent = doctor.license_number || 'MD-123456';
+                }
+                
+                const profileDobElement = document.getElementById('profileDob');
+                if (profileDobElement) {
+                    console.log('Setting birthday:', doctor.date_of_birth);
+                    profileDobElement.textContent = doctor.date_of_birth || '1980-05-15';
+                }
+                
+                const profilePhoneElement = document.getElementById('profilePhone');
+                if (profilePhoneElement) {
+                    profilePhoneElement.textContent = doctor.phone_number || '+1 (555) 123-4567';
+                }
+                
+                const profileAddressElement = document.getElementById('profileAddress');
+                if (profileAddressElement) {
+                    profileAddressElement.textContent = doctor.address || '123 Health St, Medical City';
+                }
+                
+                const profileExperienceElement = document.getElementById('profileExperience');
+                if (profileExperienceElement) {
+                    profileExperienceElement.textContent = (doctor.years_of_experience || 15) + ' Years';
+                }
+                
+                const profileJoinedElement = document.getElementById('profileJoinedDate');
+                if (profileJoinedElement) {
+                    profileJoinedElement.textContent = doctor.joined_date || '2008-09-01';
+                }
+                
+                const profileEducationElement = document.getElementById('profileEducation');
+                if (profileEducationElement) {
+                    profileEducationElement.textContent = doctor.education || 'MD, University of Health Sciences';
+                }
+                
+                const profileDepartmentElement = document.getElementById('profileDepartment');
+                if (profileDepartmentElement) {
+                    profileDepartmentElement.textContent = doctor.department || 'General Medicine';
+                }
+                
+                const profileShiftElement = document.getElementById('profileShift');
+                if (profileShiftElement) {
+                    profileShiftElement.textContent = doctor.shift_details || 'Morning (8 AM - 4 PM)';
+                }
+                
+                const profileEmailDetailElement = document.getElementById('profileEmail');
+                if (profileEmailDetailElement) {
+                    profileEmailDetailElement.textContent = doctor.email || 'doctor@4care.com';
+                }
+                
+                
+                const profileCreatedElement = document.getElementById('profileCreatedAt');
+                if (profileCreatedElement) {
+                    const createdDate = new Date(doctor.created_at);
+                    profileCreatedElement.textContent = createdDate.toLocaleDateString() || '2025-10-13';
+                }
+                
+                const profileUpdatedElement = document.getElementById('profileUpdatedAt');
+                if (profileUpdatedElement) {
+                    const updatedDate = new Date(doctor.updated_at);
+                    profileUpdatedElement.textContent = updatedDate.toLocaleDateString() || '2025-10-13';
+                }
+                
+                // Populate additional information from related tables
+                populateAdditionalInfo(doctor);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading doctor info:', error);
+            // Keep default values if there's an error
+        });
+}
+
+function populateAdditionalInfo(doctor) {
+    console.log('Populating additional info with:', doctor);
+    
+    // Populate certifications
+    const certificationsElement = document.getElementById('profileCertifications');
+    if (certificationsElement && doctor.certifications) {
+        console.log('Certifications data:', doctor.certifications);
+        if (doctor.certifications.length > 0) {
+            const certList = doctor.certifications.map(cert => 
+                `${cert.certification_name} (${cert.issued_date} - ${cert.expiry_date})`
+            ).join('<br>');
+            certificationsElement.innerHTML = certList;
+        } else {
+            certificationsElement.innerHTML = '<p>No certifications found</p>';
+        }
+    } else {
+        console.log('Certifications element not found or no certifications data');
+        if (certificationsElement) {
+            certificationsElement.innerHTML = '<p>No certifications data available</p>';
+        }
+    }
+    
+    // Populate emergency contacts
+    const emergencyElement = document.getElementById('profileEmergencyContacts');
+    if (emergencyElement && doctor.emergency_contacts) {
+        console.log('Emergency contacts data:', doctor.emergency_contacts);
+        if (doctor.emergency_contacts.length > 0) {
+            const emergencyList = doctor.emergency_contacts.map(contact => 
+                `${contact.contact_name} (${contact.relationship}) - ${contact.contact_phone_number}`
+            ).join('<br>');
+            emergencyElement.innerHTML = emergencyList;
+        } else {
+            emergencyElement.innerHTML = '<p>No emergency contacts found</p>';
+        }
+    } else {
+        console.log('Emergency contacts element not found or no data');
+        if (emergencyElement) {
+            emergencyElement.innerHTML = '<p>No emergency contacts data available</p>';
+        }
+    }
+    
+    // Populate current work position
+    const currentWorkElement = document.getElementById('profileCurrentWork');
+    if (currentWorkElement && doctor.work_history) {
+        console.log('Work history data:', doctor.work_history);
+        if (doctor.work_history.length > 0) {
+            const currentWork = doctor.work_history.find(work => work.is_current == 1) || doctor.work_history[0];
+            currentWorkElement.innerHTML = `<p>${currentWork.position_title} at ${currentWork.hospital_name}<br>Department: ${currentWork.department}<br>Started: ${currentWork.start_date}</p>`;
+        } else {
+            currentWorkElement.innerHTML = '<p>No work history found</p>';
+        }
+    } else {
+        console.log('Work history element not found or no data');
+        if (currentWorkElement) {
+            currentWorkElement.innerHTML = '<p>No work history data available</p>';
+        }
+    }
+    
+    // Populate all phone numbers
+    const allPhonesElement = document.getElementById('profileAllPhones');
+    if (allPhonesElement && doctor.phone_numbers) {
+        console.log('Phone numbers data:', doctor.phone_numbers);
+        if (doctor.phone_numbers.length > 0) {
+            const phoneList = doctor.phone_numbers.map(phone => 
+                `${phone.phone_number} (${phone.phone_type})`
+            ).join('<br>');
+            allPhonesElement.innerHTML = phoneList;
+        } else {
+            allPhonesElement.innerHTML = '<p>No phone numbers found</p>';
+        }
+    } else {
+        console.log('Phone numbers element not found or no data');
+        if (allPhonesElement) {
+            allPhonesElement.innerHTML = '<p>No phone numbers data available</p>';
+        }
+    }
+}
+
+// Language Switcher Functionality
+const languageData = {
+    en: {
+        name: 'English',
+        flag: '🇬🇧',
+        flagClass: 'en',
+        translations: {
+            dashboard: 'Dashboard',
+            doctorSchedules: 'Doctor Schedules',
+            patients: 'Patients',
+            newPatient: 'New Patient',
+            uploadPrescription: 'Upload Prescription',
+            inventory: 'Inventory',
+            profile: 'Profile',
+            settings: 'Settings',
+            logout: 'Logout',
+            totalPatients: 'Total Patients',
+            availableDoctors: 'Available Doctors',
+            newRecords: 'New Records',
+            allPatients: 'All Patients',
+            searchPatients: 'Search patients...',
+            addPatient: 'Add Patient',
+            patientName: 'Patient Name',
+            date: 'Date',
+            time: 'Time',
+            status: 'Status',
+            actions: 'Actions',
+            confirmed: 'Confirmed',
+            pending: 'Pending',
+            cancelled: 'Cancelled',
+            view: 'View',
+            edit: 'Edit',
+            delete: 'Delete',
+            patientSituationAnalysis: 'Patient Situation Analysis',
+            patientSituationTrend: 'Patient Situation Trend',
+            crucialSituation: 'Crucial Situation',
+            goodSituation: 'Good Situation',
+            inCriticalPatients: 'In Critical Patients',
+            viewDetails: 'View Details',
+            notifications: 'Notifications',
+            smsNotifications: 'SMS Notifications',
+            pushNotifications: 'Push Notifications',
+            accountSecurity: 'Account Security',
+            updatePassword: 'Update Password',
+            currentPassword: 'Current Password',
+            newPassword: 'New Password',
+            confirmPassword: 'Confirm New Password',
+            language: 'Language',
+            selectLanguage: 'Select Language',
+            selectPreferredLanguage: 'Select your preferred language for the application.'
+        }
+    },
+    es: {
+        name: 'Spanish',
+        flag: '🇪🇸',
+        flagClass: 'es',
+        translations: {
+            dashboard: 'Panel de Control',
+            doctorSchedules: 'Horarios del Doctor',
+            patients: 'Pacientes',
+            newPatient: 'Nuevo Paciente',
+            uploadPrescription: 'Subir Receta',
+            inventory: 'Inventario',
+            profile: 'Perfil',
+            settings: 'Configuración',
+            logout: 'Cerrar Sesión',
+            totalPatients: 'Total de Pacientes',
+            availableDoctors: 'Doctores Disponibles',
+            newRecords: 'Nuevos Registros',
+            allPatients: 'Todos los Pacientes',
+            searchPatients: 'Buscar pacientes...',
+            addPatient: 'Agregar Paciente',
+            patientName: 'Nombre del Paciente',
+            date: 'Fecha',
+            time: 'Hora',
+            status: 'Estado',
+            actions: 'Acciones',
+            confirmed: 'Confirmado',
+            pending: 'Pendiente',
+            cancelled: 'Cancelado',
+            view: 'Ver',
+            edit: 'Editar',
+            delete: 'Eliminar',
+            patientSituationAnalysis: 'Análisis de Situación del Paciente',
+            patientSituationTrend: 'Tendencia de Situación del Paciente',
+            crucialSituation: 'Situación Crítica',
+            goodSituation: 'Buena Situación',
+            inCriticalPatients: 'Pacientes Críticos',
+            viewDetails: 'Ver Detalles',
+            notifications: 'Notificaciones',
+            smsNotifications: 'Notificaciones SMS',
+            pushNotifications: 'Notificaciones Push',
+            accountSecurity: 'Seguridad de la Cuenta',
+            updatePassword: 'Actualizar Contraseña',
+            currentPassword: 'Contraseña Actual',
+            newPassword: 'Nueva Contraseña',
+            confirmPassword: 'Confirmar Nueva Contraseña',
+            language: 'Idioma',
+            selectLanguage: 'Seleccionar Idioma',
+            selectPreferredLanguage: 'Selecciona tu idioma preferido para la aplicación.'
+        }
+    },
+    fr: {
+        name: 'French',
+        flag: '🇫🇷',
+        flagClass: 'fr',
+        translations: {
+            dashboard: 'Tableau de Bord',
+            doctorSchedules: 'Horaires du Médecin',
+            patients: 'Patients',
+            newPatient: 'Nouveau Patient',
+            uploadPrescription: 'Télécharger Ordonnance',
+            inventory: 'Inventaire',
+            profile: 'Profil',
+            settings: 'Paramètres',
+            logout: 'Déconnexion',
+            totalPatients: 'Total des Patients',
+            availableDoctors: 'Médecins Disponibles',
+            newRecords: 'Nouveaux Enregistrements',
+            allPatients: 'Tous les Patients',
+            searchPatients: 'Rechercher des patients...',
+            addPatient: 'Ajouter un Patient',
+            patientName: 'Nom du Patient',
+            date: 'Date',
+            time: 'Heure',
+            status: 'Statut',
+            actions: 'Actions',
+            confirmed: 'Confirmé',
+            pending: 'En Attente',
+            cancelled: 'Annulé',
+            view: 'Voir',
+            edit: 'Modifier',
+            delete: 'Supprimer',
+            patientSituationAnalysis: 'Analyse de la Situation du Patient',
+            patientSituationTrend: 'Tendance de la Situation du Patient',
+            crucialSituation: 'Situation Critique',
+            goodSituation: 'Bonne Situation',
+            inCriticalPatients: 'Patients Critiques',
+            viewDetails: 'Voir les Détails',
+            notifications: 'Notifications',
+            smsNotifications: 'Notifications SMS',
+            pushNotifications: 'Notifications Push',
+            accountSecurity: 'Sécurité du Compte',
+            updatePassword: 'Mettre à Jour le Mot de Passe',
+            currentPassword: 'Mot de Passe Actuel',
+            newPassword: 'Nouveau Mot de Passe',
+            confirmPassword: 'Confirmer le Nouveau Mot de Passe',
+            language: 'Langue',
+            selectLanguage: 'Sélectionner la Langue',
+            selectPreferredLanguage: 'Sélectionnez votre langue préférée pour l\'application.'
+        }
+    },
+    de: {
+        name: 'German',
+        flag: '🇩🇪',
+        flagClass: 'de',
+        translations: {
+            dashboard: 'Dashboard',
+            doctorSchedules: 'Arzttermine',
+            patients: 'Patienten',
+            newPatient: 'Neuer Patient',
+            uploadPrescription: 'Rezept Hochladen',
+            inventory: 'Inventar',
+            profile: 'Profil',
+            settings: 'Einstellungen',
+            logout: 'Abmelden',
+            totalPatients: 'Gesamte Patienten',
+            availableDoctors: 'Verfügbare Ärzte',
+            newRecords: 'Neue Aufzeichnungen',
+            allPatients: 'Alle Patienten',
+            searchPatients: 'Patienten suchen...',
+            addPatient: 'Patient Hinzufügen',
+            patientName: 'Patientenname',
+            date: 'Datum',
+            time: 'Zeit',
+            status: 'Status',
+            actions: 'Aktionen',
+            confirmed: 'Bestätigt',
+            pending: 'Ausstehend',
+            cancelled: 'Storniert',
+            view: 'Anzeigen',
+            edit: 'Bearbeiten',
+            delete: 'Löschen',
+            patientSituationAnalysis: 'Patientensituationsanalyse',
+            patientSituationTrend: 'Patientensituationstrend',
+            crucialSituation: 'Kritische Situation',
+            goodSituation: 'Gute Situation',
+            inCriticalPatients: 'Kritische Patienten',
+            viewDetails: 'Details Anzeigen',
+            notifications: 'Benachrichtigungen',
+            smsNotifications: 'SMS-Benachrichtigungen',
+            pushNotifications: 'Push-Benachrichtigungen',
+            accountSecurity: 'Kontosicherheit',
+            updatePassword: 'Passwort Aktualisieren',
+            currentPassword: 'Aktuelles Passwort',
+            newPassword: 'Neues Passwort',
+            confirmPassword: 'Neues Passwort Bestätigen',
+            language: 'Sprache',
+            selectLanguage: 'Sprache Auswählen',
+            selectPreferredLanguage: 'Wählen Sie Ihre bevorzugte Sprache für die Anwendung.'
+        }
+    }
+};
+
+function initializeLanguageSwitcher() {
+    const languageSelect = document.getElementById('languageSelect');
+    const languageIndicator = document.getElementById('languageIndicator');
+    const currentLanguageSpan = document.getElementById('currentLanguage');
+    
+    // Load saved language from localStorage
+    const savedLanguage = localStorage.getItem('language') || 'en';
+    applyLanguage(savedLanguage);
+    
+    // Set up language selector
+    if (languageSelect) {
+        languageSelect.value = savedLanguage;
+        languageSelect.addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            applyLanguage(selectedLanguage);
+            localStorage.setItem('language', selectedLanguage);
+        });
+    }
+}
+
+function applyLanguage(languageCode) {
+    const language = languageData[languageCode];
+    if (!language) return;
+    
+    // Update language indicator
+    const flagIcon = document.querySelector('.flag-icon');
+    const currentLanguageSpan = document.getElementById('currentLanguage');
+    
+    if (flagIcon) {
+        flagIcon.className = `flag-icon ${language.flagClass}`;
+    }
+    
+    if (currentLanguageSpan) {
+        currentLanguageSpan.textContent = language.name;
+    }
+    
+    // Apply translations to elements
+    const elements = {
+        '[data-translate="dashboard"]': language.translations.dashboard,
+        '[data-translate="doctorSchedules"]': language.translations.doctorSchedules,
+        '[data-translate="patients"]': language.translations.patients,
+        '[data-translate="newPatient"]': language.translations.newPatient,
+        '[data-translate="uploadPrescription"]': language.translations.uploadPrescription,
+        '[data-translate="inventory"]': language.translations.inventory,
+        '[data-translate="profile"]': language.translations.profile,
+        '[data-translate="settings"]': language.translations.settings,
+        '[data-translate="logout"]': language.translations.logout,
+        '[data-translate="totalPatients"]': language.translations.totalPatients,
+        '[data-translate="availableDoctors"]': language.translations.availableDoctors,
+        '[data-translate="newRecords"]': language.translations.newRecords,
+        '[data-translate="allPatients"]': language.translations.allPatients,
+        '[data-translate="searchPatients"]': language.translations.searchPatients,
+        '[data-translate="addPatient"]': language.translations.addPatient,
+        '[data-translate="patientName"]': language.translations.patientName,
+        '[data-translate="date"]': language.translations.date,
+        '[data-translate="time"]': language.translations.time,
+        '[data-translate="status"]': language.translations.status,
+        '[data-translate="actions"]': language.translations.actions,
+        '[data-translate="confirmed"]': language.translations.confirmed,
+        '[data-translate="pending"]': language.translations.pending,
+        '[data-translate="cancelled"]': language.translations.cancelled,
+        '[data-translate="view"]': language.translations.view,
+        '[data-translate="edit"]': language.translations.edit,
+        '[data-translate="delete"]': language.translations.delete,
+        '[data-translate="patientSituationAnalysis"]': language.translations.patientSituationAnalysis,
+        '[data-translate="patientSituationTrend"]': language.translations.patientSituationTrend,
+        '[data-translate="crucialSituation"]': language.translations.crucialSituation,
+        '[data-translate="goodSituation"]': language.translations.goodSituation,
+        '[data-translate="inCriticalPatients"]': language.translations.inCriticalPatients,
+        '[data-translate="viewDetails"]': language.translations.viewDetails,
+        '[data-translate="notifications"]': language.translations.notifications,
+        '[data-translate="smsNotifications"]': language.translations.smsNotifications,
+        '[data-translate="pushNotifications"]': language.translations.pushNotifications,
+        '[data-translate="accountSecurity"]': language.translations.accountSecurity,
+        '[data-translate="updatePassword"]': language.translations.updatePassword,
+        '[data-translate="currentPassword"]': language.translations.currentPassword,
+        '[data-translate="newPassword"]': language.translations.newPassword,
+        '[data-translate="confirmPassword"]': language.translations.confirmPassword,
+        '[data-translate="language"]': language.translations.language,
+        '[data-translate="selectLanguage"]': language.translations.selectLanguage,
+        '[data-translate="selectPreferredLanguage"]': language.translations.selectPreferredLanguage
+    };
+    
+    // Apply translations
+    Object.entries(elements).forEach(([selector, translation]) => {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.textContent = translation;
+        }
+    });
+    
+    console.log(`Applied language: ${language.name}`);
+}
+
+// Dashboard Status Toggle Functionality
+function initializeDashboardStatusToggle() {
+    const statusToggle = document.getElementById('dashboardStatusToggleSwitch');
+    const statusText = document.getElementById('dashboardHospitalStatusText');
+    
+    if (statusToggle && statusText) {
+        // Load current status from database
+        loadDashboardCurrentStatus();
+        
+        // Add event listener for toggle change
+        statusToggle.addEventListener('change', function() {
+            const newStatus = this.checked ? 'online' : 'offline';
+            updateDashboardDoctorStatus(newStatus);
+        });
+    }
+}
+
+function loadDashboardCurrentStatus() {
+    const statusToggle = document.getElementById('dashboardStatusToggleSwitch');
+    const statusText = document.getElementById('dashboardHospitalStatusText');
+    
+    if (statusToggle && statusText) {
+        // Load current status from database
+        fetch('/4care/Doc-Dash/Back-end/api/get-doctor-status.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const currentStatus = data.status;
+                    statusToggle.checked = (currentStatus === 'online');
+                    statusText.textContent = currentStatus === 'online' ? 'Online' : 'Offline';
+                    console.log('Dashboard current status loaded:', currentStatus);
+                } else {
+                    // Default to offline if there's an error
+                    statusToggle.checked = false;
+                    statusText.textContent = 'Offline';
+                    console.error('Failed to load dashboard status:', data.message);
+                }
+            })
+            .catch(error => {
+                // Default to offline if there's a network error
+                statusToggle.checked = false;
+                statusText.textContent = 'Offline';
+                console.error('Error loading dashboard status:', error);
+            });
+    }
+}
+
+function updateDashboardDoctorStatus(status) {
+    const statusToggle = document.getElementById('dashboardStatusToggleSwitch');
+    const statusText = document.getElementById('dashboardHospitalStatusText');
+    
+    // Show loading state
+    if (statusText) {
+        statusText.textContent = 'Updating...';
+    }
+    
+    // Disable toggle during update
+    if (statusToggle) {
+        statusToggle.disabled = true;
+    }
+    
+    // Send request to update status
+    fetch('/4care/Doc-Dash/Back-end/api/update-doctor-status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            status: status
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI to reflect new status
+            if (statusText) {
+                statusText.textContent = status === 'online' ? 'Online' : 'Offline';
+            }
+            
+            // Sync with profile
+            syncProfileStatus(status);
+            
+            // Force correct toggle colors
+            forceToggleColors();
+            
+            // Show success message
+            showDashboardStatusMessage(`Status updated to ${status}`, 'success');
+            
+            console.log('Dashboard status updated successfully:', data);
+        } else {
+            // Revert toggle state on error
+            if (statusToggle) {
+                statusToggle.checked = !statusToggle.checked;
+            }
+            if (statusText) {
+                statusText.textContent = statusToggle.checked ? 'Online' : 'Offline';
+            }
+            
+            showDashboardStatusMessage('Failed to update status: ' + data.message, 'error');
+            console.error('Failed to update dashboard status:', data.message);
+        }
+    })
+    .catch(error => {
+        // Revert toggle state on error
+        if (statusToggle) {
+            statusToggle.checked = !statusToggle.checked;
+        }
+        if (statusText) {
+            statusText.textContent = statusToggle.checked ? 'Online' : 'Offline';
+        }
+        
+        showDashboardStatusMessage('Network error: Failed to update status', 'error');
+        console.error('Error updating dashboard status:', error);
+    })
+    .finally(() => {
+        // Re-enable toggle
+        if (statusToggle) {
+            statusToggle.disabled = false;
+        }
+    });
+}
+
+function showDashboardStatusMessage(message, type) {
+    // Create or update status message element
+    let messageElement = document.getElementById('dashboardStatusMessage');
+    
+    if (!messageElement) {
+        messageElement = document.createElement('div');
+        messageElement.id = 'dashboardStatusMessage';
+        messageElement.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transition: all 0.3s ease;
+        `;
+        document.body.appendChild(messageElement);
+    }
+    
+    // Set message content and style based on type
+    messageElement.textContent = message;
+    if (type === 'success') {
+        messageElement.style.backgroundColor = '#4caf50';
+    } else if (type === 'error') {
+        messageElement.style.backgroundColor = '#f44336';
+    }
+    
+    // Show message
+    messageElement.style.opacity = '1';
+    messageElement.style.transform = 'translateX(0)';
+    
+    // Hide message after 3 seconds
+    setTimeout(() => {
+        messageElement.style.opacity = '0';
+        messageElement.style.transform = 'translateX(100%)';
+    }, 3000);
+}
+
+// Profile Status Toggle Functionality
+function initializeProfileStatusToggle() {
+    const statusToggle = document.getElementById('statusToggleSwitch');
+    const statusText = document.getElementById('hospitalStatusText');
+    
+    if (statusToggle && statusText) {
+        // Load current status from database
+        loadProfileCurrentStatus();
+        
+        // Add event listener for toggle change
+        statusToggle.addEventListener('change', function() {
+            const newStatus = this.checked ? 'online' : 'offline';
+            updateProfileDoctorStatus(newStatus);
+        });
+    }
+}
+
+function loadProfileCurrentStatus() {
+    const statusToggle = document.getElementById('statusToggleSwitch');
+    const statusText = document.getElementById('hospitalStatusText');
+    
+    if (statusToggle && statusText) {
+        // Load current status from database
+        fetch('/4care/Doc-Dash/Back-end/api/get-doctor-status.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const currentStatus = data.status;
+                    statusToggle.checked = (currentStatus === 'online');
+                    statusText.textContent = currentStatus === 'online' ? 'Online' : 'Offline';
+                    console.log('Profile current status loaded:', currentStatus);
+                } else {
+                    // Default to offline if there's an error
+                    statusToggle.checked = false;
+                    statusText.textContent = 'Offline';
+                    console.error('Failed to load profile status:', data.message);
+                }
+            })
+            .catch(error => {
+                // Default to offline if there's a network error
+                statusToggle.checked = false;
+                statusText.textContent = 'Offline';
+                console.error('Error loading profile status:', error);
+            });
+    }
+}
+
+function updateProfileDoctorStatus(status) {
+    const statusToggle = document.getElementById('statusToggleSwitch');
+    const statusText = document.getElementById('hospitalStatusText');
+    
+    // Show loading state
+    if (statusText) {
+        statusText.textContent = 'Updating...';
+    }
+    
+    // Disable toggle during update
+    if (statusToggle) {
+        statusToggle.disabled = true;
+    }
+    
+    // Send request to update status
+    fetch('/4care/Doc-Dash/Back-end/api/update-doctor-status.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            status: status
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI to reflect new status
+            if (statusText) {
+                statusText.textContent = status === 'online' ? 'Online' : 'Offline';
+            }
+            
+            // Sync with dashboard
+            syncDashboardStatus(status);
+            
+            // Force correct toggle colors
+            forceToggleColors();
+            
+            // Show success message
+            showProfileStatusMessage(`Status updated to ${status}`, 'success');
+            
+            console.log('Profile status updated successfully:', data);
+        } else {
+            // Revert toggle state on error
+            if (statusToggle) {
+                statusToggle.checked = !statusToggle.checked;
+            }
+            if (statusText) {
+                statusText.textContent = statusToggle.checked ? 'Online' : 'Offline';
+            }
+            
+            showProfileStatusMessage('Failed to update status: ' + data.message, 'error');
+            console.error('Failed to update profile status:', data.message);
+        }
+    })
+    .catch(error => {
+        // Revert toggle state on error
+        if (statusToggle) {
+            statusToggle.checked = !statusToggle.checked;
+        }
+        if (statusText) {
+            statusText.textContent = statusToggle.checked ? 'Online' : 'Offline';
+        }
+        
+        showProfileStatusMessage('Network error: Failed to update status', 'error');
+        console.error('Error updating profile status:', error);
+    })
+    .finally(() => {
+        // Re-enable toggle
+        if (statusToggle) {
+            statusToggle.disabled = false;
+        }
+    });
+}
+
+function showProfileStatusMessage(message, type) {
+    // Create or update status message element
+    let messageElement = document.getElementById('profileStatusMessage');
+    
+    if (!messageElement) {
+        messageElement = document.createElement('div');
+        messageElement.id = 'profileStatusMessage';
+        messageElement.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transition: all 0.3s ease;
+        `;
+        document.body.appendChild(messageElement);
+    }
+    
+    // Set message content and style based on type
+    messageElement.textContent = message;
+    if (type === 'success') {
+        messageElement.style.backgroundColor = '#4caf50';
+    } else if (type === 'error') {
+        messageElement.style.backgroundColor = '#f44336';
+    }
+    
+    // Show message
+    messageElement.style.opacity = '1';
+    messageElement.style.transform = 'translateX(0)';
+    
+    // Hide message after 3 seconds
+    setTimeout(() => {
+        messageElement.style.opacity = '0';
+        messageElement.style.transform = 'translateX(100%)';
+    }, 3000);
+}
+
+// Synchronization functions
+function syncDashboardStatus(status) {
+    const dashboardToggle = document.getElementById('dashboardStatusToggleSwitch');
+    const dashboardText = document.getElementById('dashboardHospitalStatusText');
+    
+    if (dashboardToggle && dashboardText) {
+        dashboardToggle.checked = (status === 'online');
+        dashboardText.textContent = status === 'online' ? 'Online' : 'Offline';
+    }
+}
+
+function syncProfileStatus(status) {
+    const profileToggle = document.getElementById('statusToggleSwitch');
+    const profileText = document.getElementById('hospitalStatusText');
+    
+    if (profileToggle && profileText) {
+        profileToggle.checked = (status === 'online');
+        profileText.textContent = status === 'online' ? 'Online' : 'Offline';
+    }
+}
+
+function forceToggleColors() {
+    console.log('Forcing toggle colors...');
+    
+    // Force correct colors for all toggle switches
+    const toggles = document.querySelectorAll('.status-toggle input[type="checkbox"]');
+    console.log('Found toggles:', toggles.length);
+    
+    toggles.forEach((toggle, index) => {
+        const slider = toggle.nextElementSibling;
+        console.log(`Toggle ${index}: checked=${toggle.checked}, slider=`, slider);
+        
+        if (slider && slider.classList.contains('slider')) {
+            if (toggle.checked) {
+                slider.style.backgroundColor = '#34a853';
+                slider.style.setProperty('background-color', '#34a853', 'important');
+                console.log(`Set toggle ${index} to GREEN (online)`);
+            } else {
+                slider.style.backgroundColor = '#ccc';
+                slider.style.setProperty('background-color', '#ccc', 'important');
+                console.log(`Set toggle ${index} to GRAY (offline)`);
+            }
+        }
+    });
+    
+    // Also force colors for modern switches
+    const modernToggles = document.querySelectorAll('.switch.modern input[type="checkbox"]');
+    console.log('Found modern toggles:', modernToggles.length);
+    
+    modernToggles.forEach((toggle, index) => {
+        const slider = toggle.nextElementSibling;
+        console.log(`Modern toggle ${index}: checked=${toggle.checked}, slider=`, slider);
+        
+        if (slider && slider.classList.contains('slider')) {
+            if (toggle.checked) {
+                slider.style.backgroundColor = '#34a853';
+                slider.style.setProperty('background-color', '#34a853', 'important');
+                console.log(`Set modern toggle ${index} to GREEN (online)`);
+            } else {
+                slider.style.backgroundColor = '#ccc';
+                slider.style.setProperty('background-color', '#ccc', 'important');
+                console.log(`Set modern toggle ${index} to GRAY (offline)`);
+            }
+        }
+    });
+    
+    // Force colors for all sliders regardless of class
+    const allSliders = document.querySelectorAll('.slider');
+    console.log('Found all sliders:', allSliders.length);
+    
+    allSliders.forEach((slider, index) => {
+        const toggle = slider.previousElementSibling;
+        if (toggle && toggle.type === 'checkbox') {
+            if (toggle.checked) {
+                slider.style.backgroundColor = '#34a853';
+                slider.style.setProperty('background-color', '#34a853', 'important');
+                console.log(`Force set slider ${index} to GREEN (online)`);
+            } else {
+                slider.style.backgroundColor = '#ccc';
+                slider.style.setProperty('background-color', '#ccc', 'important');
+                console.log(`Force set slider ${index} to GRAY (offline)`);
+            }
+        }
+    });
+    
+    // Update status badges based on toggle state
+    updateStatusBadges();
+}
+
+function updateStatusBadges() {
+    console.log('Updating status badges...');
+    
+    // Get the current status from the dashboard toggle
+    const dashboardToggle = document.getElementById('dashboardStatusToggleSwitch');
+    const profileToggle = document.getElementById('statusToggleSwitch');
+    
+    // Get the status badges
+    const dashboardBadge = document.getElementById('dashboardOnlineStatus');
+    const profileBadge = document.getElementById('profileOnlineStatus');
+    
+    // Determine current status (prefer dashboard toggle if available)
+    let isOnline = false;
+    if (dashboardToggle) {
+        isOnline = dashboardToggle.checked;
+    } else if (profileToggle) {
+        isOnline = profileToggle.checked;
+    }
+    
+    console.log('Current status is online:', isOnline);
+    
+    // Update dashboard badge
+    if (dashboardBadge) {
+        if (isOnline) {
+            dashboardBadge.textContent = 'Online';
+            dashboardBadge.className = 'online-status online';
+            console.log('Set dashboard badge to Online');
+        } else {
+            dashboardBadge.textContent = 'Offline';
+            dashboardBadge.className = 'online-status offline';
+            console.log('Set dashboard badge to Offline');
+        }
+    }
+    
+    // Update profile badge
+    if (profileBadge) {
+        if (isOnline) {
+            profileBadge.textContent = 'Online';
+            profileBadge.className = 'online-status online';
+            console.log('Set profile badge to Online');
+        } else {
+            profileBadge.textContent = 'Offline';
+            profileBadge.className = 'online-status offline';
+            console.log('Set profile badge to Offline');
+        }
+    }
+
+}
+
+// Password update functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const updatePasswordBtn = document.getElementById('updatePasswordBtn');
+    
+    if (updatePasswordBtn) {
+        updatePasswordBtn.addEventListener('click', function() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+            
+            // Show loading state
+            updatePasswordBtn.disabled = true;
+            updatePasswordBtn.textContent = 'Updating...';
+            
+            // Send request to update password
+            fetch('../Admin-Dash/Back-end/auth/update-doctor-password.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentPassword: currentPassword,
+                    newPassword: newPassword,
+                    confirmPassword: confirmPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Password updated successfully! You will be logged out.');
+                    // Clear form
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmNewPassword').value = '';
+                    // Redirect to login or reload page
+                    window.location.href = '/4care/Staff-Login/Staff-Login.html';
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to update password'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating password');
+            })
+            .finally(() => {
+                // Reset button state
+                updatePasswordBtn.disabled = false;
+                updatePasswordBtn.textContent = 'Update Password';
+            });
+        });
+    }
+    
+    // Password toggle functionality
+    function initializePasswordToggles() {
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        passwordToggles.forEach(toggle => {
+            // Remove any existing event listeners
+            toggle.replaceWith(toggle.cloneNode(true));
+        });
+        
+        // Re-select after cloning
+        const newPasswordToggles = document.querySelectorAll('.password-toggle');
+        newPasswordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (input && icon) {
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+            });
+        });
+    }
+    
+    // Initialize password toggles
+    initializePasswordToggles();
+
+    // Schedule Doctor Modal functionality
+    const addDoctorScheduleBtn = document.getElementById('addDoctorScheduleBtn');
+    const scheduleDoctorModalOverlay = document.getElementById('scheduleDoctorModalOverlay');
+    const closeScheduleDoctorModalBtn = document.getElementById('closeScheduleDoctorModalBtn');
+    const cancelScheduleDoctorBtn = document.getElementById('cancelScheduleDoctorBtn');
+    const scheduleDoctorForm = document.getElementById('scheduleDoctorForm');
+
+    if (addDoctorScheduleBtn) {
+        addDoctorScheduleBtn.addEventListener('click', () => {
+            scheduleDoctorModalOverlay.style.display = 'flex';
+        });
+    }
+
+    if (closeScheduleDoctorModalBtn) {
+        closeScheduleDoctorModalBtn.addEventListener('click', () => {
+            scheduleDoctorModalOverlay.style.display = 'none';
+        });
+    }
+
+    if (cancelScheduleDoctorBtn) {
+        cancelScheduleDoctorBtn.addEventListener('click', () => {
+            scheduleDoctorModalOverlay.style.display = 'none';
+        });
+    }
+
+    if (scheduleDoctorModalOverlay) {
+        scheduleDoctorModalOverlay.addEventListener('click', (e) => {
+            if (e.target === scheduleDoctorModalOverlay) {
+                scheduleDoctorModalOverlay.style.display = 'none';
+            }
+        });
+    }
+
+    if (scheduleDoctorForm) {
+        scheduleDoctorForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Form submission logic can be added here
+            console.log('Schedule Doctor form submitted');
+            scheduleDoctorModalOverlay.style.display = 'none';
+        });
+    }
+});
+
+</script>
+
+    <!-- Schedule Doctor Modal -->
+    <div class="modal-overlay" id="scheduleDoctorModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Schedule a Doctor</h2>
+                    <button id="closeScheduleDoctorModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="scheduleDoctorForm" class="patient-form">
+                    <div id="scheduleMessage" style="margin: 10px 0; padding: 10px; border-radius: 5px; display: none; font-weight: bold;"></div>
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-md"></i>
+                            Doctor Schedule Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="scheduleDoctorName" class="form-label">Doctor Name</label>
+                                <input type="text" id="scheduleDoctorName" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleDate" class="form-label">Date</label>
+                                <input type="date" id="scheduleDate" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleStartTime" class="form-label">Start Time</label>
+                                <input type="time" id="scheduleStartTime" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleEndTime" class="form-label">End Time</label>
+                                <input type="time" id="scheduleEndTime" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleLocation" class="form-label">Location</label>
+                                <input type="text" id="scheduleLocation" class="input-field" placeholder="e.g., Room 101, Emergency Ward">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleNotes" class="form-label">Notes</label>
+                                <textarea id="scheduleNotes" class="input-field" rows="3" placeholder="Additional notes or special instructions"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelScheduleDoctorBtn">Cancel</button>
+                        <button type="submit" class="btn-primary-modal">Schedule Doctor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

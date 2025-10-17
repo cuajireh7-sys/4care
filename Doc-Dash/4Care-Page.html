@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4Care - Redirecting...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .redirect-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .links {
+            margin-top: 30px;
+        }
+        .links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            border: 2px solid white;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        .links a:hover {
+            background: white;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-container">
+        <h1>🏥 4Care Health Center</h1>
+        <p>Redirecting you to the correct page...</p>
+        <div class="spinner"></div>
+        <p>If you're not redirected automatically, use the links below:</p>
+        
+        <div class="links">
+            <a href="4Care-Doc.html">👨‍⚕️ Doctor Dashboard</a>
+            <a href="../Staff-Login/Staff-Login.html">🔐 Staff Login</a>
+            <a href="../Admin-Dash/4Care-Admin.html">👨‍💼 Admin Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect to the correct doctor dashboard
+        setTimeout(() => {
+            window.location.href = '4Care-Doc.html';
+        }, 2000);
+        
+        // Also redirect if someone tries to access this page directly
+        if (window.location.pathname.includes('4Care-Page.html')) {
+            window.location.href = '4Care-Doc.html';
+        }
+    </script>
+</body>
+</html>
