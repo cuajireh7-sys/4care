@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4Care | Admin</title>
+    <link rel="icon" type="image/x-icon" href="../4CARE LOGO.png">
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="4Care-Admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="4Care-Admin-Extra.css">
+    <!-- Chart.js CDN for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FullCalendar CSS & JS (example, you'd link to actual files) -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    
+
+
+</head>
+<body>
+    <div class="nav-container">
+        <div class="logo-container">
+            <div>
+                <div class="title-name" data-editable="true" data-section="dashboard" data-key="title" data-type="text">4Care</div>
+                <div class="title-below">F. Legarda Health Center</div>
+            </div>
+        </div>
+    </div>
+
+        <div class="navi-container">
+        <div class="nav-menu">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-section="admin-settings">
+                <i class="fas fa-user-cog"></i> Profile
+            </a>
+            <div class="nav-item-has-submenu">
+                <a href="#" class="nav-item" data-section="appointments-doctor">
+                    <i class="fas fa-calendar-alt"></i>Schedule
+                </a>
+            </div>
+            <a href="#" class="nav-item" data-section="doctors">
+                <i class="fas fa-user-md"></i> Doctors
+            </a>
+            <a href="#" class="nav-item" data-section="patients">
+                <i class="fas fa-users"></i> Patients
+            </a>
+            <a href="#" class="nav-item" data-section="inventory">
+                <i class="fas fa-boxes"></i> Inventory
+            </a>
+            <a href="Admin-Editing-Section.html" class="nav-item" data-section="admin-editing">
+                <i class="fas fa-cogs"></i> Manage System
+            </a>
+            
+            <a href="#" class="nav-item" data-section="activity-log">
+                <i class="fas fa-history"></i> Activity Log
+            </a>
+
+        </div>
+
+        <div class="nav-footer">
+
+            <a href="" class="nav-item" id="logoutButton">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+<div class="modal-overlay" id="logoutModalOverlay">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-content-wrapper">
+            <div class="modal-header-new">
+                <h2 class="modal-title-new">Confirm Logout</h2>
+                <button id="closeLogoutModalBtn" class="close-modal-btn-new">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <i class="fas fa-sign-out-alt" style="font-size: 50px; color: #1a73e8; margin-bottom: 20px;"></i>
+                <p style="font-size: 16px; margin-bottom: 25px;">Are you sure you want to log out?</p>
+                <div class="form-actions" style="justify-content: center;">
+                    <button type="button" id="cancelLogout" class="btn-secondary">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirmLogout" class="btn-primary-modal">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="main-content">
+
+        <!-- Dashboard Section -->
+        <div class="content-section active" id="dashboard-section">
+        <div class="notification-container">
+            <!-- User Identification Added Here -->
+            <span class="user-identification">
+                <i class="fas fa-user-circle user-icon"></i> Admin User
+            </span>
+            <i class="fas fa-bell notification-icon" id="notificationIcon"></i>
+            <span class="notification-badge" id="notificationBadge">0</span>
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <h3>Notifications</h3>
+                    <button class="clear-notifications-btn" id="clearNotificationsBtn">Clear All</button>
+                </div>
+                <ul class="notification-list" id="notificationList">
+                    <!-- Notifications will be dynamically loaded here -->
+                </ul>
+                <div class="notification-footer">
+                    <button id="viewAllNotificationsBtn">View All</button>
+                </div>
+            </div>
+        </div>
+
+            <!-- All Notifications Modal -->
+    <div class="modal-overlay" id="allNotificationsModalOverlay">
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">All Notifications</h2>
+                    <button id="closeAllNotificationsModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="notification-list" id="allNotificationsList">
+                        <!-- All notifications will be dynamically loaded here -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closeAllNotificationsModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <div class="parent">
+                <div class="div1">
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8)); height: 100%;">
+                        <h3 data-editable="true" data-section="dashboard" data-key="stat1_title" data-type="text">Patient this Month</h3>
+                        <p data-editable="true" data-section="dashboard" data-key="stat1_value" data-type="text">0</p>
+                    </div>
+                </div>
+                <div class="div2">
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8)); height: 100%;">
+                        <h3 data-editable="true" data-section="dashboard" data-key="stat2_title" data-type="text">Staff this Month</h3>
+                        <p data-editable="true" data-section="dashboard" data-key="stat2_value" data-type="text">0</p>
+                    </div>
+                </div>
+
+                <div class="div3">
+                    <div class="barangay-select-form">
+                        <h4>Patient Visits This Month</h4>
+                        <div class="barangay-dropdown-container">
+                            <select id="barangaySelect" class="barangay-select" aria-describedby="barangaySelectHelp">
+                                <option value="all">All Barangays</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="barangay-chart-container">
+                        <canvas id="barangayPatientVisitsChart" role="img" aria-label="Line chart showing patient visits per barangay"></canvas>
+                    </div>
+
+                </div>
+                <div class="div5">
+                    <div class="barangay-chart-container">
+                        <canvas id="barangayPieChart" role="img" aria-label="Pie chart showing health analysis per barangay"></canvas>
+                    </div>
+                </div>
+
+                    <!-- Illness Details Modal -->
+                    <div class="modal-overlay" id="illnessDetailsModalOverlay">
+                        <div class="modal-container">
+                            <div class="modal-content-wrapper">
+                                <div class="modal-header-new">
+                                    <h2 class="modal-title-new" id="illnessDetailsModalTitle"></h2>
+                                    <button id="closeIllnessDetailsModalBtn" class="close-modal-btn-new">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul id="illnessDetailsList">
+                                        <!-- Illness details will be populated here -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="div6">
+                    <h3 class="section-title" style="font-size: large; margin-left: 0;">Patient Satisfaction</h3>
+                    <div class="chart-container">
+                        <canvas id="patientSatisfactionWaveChart"></canvas>
+                    </div>
+                </div>
+                <!-- Add Bootstrap CSS and FontAwesome for icons -->
+<!-- Removed downloadable files list -->
+
+<!-- Modal -->
+<div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header"> 
+        <h5 class="modal-title" id="fileModalLabel">File Preview</h5>
+        <button type="button" class="btn btn-primary" id="modalPrintBtn">Print</button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalBody" style="max-height: 600px;">
+        <!-- Content will be injected here -->
+        <p>Loading preview...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+  /* Modal dialog sizing and centering */
+  .modal-dialog {
+    margin: auto; /* center horizontally */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+  max-height: 900vh;
+  overflow-y: scroll; /* enable vertical scrolling */
+  display: flex;
+  flex-direction: column;
+  width: 870px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+  .modal-body {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-body iframe,
+  .modal-body img {
+    max-width: 100%;
+    height: 1000px;
+    display: block;
+    border: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const modal = new bootstrap.Modal(document.getElementById('fileModal'));
+    const modalBody = document.getElementById('modalBody');
+    const modalTitle = document.getElementById('fileModalLabel');
+    const modalPrintBtn = document.getElementById('modalPrintBtn');
+
+    let currentPrintContent = '';
+
+    // Handle View button click
+    document.querySelectorAll('.view-btn').forEach(button => {
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+        const li = this.closest('li');
+        const fileType = li.getAttribute('data-filetype');
+        const fileName = li.getAttribute('data-filename');
+        const fileUrl = li.getAttribute('data-fileurl') || null;
+
+        modalTitle.textContent = fileName;
+        modalBody.innerHTML = '';
+
+        if (fileUrl) {
+          modalBody.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:600px;" frameborder="0"></iframe>`;
+          currentPrintContent = `<iframe src="${fileUrl}" style="width:100%; height:100%;" frameborder="0"></iframe>`;
+          
+        } else {
+          modalBody.innerHTML = `<p>No preview available.</p>`;
+          currentPrintContent = modalBody.innerHTML;
+        }
+
+        
+
+        modal.show();
+      });
+    });
+
+    // Handle Print button (outside modal) - ONLY print PDFs and URLs
+    document.querySelectorAll('.print-btn').forEach(button => {
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+        const li = this.closest('li');
+        const fileType = li.getAttribute('data-filetype');
+        const fileUrl = li.getAttribute('data-fileurl') || null;
+
+        if (fileUrl) {
+          const printContent = `<iframe src="${fileUrl}" style="width:100%; height:100%;" frameborder="0"></iframe>`;
+          printContentInNewWindow(printContent);
+        } else if (fileType === 'excel') {
+            // For Excel, you might want to generate a printable table or open a new window with the table
+            const tableHtml = `
+                <table class="table table-bordered">
+                <thead>
+                    <tr><th>Item</th><th>Quantity</th><th>Price</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Apples</td><td>50</td><td>$1.00</td></tr>
+                    <tr><td>Oranges</td><td>30</td><td>$0.80</td></tr>
+                    <tr><td>Bananas</td><td>20</td><td>$0.50</td></tr>
+                </tbody>
+                </table>
+            `;
+            printContentInNewWindow(tableHtml);
+        } else {
+          alert('Only PDF/URL files can be printed directly. For other types, view first and then print from the modal.');
+        }
+      });
+    });
+
+    // Handle Print button inside modal
+    modalPrintBtn.addEventListener('click', function () {
+      printContentInNewWindow(currentPrintContent);
+    });
+
+    // Print helper function
+    function printContentInNewWindow(content) {
+      const printWindow = window.open('', '', 'width=800,height=600');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              table { border-collapse: collapse; width: 100%; }
+              table, th, td { border: 1px solid black; }
+              th, td { padding: 8px; text-align: left; }
+              iframe { width: 100%; height: 100%; border: none; }
+              img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+            </style>
+          </head>
+          <body>
+            ${content}
+            <script>
+              window.onload = function() {
+                window.print();
+                window.onafterprint = function() { window.close(); }
+              }
+            <\/script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  });
+</script>
+
+            </div>
+
+
+        </div>
+
+        <!-- Appointments Section -->
+        <div class="content-section" id="appointments-section">
+            <div class="dashboard-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 5;">Appointment Calendar & Doctors on Duty</h2>
+                    <button class="btn btn-primary" id="addDoctorScheduleBtn">
+                        <i class="fas fa-plus"></i> Schedule a Doctor
+                    </button>
+                </div>
+                <div class="calendar-and-doctors-container">
+                    <!-- Custom calendar for appointments -->
+                    <div class="calendar-container">
+                        <div id="appointments-calendar-container">
+                            <div class="calendar-header">
+                                <button id="appointmentsPrevMonth"><i class="fas fa-chevron-left"></i></button>
+                                <span id="appointmentsCurrentMonthYear"></span>
+                                <button id="appointmentsNextMonth"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-weekdays">
+                                <div>Sun</div>
+                                <div>Mon</div>
+                                <div>Tue</div>
+                                <div>Wed</div>
+                                <div>Thu</div>
+                                <div>Fri</div>
+                                <div>Sat</div>
+                            </div>
+                            <div class="calendar-dates" id="appointmentsCalendarDates">
+                                <!-- Dates will be dynamically generated here -->
+                            </div>
+                            <!-- Replaced current time with time buttons -->
+                            <div class="time-slots" id="appointmentTimeSlots">
+                                <button class="time-btn">07:00</button>
+                                <button class="time-btn">08:00</button>
+                                <button class="time-btn">09:00</button>
+                                <button class="time-btn">10:00</button>
+                                <button class="time-btn">11:00</button>
+                                <button class="time-btn">12:00</button>
+                                <!-- Add more time buttons as needed -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doctors on Duty Section (Static List) -->
+                    <div class="doctors-on-duty-card">
+                        <h3 class="sidebar-title">Doctors on Duty Today</h3>
+                        <div class="doctors-on-duty-table-container">
+                            <table class="doctors-on-duty-table" id="doctorsOnDutyTable">
+                                <thead>
+                                    <tr>
+                                        <th>Doctor</th>
+                                        <th>Availability</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Doctor data will be dynamically loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Overview Table -->
+            <div class="table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Appointment Overview</h2>
+                    <button class="btn btn-primary" id="viewAllAppointmentsBtn">
+                        <i class="fas fa-eye"></i> View All Appointments
+                    </button>
+                </div>
+                <table class="data-table" id="appointmentOverviewTable">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Appointment Type</th>
+                            <th>Patient Name</th>
+                            <th>Assigned Doctor</th>
+                            <th>Approved By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Appointments will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Patient Appointments Section (New) -->
+        <div class="content-section" id="appointments-patient-section">
+            <h1 class="section-title">Patient Appointments</h1>
+            <iframe id="doctorDashboardIframe" class="pat-calendar" src="Patient-Appointment.html"></iframe>
+        </div>
+
+        <!-- Doctor Schedules Section (New) -->
+        <div class="content-section" id="appointments-doctor-section">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:40px;margin-bottom: -80px;">
+            </div>
+            <iframe id="doctorDashboardIframe" class="doc-calendar" src="Doctor-Calendar.html"></iframe>
+        </div>
+
+        <!-- Doctors Section -->
+        <div class="content-section" id="doctors-section">
+            <div class="doctors-content-container">
+                <div class="doctors-list-column">
+                    <h3>All Active Doctors</h3>
+                    <div class="search-bar-container">
+                        <input type="text" id="doctorSearchInput" placeholder="Search doctor by name...">
+                        <button id="doctorSearchBtn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="doctor-card-grid" id="doctorCardGrid">
+                        <!-- Doctor cards will be rendered here by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="duty-stats-column">
+                    <!-- Staff Details Section (Replaced Recruitment Progress) -->
+                    <div class="staff-details-column">
+                        <h3 id="staffDetailsTitle">Select a Staff to View Details</h3>
+                        <div class="staff-profile-details" id="staffProfileDetails">
+                            <!-- Staff details will be displayed here -->
+                            <div class="detail-item">
+                                <strong>Full Name:</strong>
+                                <p id="staffDetailName"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Position:</strong>
+                                <p id="staffDetailPosition"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Specialization:</strong>
+                                <p id="staffDetailSpecialization"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Email:</strong>
+                                <p id="staffDetailEmail"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Phone:</strong>
+                                <p id="staffDetailPhone"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong>License No.:</strong>
+                                <p id="staffDetailLicense"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Availability:</strong>
+                                <p id="staffDetailAvailability"></p>
+                            </div>
+                            <div class="detail-item bio-item" id="staffDetailBioContainer">
+                                <strong>Bio:</strong>
+                                <p id="staffDetailBio"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Patients Section -->
+<div class="content-section" id="patients-section">
+    <div class="patients-content-container">
+        <div class="patients-list-column">
+            <h3>All Patients</h3>
+            <div class="search-bar-container">
+                <input type="text" id="patientSearchInput" placeholder="Search patient name...">
+                <button id="patientSearchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <!-- Barangay Filter Dropdown -->
+            <div class="filter-container">
+                <select id="barangayFilter" style="width: 100%; padding: 8px; border-radius: 5px; border: none;">
+                    <option value="all">All Barangays</option>
+                    <option value="546">Barangay 546</option>
+                    <option value="547">Barangay 547</option>
+                    <option value="548">Barangay 548</option>
+                    <option value="549">Barangay 549</option>
+                    <option value="550">Barangay 550</option>
+                    <option value="551">Barangay 551</option>
+                </select>
+            </div>
+            <div class="patient-card-grid" id="patientCardGrid" style="margin-top: 5px;">
+                <!-- Patient cards will be rendered here by JavaScript -->
+            </div>
+        </div>
+
+        <div class="patient-details-column">
+            <h2 class="section-title" id="patientDetailsTitle">Select a Patient to View Details</h2>
+            <div class="patient-profile-details form-grid md-cols-2" id="patientProfileDetails">
+                <!-- Patient details will be displayed here -->
+                <div class="detail-item">
+                    <strong>Full Name:</strong>
+                    <p id="patientDetailName"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Date of Birth:</strong>
+                    <p id="patientDetailDob"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Gender:</strong>
+                    <p id="patientDetailGender"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Email:</strong>
+                    <p id="patientDetailEmail"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Phone:</strong>
+                    <p id="patientDetailPhone"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Address:</strong>
+                    <p id="patientDetailAddress"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Barangay:</strong>
+                    <p id="patientDetailBarangay"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Blood Type:</strong>
+                    <p id="patientDetailBloodType"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Allergies:</strong>
+                    <p id="patientDetailAllergies"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Medical Conditions:</strong>
+                    <p id="patientDetailConditions"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Current Medications:</strong>
+                    <p id="patientDetailMedications"></p>
+                </div>
+                <div class="detail-item emergency-contact-item" id="patientDetailEmergencyContactContainer">
+                    <strong>Emergency Contact:</strong>
+                    <p id="patientDetailEmergencyContact"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Current Medications:</strong>
+                    <p id="patientDetailMedications"></p>
+                </div>
+                <div class="detail-item">
+                    <strong>Current Medications:</strong>
+                    <p id="patientDetailMedications"></p>
+                </div>
+                <!-- NEW: Prescription Detail Item -->
+                <div class="detail-item prescription-item" id="patientDetailPrescriptionsContainer">
+                    <strong>Prescriptions:</strong>
+                    <p id="patientDetailPrescriptions"></p>
+                </div>
+                
+                <!-- Health Timeline Section (Read-Only for Admin) -->
+                <div class="detail-item" style="grid-column: span 2;">
+                    <div class="health-timeline-display">
+                        <h4>Health Timeline</h4>
+                        <ul id="adminPatientDetailHealthTimeline" class="health-timeline-list"></ul>
+                    </div>
+                </div>
+                
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<!-- NEW: Prescription Details Modal -->
+    <div class="modal-overlay" id="prescriptionDetailsModalOverlay">
+        <div class="modal-container" style="max-width: 700px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Prescription Details</h2>
+                    <button id="closePrescriptionDetailsModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="prescription-info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="detail-item">
+                            <strong>Doctor:</strong>
+                            <p id="prescriptionDoctorName"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Date Uploaded:</strong>
+                            <p id="prescriptionDateUploaded"></p>
+                        </div>
+                    </div>
+                    <div class="prescription-file-preview" style="text-align: center;">
+                        <strong>Prescription File:</strong>
+                        <div id="prescriptionFileContent" style="margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                            <!-- PDF or image preview will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closePrescriptionDetailsModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- View/Edit Patient Modal -->
+<div class="modal-overlay" id="viewEditPatientModalOverlay">
+    <div class="modal-content"  id="viewEditPatientModal">
+        <div class="modal-header">
+            <h3 id="viewEditModalTitle">View Patient Details</h3>
+            <button class="close-modal-btn" id="closeViewEditModalBtn">&times;</button>
+        </div>
+        <form id="viewEditPatientForm">
+        <div class="form-grid md-cols-2">
+            <input type="hidden" id="viewEditPatientId" name="patientId">
+            <div class="form-group">
+                <label for="viewEditFirstName">First Name</label>
+                <input type="text" id="viewEditFirstName" name="firstName" readonly required>
+            </div>
+            <div class="form-group">
+                <label for="viewEditLastName">Last Name</label>
+                <input type="text" id="viewEditLastName" name="lastName" readonly required>
+            </div>
+            <div class="form-group">
+                <label for="viewEditDob">Date of Birth</label>
+                <input type="date" id="viewEditDob" name="dob" readonly required>
+            </div>
+            <div class="form-group">
+                <label for="viewEditGender">Gender</label>
+                <select id="viewEditGender" name="gender" disabled required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="viewEditEmail">Email</label>
+                <input type="email" id="viewEditEmail" name="email" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditPhone">Phone</label>
+                <input type="tel" id="viewEditPhone" name="phone" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditAddress">Address</label>
+                <input type="text" id="viewEditAddress" name="address" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditCity">City</label>
+                <input type="text" id="viewEditCity" name="city" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditZipCode">Zip Code</label>
+                <input type="text" id="viewEditZipCode" name="zipCode" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditBarangay">Barangay</label>
+                <input type="text" id="viewEditBarangay" name="barangay" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditCountry">Country</label>
+                <input type="text" id="viewEditCountry" name="country" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditBloodType">Blood Type</label>
+                <input type="text" id="viewEditBloodType" name="bloodType" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditAllergies">Allergies</label>
+                <textarea id="viewEditAllergies" name="allergies" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label for="viewEditConditions">Medical Conditions</label>
+                <textarea id="viewEditConditions" name="conditions" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label for="viewEditMedications">Current Medications</label>
+                <textarea id="viewEditMedications" name="medications" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label for="viewEditEmergencyName">Emergency Contact Name</label>
+                <input type="text" id="viewEditEmergencyName" name="emergencyName" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditEmergencyRelationship">Emergency Contact Relationship</label>
+                <input type="text" id="viewEditEmergencyRelationship" name="emergencyRelationship" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditEmergencyPhone">Emergency Contact Phone</label>
+                <input type="tel" id="viewEditEmergencyPhone" name="emergencyPhone" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewEditAdditionalDetails">Additional Details</label>
+                <textarea id="viewEditAdditionalDetails" name="additionalDetails" rows="3" class="input-field" readonly></textarea>
+            </div>
+            <div class="form-actions" style="text-align: right;">
+                <button type="button" id="editPatientDetailsBtn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button type="submit" id="savePatientDetailsBtn" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+        <div class="content-section" id="inventory-section">
+            <h1 class="section-title">Inventory Management</h1>
+            <div class="dashboard-card">
+                <!-- Inventory Summary Cards -->
+                <div class="card-row">
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8)); ">
+                        <h3>Total Items</h3>
+                        <p>56</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                        <h3>Low Stock Items</h3>
+                        <p>8</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(52, 168, 83, 0.8));">
+                        <h3>Expiring Soon</h3>
+                        <p>5</p>
+                    </div>
+                </div>
+
+
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Inventory Items</h2>
+                    <div>
+
+                        <button class="btn btn-secondary" style="margin-right: 10px;" id="printInventoryBtn">
+                            <i class="fas fa-file-export"></i> Print
+                        </button>
+                        <button class="btn btn-primary" id="addInventoryItemBtn">
+                            <i class="fas fa-plus"></i> Add New Item
+                        </button>
+                    </div>
+                </div>
+                <table class="data-table" id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Inventory items will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- New Admin Settings Section -->
+        <div class="content-section" id="admin-settings-section">
+            <h1 class="section-title">Admin Settings</h1>
+            <div class="dashboard-card " style="height: 600px;">
+                <!-- User Profile Management -->
+                <div class="form-section" style="height: 600px;">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-user-circle"></i>
+                        User Profile Management
+                    </h3>
+                    <form id="userProfileForm" class="patient-form">
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="userName" class="form-label">Name</label>
+                                <input type="text" id="userName" class="input-field" value="Admin User">
+                            </div>
+                            <div class="form-group">
+                                <label for="userEmail" class="form-label">Email</label>
+                                <input type="email" id="userEmail" class="input-field" value="admin@4care.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="userPhone" class="form-label">Phone Number</label>
+                                <input type="tel" id="userPhone" class="input-field" value="+63 912 345 6789">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <input type="password" id="currentPassword" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" id="newPassword" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" id="confirmNewPassword" class="input-field">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary-modal">
+                                <i class="fas fa-save"></i> Save Profile Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Report Generation Section (Moved to its own section) -->
+                <!-- System Configuration -->
+
+
+                <!-- User Management (Placeholder for future functionality) -->
+                <div class="form-section" style="display: none;">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-users-cog"></i>
+                        User & Role Management
+                    </h3>
+                    <form id="userRoleManagementForm" class="patient-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="defaultUserRole" class="form-label">Default New User Role</label>
+                                <select id="defaultUserRole" class="input-field">
+                                    <option value="nurse">Nurse</option>
+                                    <option value="doctor">Doctor</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="staff">Staff</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="allowRoleChanges" class="form-label">Allow Role Changes by Admins</label>
+                                <select id="allowRoleChanges" class="input-field">
+                                    <option value="yes" selected>Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="systemAnnouncements" class="form-label">System-wide Announcements</label>
+                                <textarea id="systemAnnouncements" rows="3" class="input-field" placeholder="Enter important announcements for all users."></textarea>
+                                <p class="input-hint">These announcements will be visible to all logged-in users.</p>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary-modal">
+                                <i class="fas fa-save"></i> Save User & Role Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        
+
+                <!-- Admin Editing Section -->
+        <div class="content-section" id="admin-editing-section">
+            <h2 class="section-title" style="margin-bottom: 20px;">Manage System Data</h2>
+            <div class="dashboard-card">
+                <div class="admin-editing-options">
+                    <button class="btn btn-primary admin-edit-btn" data-external-link="Doctor-Dashboard-Editing.html" target="_blank">
+                         Doctor Dashboard
+                    </button>
+                    <button class="btn btn-primary admin-edit-btn" data-external-link="Patient-Dashboard-Editing.html" target="_blank">
+                         Patient Dashboard
+                    </button>
+                    <button class="btn btn-primary admin-edit-btn" data-external-link="4Care-Page-Editing.html" target="_blank">
+                         Main Dashboard
+                    </button>
+                </div>
+
+                <div class="admin-editing-area" id="adminEditingArea">
+                    <!-- Content for selected editing type will be loaded here -->
+                </div>
+            </div>
+
+                <div class="table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">All System Activities</h2>
+                    <button class="btn btn-secondary" id="printActivityLogBtn">
+                        <i class="fas fa-file-export"></i> Print
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Section -->
+
+        <!-- Activity Log Section -->
+        <div class="content-section" id="activity-log-section">
+            <h1 class="section-title">Activity Logs</h1>
+            <div class="table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Admin System Activities</h2>
+                    <button class="btn btn-secondary print-activity-btn" data-target="activityLogTableAdmin">
+                      Print
+                    </button>
+                </div>
+                <table class="data-table" id="activityLogTableAdmin">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Activity log entries will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+                        <div class="table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Doctor System Activities</h2>
+                    <button class="btn btn-secondary print-activity-btn" data-target="activityLogTableDoctor">
+                       Print
+                    </button>
+                </div>
+                <table class="data-table" id="activityLogTableDoctor">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Activity log entries will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+                        <div class="table-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 class="section-title" style="margin-bottom: 0;">Patient System Activities</h2>
+                    <button class="btn btn-secondary print-activity-btn" data-target="activityLogTablePatient">
+                        Print
+                    </button>
+                </div>
+                <table class="data-table" id="activityLogTablePatient">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Activity log entries will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <!-- Removed Right Sidebar -->
+
+        <!-- Confirm Accept/Decline Modal (NEW) -->
+    <div class="modal-overlay" id="confirmActionModalOverlay">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new" id="confirmActionModalTitle">Confirm Action</h2>
+                    <button id="closeConfirmActionModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <i class="fas fa-question-circle" style="font-size: 50px; color: #1a73e8; margin-bottom: 20px;"></i>
+                    <p style="font-size: 16px; margin-bottom: 25px;" id="confirmActionMessage"></p>
+                    <div class="form-actions" style="justify-content: center;">
+                        <button type="button" id="cancelConfirmActionBtn" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="button" id="confirmActionButton" class="btn-primary-modal">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Add Patient Modal (Existing, but will be replaced/updated) -->
+    <!-- I will replace the existing patientModal with the new, enhanced one -->
+    <div class="modal-overlay" id="patientModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Add New Schedule</h2>
+                    <button id="closePatientModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="patientForm" class="patient-form">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-circle"></i>
+                            Staff Information
+                        </h3>
+
+                        <div class="form-grid md-cols-2">
+                            <!-- First Name -->
+                            <div class="form-group" style="--order: 1">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" id="firstName" class="input-field">
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="form-group" style="--order: 2">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" id="lastName" class="input-field">
+                            </div>
+
+                            <div class="form-group" style="--order: 2">
+                                <label for="position" class="form-label">Position</label>
+                                <input type="text" id="position" class="input-field">
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-address-book"></i>
+                            Patient Information
+                        </h3>
+
+                        <div class="form-grid">
+                             <div class="form-grid md-cols-2">
+                            <div class="form-group" style="--order: 5">
+                                <label for="patientName" class="form-label">Patient Name</label>
+                                <input type="text" id="patientName" class="input-field">
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group" style="--order: 4">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select id="gender" class="input-field">
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                </select>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-group" style="--order: 6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" id="phone" class="input-field"
+                                    pattern="[0-9]{10,15}">
+                                <p class="input-hint">Format: 1234567890 (10-15 digits)</p>
+                            </div>
+
+                            <div class="form-group" style="--order: 11">
+                                <label for="bloodType" class="form-label">Blood Type</label>
+                                <select id="bloodType" class="input-field">
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+
+                            <!-- Allergies -->
+                            <div class="form-group" style="--order: 12">
+                                <label for="allergies" class="form-label">Allergies</label>
+                                <textarea id="allergies" rows="2"
+                                    class="input-field"
+                                    placeholder="List any known allergies"></textarea>
+                            </div>
+
+                            <!-- Medications -->
+                            <div class="form-group" style="--order: 14">
+                                <label for="medications" class="form-label">Current Medications</label>
+                                <textarea id="medications" rows="2"
+                                    class="input-field"
+                                    placeholder="List current medications"></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Emergency Contact Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Emergency Contact
+                        </h3>
+
+                        <div class="form-grid md-cols-2">
+                            <!-- Emergency Contact Name -->
+                            <div class="form-group" style="--order: 14">
+                                <label for="emergencyName" class="form-label">Name</label>
+                                <input type="text" id="emergencyName" class="input-field">
+                            </div>
+
+                            <!-- Emergency Contact Relationship -->
+                            <div class="form-group" style="--order: 16">
+                                <label for="emergencyRelationship" class="form-label">Relationship</label>
+                                <input type="text" id="emergencyRelationship" class="input-field">
+                            </div>
+
+                            <!-- Emergency Contact Phone -->
+                            <div class="form-group" style="--order: 17">
+                                <label for="emergencyPhone" class="form-label">Phone Number</label>
+                                <input type="tel" id="emergencyPhone" class="input-field"
+                                    pattern="[0-9]{10,15}">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="clinicAddress" class="form-label">Address</label>
+                                <input type="text" id="clinicAddress" class="input-field" value="123 Health St, Manila">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary-modal">
+                            Save Patient
+                        </button>
+                        <button type="button" id="cancelPatientForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View/Edit Patient Modal -->
+    <div class="modal-overlay" id="viewEditPatientModalOverlay">
+        <div class="modal-container" style="max-height: 90vh; overflow-y: auto; border-radius: 15px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new" id="viewEditModalTitle">View Patient Details</h2>
+                    <button id="closeViewEditModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="viewEditPatientForm" class="patient-form">
+                    <input type="hidden" id="viewEditPatientId">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-circle"></i>
+                            Personal Information
+                        </h3>
+
+                        <div class="form-grid md-cols-2">
+                            <!-- First Name -->
+                            <div class="form-group">
+                                <label for="viewEditFirstName" class="form-label">First Name *</label>
+                                <input type="text" id="viewEditFirstName" class="input-field" readonly>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="form-group">
+                                <label for="viewEditLastName" class="form-label">Last Name *</label>
+                                <input type="text" id="viewEditLastName" class="input-field" readonly>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="form-group">
+                                <label for="viewEditDob" class="form-label">Date of Birth *</label>
+                                <input type="date" id="viewEditDob" class="input-field" readonly>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label for="viewEditGender" class="form-label">Gender *</label>
+                                <select id="viewEditGender" class="input-field" disabled>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-address-book"></i>
+                            Contact Information
+                        </h3>
+
+                        <div class="form-grid">
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="viewEditEmail" class="form-label">Email Address</label>
+                                <input type="email" id="viewEditEmail" class="input-field" readonly>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="viewEditPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" id="viewEditPhone" class="input-field" readonly
+                                    pattern="[0-9]{10,15}">
+                                <p class="input-hint">Format: 1234567890 (10-15 digits)</p>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group">
+                                <label for="viewEditAddress" class="form-label">Address *</label>
+                                <textarea id="viewEditAddress" rows="2"
+                                    class="input-field" readonly></textarea>
+                            </div>
+
+                            <!-- City and Zip Code -->
+                            <div class="form-grid md-cols-2">
+                                <div class="form-group">
+                                    <label for="viewEditCity" class="form-label">City *</label>
+                                    <input type="text" id="viewEditCity" class="input-field" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="viewEditZipCode" class="form-label">Zip/Postal Code *</label>
+                                    <input type="text" id="viewEditZipCode" class="input-field" readonly>
+                                </div>
+                            </div>
+
+                            <!-- Barangay (NEW) -->
+                            <div class="form-group">
+                                <label for="viewEditBarangay" class="form-label">Barangay *</label>
+                                <input type="text" id="viewEditBarangay" class="input-field" readonly>
+                            </div>
+
+                            <!-- Country -->
+                            <div class="form-group">
+                                <label for="viewEditCountry" class="form-label">Country *</label>
+                                <select id="viewEditCountry" class="input-field" disabled>
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="IN">India</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-heartbeat"></i>
+                            Medical Information
+                        </h3>
+
+                        <div class="form-grid">
+                            <!-- Blood Type -->
+                            <div class="form-group">
+                                <label for="viewEditBloodType" class="form-label">Blood Type</label>
+                                <select id="viewEditBloodType" class="input-field" disabled>
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+
+                            <!-- Allergies -->
+                            <div class="form-group">
+                                <label for="viewEditAllergies" class="form-label">Allergies</label>
+                                <textarea id="viewEditAllergies" rows="2"
+                                    class="input-field" readonly
+                                    placeholder="List any known allergies"></textarea>
+                            </div>
+
+                            <!-- Medical Conditions -->
+                            <div class="form-group">
+                                <label for="viewEditConditions" class="form-label">Medical Conditions</label>
+                                <textarea id="viewEditConditions" rows="2"
+                                    class="input-field" readonly
+                                    placeholder="List any existing medical conditions"></textarea>
+                            </div>
+
+                            <!-- Medications -->
+                            <div class="form-group">
+                                <label for="viewEditMedications" class="form-label">Current Medications</label>
+                                <textarea id="viewEditMedications" rows="2"
+                                    class="input-field" readonly
+                                    placeholder="List current medications"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Emergency Contact
+                        </h3>
+
+                        <div class="form-grid md-cols-2">
+                            <!-- Emergency Contact Name -->
+                            <div class="form-group">
+                                <label for="viewEditEmergencyName" class="form-label">Name *</label>
+                                <input type="text" id="viewEditEmergencyName" class="input-field" readonly>
+                            </div>
+
+                            <!-- Emergency Contact Relationship -->
+                            <div class="form-group">
+                                <label for="viewEditEmergencyRelationship" class="form-label">Relationship *</label>
+                                <input type="text" id="viewEditEmergencyRelationship" class="input-field" readonly>
+                            </div>
+
+                            <!-- Emergency Contact Phone -->
+                            <div class="form-group">
+                                <label for="viewEditEmergencyPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" id="viewEditEmergencyPhone" class="input-field" readonly
+                                    pattern="[0-9]{10,15}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details Section -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Additional Details
+                        </h3>
+                        <div class="form-group">
+                            <label for="viewEditAdditionalDetails">Additional Details</label>
+                            <textarea id="viewEditAdditionalDetails" name="additionalDetails" rows="3" class="input-field" readonly></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" id="editPatientDetailsBtn" class="btn-secondary">
+                            <i class="fas fa-edit"></i> Edit Details
+                        </button>
+                        <button type="submit" id="savePatientDetailsBtn" class="btn-primary-modal" style="display: none;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Record Modal (Removed as per instruction) -->
+
+        <!-- Add Patient Information Modal -->
+    <div class="modal-overlay" id="addPatientInfoModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Add Patient Information</h2>
+                    <button id="closeAddPatientInfoModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addPatientInfoForm" class="patient-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Information Details
+                        </h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="infoType" class="form-label">Information Type *</label>
+                                <input type="text" id="infoType" class="input-field" placeholder="e.g., Diagnosis, Treatment, Lab Result">
+                            </div>
+                            <div class="form-group">
+                                <label for="infoDetails" class="form-label">Details *</label>
+                                <textarea id="infoDetails" rows="5" class="input-field" placeholder="Enter detailed information here..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelAddPatientInfoForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Information
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Inventory Item Modal -->
+    <div class="modal-overlay" id="addInventoryItemModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Add New Inventory Item</h2>
+                    <button id="closeAddInventoryItemModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addInventoryItemForm" class="patient-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-boxes"></i>
+                            Item Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="itemName" class="form-label">Item Name *</label>
+                                <input type="text" id="itemName" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemQuantity" class="form-label">Quantity *</label>
+                                <input type="number" id="itemQuantity" min="0" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemUnit" class="form-label">Unit *</label>
+                                <input type="text" id="itemUnit" placeholder="e.g., Packs, Bottles, Units" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemSupplier" class="form-label">Supplier</label>
+                                <input type="text" id="itemSupplier" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemExpiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" id="itemExpiryDate" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemLocation" class="form-label">Storage Location</label>
+                                <input type="text" id="itemLocation" class="input-field">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelAddInventoryItemForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Inventory Item Modal (NEW) -->
+    <div class="modal-overlay" id="editInventoryItemModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Edit Inventory Item</h2>
+                    <button id="closeEditInventoryItemModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="editInventoryItemForm" class="patient-form">
+                    <input type="hidden" id="editItemId">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-boxes"></i>
+                            Item Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="editItemName" class="form-label">Item Name *</label>
+                                <input type="text" id="editItemName" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemQuantity" class="form-label">Quantity *</label>
+                                <input type="number" id="editItemQuantity" min="0" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemUnit" class="form-label">Unit *</label>
+                                <input type="text" id="editItemUnit" placeholder="e.g., Packs, Bottles, Units" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemSupplier" class="form-label">Supplier</label>
+                                <input type="text" id="editItemSupplier" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemExpiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" id="editItemExpiryDate" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemLocation" class="form-label">Storage Location</label>
+                                <input type="text" id="editItemLocation" class="input-field">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelEditInventoryItemForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Doctor Modal (Replaced Add New Appointment Modal) -->
+    <div class="modal-overlay" id="scheduleDoctorModalOverlay">
+        <div class="modal-container">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Schedule a Doctor</h2>
+                    <button id="closeScheduleDoctorModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="scheduleDoctorForm" class="patient-form">
+                    <div id="scheduleMessage" style="margin: 10px 0; padding: 10px; border-radius: 5px; display: none; font-weight: bold;"></div>
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user-md"></i>
+                            Doctor Schedule Details
+                        </h3>
+                        <div class="form-grid md-cols-2">
+                            <div class="form-group">
+                                <label for="scheduleDoctorName" class="form-label">Doctor Name</label>
+                                <input type="text" id="scheduleDoctorName" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleDate" class="form-label">Date</label>
+                                <input type="date" id="scheduleDate" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleStartTime" class="form-label">Start Time</label>
+                                <input type="time" id="scheduleStartTime" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleEndTime" class="form-label">End Time</label>
+                                <input type="time" id="scheduleEndTime" class="input-field">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleLocation" class="form-label">Location</label>
+                                <input type="text" id="scheduleLocation" class="input-field" placeholder="e.g., Clinic Room 1, Telemedicine">
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleNotes" class="form-label">Notes</label>
+                                <textarea id="scheduleNotes" rows="2" class="input-field" placeholder="Any specific notes for this schedule"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelScheduleDoctorForm" class="btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary-modal">
+                            Save Schedule
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    <!-- View Appointment Details Modal -->
+    <div class="modal-overlay" id="viewAppointmentModalOverlay">
+        <div class="modal-container" style="max-width: 700px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Appointment Details</h2>
+                    <button id="closeViewAppointmentModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="appointment-details-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div class="detail-item">
+                            <strong>Date/Time:</strong>
+                            <p id="viewApptDateTime"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Appointment Type:</strong>
+                            <p id="viewApptType"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Patient Name:</strong>
+                            <p id="viewApptPatientName"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Assigned Doctor:</strong>
+                            <p id="viewApptDoctor"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Approved By:</strong>
+                            <p id="viewApptApprovedBy"></p>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Status:</strong>
+                            <p id="viewApptStatus"></p>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1;">
+                            <strong>Reason for Visit:</strong>
+                            <p id="viewApptReason"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closeViewAppointmentModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Appointment Details Modal -->
+    <div class="modal-overlay" id="doctorAppointmentModalOverlay">
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Doctor Appointment Details</h2>
+                    <button id="closeDoctorAppointmentModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Doctor:</label>
+                        <p id="doctorApptDoctorName"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time Slot:</label>
+                        <p id="doctorApptTimeSlot"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Patient:</label>
+                        <p id="doctorApptPatient"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Appointment Type:</label>
+                        <p id="doctorApptType"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Details:</label>
+                        <p id="doctorApptDetails"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closeDoctorAppointmentModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Details Modal -->
+    <div class="modal-overlay" id="activityDetailsModalOverlay">
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Activity Details</h2>
+                    <button id="closeActivityDetailsModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label"><strong>Timestamp:</strong></label>
+                        <p id="activityDetailTimestamp"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><strong>User:</strong></label>
+                        <p id="activityDetailUser"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><strong>Action:</strong></label>
+                        <p id="activityDetailAction"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><strong>Details:</label>
+                        <p id="activityDetailDetails"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closeActivityDetailsModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Announcement Modal -->
+
+
+    <!-- Doctor Bio Details Modal (NEW) -->
+    <div class="modal-overlay" id="doctorBioModalOverlay">
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Doctor Bio</h2>
+                    <button id="closeDoctorBioModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="doctorBioContent" style="font-size: 1rem; color: #333;"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closeDoctorBioModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contact Details Modal (NEW) -->
+    <div class="modal-overlay" id="emergencyContactModalOverlay">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-content-wrapper">
+                <div class="modal-header-new">
+                    <h2 class="modal-title-new">Emergency Contact Details</h2>
+                    <button id="closeEmergencyContactModalBtn" class="close-modal-btn-new">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-item">
+                        <strong>Name:</strong>
+                        <p id="emergencyContactNameDetail"></p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Relationship:</strong>
+                        <p id="emergencyContactRelationshipDetail"></p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Phone:</strong>
+                        <p id="emergencyContactPhoneDetail"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="closeEmergencyContactModalFooterBtn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Removed OCR Additional Info Modal -->
+
+    
+
+
+    <script src="4Care-Admin.js"></script>
+    <!-- The Admin-Logout.js script is now loaded by Admin-Logout.html -->
+    <script>
+        // Removed legacy OCR helpers
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileUploadArea = document.getElementById('ocrFileUploadArea');
+            const ocrFile = document.getElementById('ocrFile');
+            const ocrFileNameDisplay = document.getElementById('ocrFileNameDisplay');
+            const ocrFilePreviewContainer = document.getElementById('ocrFilePreviewContainer');
+            const ocrImagePreview = document.getElementById('ocrImagePreview');
+            const ocrPdfPreview = document.getElementById('ocrPdfPreview');
+
+            // Make the file upload area clickable
+            // no-op
+
+            // Display selected file name and preview
+            // no-op
+
+            // Optional: Drag and drop functionality
+            // no-op
+
+            // no-op
+
+            // no-op
+
+            // OCR Form Submission (Placeholder for actual OCR logic)
+            // no-op
+
+            // no-op
+
+            // OCR Patient Details Form Submission - removed
+        });
+    </script>
+    <script src="back-end/js/admin-autosave.js"></script>
+    <script src="back-end/js/admin-profile-autosave.js"></script>
+    <script src="back-end/js/admin-profile.js"></script>
+    <script src="back-end/js/admin-schedule-autosave.js"></script>
+</body>
+</html>
