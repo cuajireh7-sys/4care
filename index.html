@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4Care | Patient</title>
+    <link rel="icon" type="image/x-icon" href="../Main-Dash/4CARE LOGO.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="4Care-Patient.css">
+
+    <body class="bg-gray-50">    
+    <nav class="bg-white shadow-md sticky top-0 z-50 navbar-custom">
+        <div class="container mx-auto flex justify-between items-center py-3">
+            <div class="flex items-center space-x-2">
+                <span class="logo-text text-3xl font-bold text-blue-600">4Care</span>
+            </div>
+
+            <div class="desktop-nav flex items-center space-x-4">
+                <a href="#home" class="nav-link px-3 py-5 rounded-md text-sm font-medium" onclick="showSection('homeSection')">Home</a>
+                <a href="#appointments" class="nav-link px-3 py-2 rounded-md text-sm font-medium" onclick="showSection('appointmentsSection')">Check-Ups</a>
+                <a href="#medical-history" class="nav-link px-3 py-2 rounded-md text-sm font-medium" onclick="showSection('medicalHistorySection')">Medical History</a>
+                <!-- New Prescription Button -->
+                <a href="#" class="btn text-white font-bold py-2 px-6 rounded-full transition-all shadow-lg hover:shadow-xl bg-blue-600 hover:bg-blue-900 hover:transform" id="prescriptionBtnDesktop">Prescription</a>
+                <a href="#" class="btn text-white font-bold py-2 px-6 rounded-full transition-all shadow-lg hover:shadow-xl bg-blue-600 hover:bg-blue-900 hover:transform" id="logoutBtnDesktop">Logout</a>
+            </div>
+
+            <div class="mobile-nav">
+                <div class="flex items-center space-x-4">
+                    <!-- New Prescription Button for Mobile -->
+                    <a href="#" class="mobile-logout-icon text-2xl" id="prescriptionBtnMobile">
+                        <i class="fas fa-prescription"></i>
+                    </a>
+                    <a href="#" class="mobile-logout-icon text-2xl" id="logoutBtnMobile">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                    <button id="mobileMenuBtn" class="text-blue-600 text-2xl focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileNavMenu" class="mobile-nav-menu">
+            <a href="#home" class="nav-link" onclick="showSection('homeSection'); toggleMobileMenu();">Home</a>
+            <a href="#appointments" class="nav-link" onclick="showSection('appointmentsSection'); toggleMobileMenu();">Check-Up</a>
+            <a href="#medical-history" class="nav-link" onclick="showSection('medicalHistorySection'); toggleMobileMenu();">Medical History</a>
+            <!-- New Prescription Link for Mobile Menu -->
+            <a href="#" class="nav-link" id="prescriptionLinkMobile" onclick="toggleMobileMenu();">Prescription</a>
+        </div>
+    </nav>
+
+    <section id="homeSection" class="container content-section active">
+
+        <div class="hero-profile-container">
+            <div class="hero">
+            <div class="relative">
+                <img id="patientProfilePhoto" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjIwIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0yNCAxMDBDMjQgODguOTU0NCAzMi45NTQ0IDgwIDQ0IDgwSDg0Qzk1LjA0NTYgODAgMTA0IDg4Ljk1NDQgMTA0IDEwMFYxMjhIMjRWMTIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K" alt="Patient portrait photo" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
+            </div>
+            
+                <h2 id="welcomeHeading">Welcome Back!</h2>
+                <p id="healthJourneyText">Your health journey, simplified. View your history, and stay connected with 4Care.</p>
+            </div>
+
+            <div class="patient-profile-card">
+                <div class="card-header text-blue-800 font-medium">
+                    <div class="flex items-center">
+                        Patient Profile
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn" id="patientInfoTrigger">
+                            <i class="fas fa-user-edit mr-2"></i>View Full Profile
+                        </button>
+                        <button class="btn ml-2 speak-section-btn" data-section-id="homeSection">
+                            <i class="fas fa-volume-up mr-2"></i>Read Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row gap-1">
+                        <div class="flex flex-col items-center md:items-start">
+                        </div>
+                        
+                        <div class="flex-1"> 
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow-md hover:bg-blue-50 transition">
+                                    <h4 class="font-medium text-gray-700 mb-2 flex items-center">
+                                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                                        Personal Information
+                                    </h4>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-28">Full Name:</span>
+                                            <span class="font-medium" id="displayFullName"></span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-28">Gender:</span>
+                                            <span class="font-medium" id="displayGender"></span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-28">Age:</span>
+                                            <span class="font-medium" id="displayAge"></span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-28">Date of Birth:</span>
+                                            <span class="font-medium" id="displayDateOfBirth"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg shadow-md hover:bg-blue-50 transition">
+                                    <h4 class="font-medium text-gray-700 mb-2 flex items-center">
+                                        <i class="fas fa-address-book mr-2 text-blue-500"></i>
+                                        Contact Information
+                                    </h4>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-24">Phone:</span>
+                                            <span class="font-medium" id="displayPhone"></span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-24">Email:</span>
+                                            <span class="font-medium" id="displayEmail"></span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-24">Address:</span>
+                                            <span class="font-medium" id="displayAddress"></span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-600 w-24">Barangay:</span>
+                                            <span class="font-medium" id="displayBarangay"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="appointments-calendar-container">
+            <div class="card flex-1 bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+                <div class="card-header text-green-800 flex items-center justify-between">
+                    <span>Upcoming Check-Up</span>
+                    <small class="text-green-600 text-xs">(Latest 2)</small>
+                </div>
+                <ul id="upcomingAppointmentsList" class="space-y-3"></ul>
+                <div id="noUpcomingAppointmentsMessage" class="text-center py-6 text-gray-500" style="display:none;">No upcoming check-ups.</div>
+            </div>
+
+            <div class="card flex-1 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                <div class="card-header text-purple-800 flex items-center justify-between">
+                    <span>Health Timeline</span>
+                    <small class="text-purple-600 text-xs">(Latest 2)</small>
+                </div>
+                <div id="healthTimelineContainer" class="mt-4 space-y-4">
+                    <!-- Health timeline entries will be loaded dynamically here -->
+                    <div id="noHealthTimelineMessage" class="text-center py-8 text-gray-500" style="display: none;">
+                        <i class="fas fa-heartbeat text-4xl mb-4 text-gray-300"></i>
+                        <p>No health timeline entries found.</p>
+                        <p class="text-sm">Your health timeline will appear here once entries are added.</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section id="appointmentsSection" class="container content-section">
+        <h1 class="text-3xl font-bold mb-6">My Check-Ups
+            <button class="btn ml-4 speak-section-btn" data-section-id="appointmentsSection">
+                <i class="fas fa-volume-up mr-2"></i>Read Section
+            </button>
+        </h1>
+        
+        <div class="card">
+            <div class="card-header">Upcoming Check-Ups</div>
+            <ul id="checkUpsList" class="medical-history-list">
+                <!-- Check-up entries will be loaded dynamically here -->
+                <li id="noCheckUpsMessage" class="text-center py-8 text-gray-500" style="display: none;">
+                    <i class="fas fa-calendar-check text-4xl mb-4 text-gray-300"></i>
+                    <p>No upcoming check-ups found.</p>
+                    <p class="text-sm">Your check-ups will appear here once scheduled.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="medicalHistorySection" class="container content-section">
+        <h1 class="text-3xl font-bold mb-6">My Medical History
+            <button class="btn ml-4 speak-section-btn" data-section-id="medicalHistorySection">
+                <i class="fas fa-volume-up mr-2"></i>Read Section
+            </button>
+        </h1>
+
+        <div class="card">
+            <div class="card-header">Personal Medical History</div>
+            <ul id="medicalHistoryList" class="medical-history-list">
+                <!-- Medical history entries will be loaded dynamically here -->
+                <li id="noMedicalHistoryMessage" class="text-center py-8 text-gray-500" style="display: none;">
+                    <i class="fas fa-file-medical text-4xl mb-4 text-gray-300"></i>
+                    <p>No medical history entries found.</p>
+                    <p class="text-sm">Your medical history will appear here once entries are added.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <div id="medicalHistoryDetailsModal" class="modal">
+        <div class="appointment-details-modal-content">
+            <div class="flex justify-end">
+                <button id="closeMedicalHistoryModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2>Medical Record Details</h2>
+            <p><strong><i class="fas fa-calendar-day mr-2"></i>Date:</strong> <span id="modalRecordDate"></span></p>
+            <p><strong><i class="fas fa-tag mr-2"></i>Type:</strong> <span id="modalRecordType"></span></p>
+            <p><strong><i class="fas fa-info-circle mr-2"></i>Details:</strong> <span id="modalRecordDetails"></span></p>
+            <p><strong><i class="fas fa-file-medical mr-2"></i>Doctor:</strong> <span id="modalRecordDoctor"></span></p>
+        </div>
+    </div>
+
+     <!-- Check-Up Details Modal -->
+    <div id="checkUpDetailsModal" class="modal">
+        <div class="appointment-details-modal-content">
+            <div class="flex justify-end">
+                <button id="closeCheckUpModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2>Check-Up Details</h2>
+            <p><strong><i class="fas fa-tag mr-2"></i>Type:</strong> <span id="modalCheckUpType"></span></p>
+            <p><strong><i class="fas fa-calendar-day mr-2"></i>Date:</strong> <span id="modalCheckUpDate"></span></p>
+            <p><strong><i class="fas fa-user-md mr-2"></i>Doctor:</strong> <span id="modalCheckUpDoctor"></span></p>
+            <p><strong><i class="fas fa-info-circle mr-2"></i>Notes:</strong> <span id="modalCheckUpNotes"></span></p>
+        </div>
+    </div>
+
+    <!-- New File View Modal -->
+    <div id="fileViewModal" class="modal">
+        <div class="appointment-details-modal-content">
+            <div class="flex justify-end">
+                <button id="closeFileViewModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2 id="fileViewModalTitle">View File</h2>
+            <div id="fileContent" class="mt-4 text-center">
+                <!-- Content will be loaded here (e.g., an image or PDF iframe) -->
+                <p class="text-gray-600">Loading file...</p>
+            </div>
+        </div>
+    </div>
+    <!-- End New File View Modal -->
+
+    <div id="patientInfoModal" class="modal">
+        <div class="patient-info-modal-content">
+            <div class="flex justify-end">
+                <button id="closePatientInfoModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2 class="text-2xl font-bold mb-1 text-center text-blue-600">Patient Details</h2>
+            <div class="flex flex-col items-center mb-4">
+                <div class="relative">
+                    <img id="modalPatientProfilePhoto" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjIwIiBmaWxsPSIjMzM3QUJCIi8+CjxwYXRoIGQ9Ik0yNCAxMDBDMjQgODguOTU0NCAzMi45NTQ0IDgwIDQ0IDgwSDg0Qzk1LjA0NTYgODAgMTA0IDg4Ljk1NDQgMTA0IDEwMFYxMjhIMjRWMTIwWiIgZmlsbD0iIzMzN0FCQiIvPgo8L3N2Zz4K" alt="Patient Photo" class="w-32 h-32 rounded-full object-cover border-4 border-blue-500 mb-4">
+                    <button id="changeModalProfilePhotoBtn" class="absolute bottom-4 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-colors" style="display: none;">
+                        <i class="fas fa-plus text-sm"></i>
+                    </button>
+                </div>
+                
+                <!-- Hidden file input for profile photo upload -->
+                <input type="file" id="profilePhotoUpload" accept="image/*" style="display: none;">
+                <div id="profilePhotoError" class="text-red-500 text-sm mt-2" style="display: none;"></div>
+                <p class="text-xl font-semibold" id="modalPatientName"></p>
+            </div>
+            
+            <!-- Edit Button -->
+            <div class="flex justify-center mb-6">
+                <button id="editPatientInfoBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition duration-300">
+                    <i class="fas fa-edit mr-2"></i>Edit Profile
+                </button>
+            </div>
+            
+            <h4 class="modal-section-header"><i class="fas fa-info-circle mr-2"></i>Personal Information</h4>
+            <div class="modal-section-content">
+                <!-- Read-only display -->
+                <div id="personalInfoReadOnly">
+                    <div><strong>Full Name:</strong> <span id="modalDisplayFullName"></span></div>
+                    <div><strong>Gender:</strong> <span id="modalDisplayGender"></span></div>
+                    <div><strong>Age:</strong> <span id="modalDisplayAge"></span></div>
+                    <div><strong>Date of Birth:</strong> <span id="modalDisplayDateOfBirth"></span></div>
+                </div>
+                
+                <!-- Edit controls (hidden initially) -->
+                <div id="personalInfoEdit" style="display: none;">
+                    <div><strong>First Name:</strong> <input type="text" id="editFirstName" value="" class="form-control" autocomplete="off" placeholder="Enter first name"></div>
+                    <div><strong>Last Name:</strong> <input type="text" id="editLastName" value="" class="form-control" autocomplete="off" placeholder="Enter last name"></div>
+                    <div><strong>Gender:</strong> 
+                        <select id="editGender" class="form-control" autocomplete="off">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div><strong>Age:</strong> <input type="number" id="editAge" value="" class="form-control" min="0" max="120" autocomplete="off" placeholder="Enter age" step="1"></div>
+                    <div><strong>Date of Birth:</strong> <input type="date" id="editDateOfBirth" value="" class="form-control" autocomplete="off"></div>
+                </div>
+            </div>
+            
+            <h4 class="modal-section-header"><i class="fas fa-address-book mr-2"></i>Contact Information</h4>
+            <div class="modal-section-content">
+                <!-- Read-only display -->
+                <div id="contactInfoReadOnly">
+                    <div><strong>Phone:</strong> <span id="modalDisplayPhone"></span></div>
+                    <div><strong>Email:</strong> <span id="modalDisplayEmail"></span></div>
+                    <div><strong>Address:</strong> <span id="modalDisplayAddress"></span></div>
+                    <div><strong>Barangay:</strong> <span id="modalDisplayBarangay"></span></div>
+                    <div><strong>Emergency:</strong> <span id="modalDisplayEmergencyContact"></span></div>
+                </div>
+                
+                <!-- Edit controls (hidden initially) -->
+                <div id="contactInfoEdit" style="display: none;">
+                    <div><strong>Phone:</strong> <input type="text" id="editPhone" value="" class="form-control" autocomplete="off"></div>
+                    <div><strong>Address:</strong> <input type="text" id="editAddress" value="" class="form-control" autocomplete="off"></div>
+                     <div><strong>Barangay:</strong> 
+                         <select id="editBarangay" class="form-control" autocomplete="off">
+                             <option value="">Select Barangay</option>
+                             <option value="545">545</option>
+                             <option value="546">546</option>
+                             <option value="547">547</option>
+                             <option value="548">548</option>
+                             <option value="549">549</option>
+                             <option value="550">550</option>
+                             <option value="551">551</option>
+                         </select>
+                     </div>
+                    <div><strong>Emergency:</strong> <input type="text" id="editEmergencyContact" value="" class="form-control" autocomplete="off"></div>
+                </div>
+            </div>
+
+
+            <h4 class="modal-section-header"><i class="fas fa-calendar-alt mr-2"></i>Registration Information</h4>
+            <div class="modal-section-content">
+                <!-- Read-only display -->
+                <div id="additionalInfoReadOnly">
+                    <div><strong>Date of Registration:</strong> <span id="modalDisplayRegistrationDate"></span></div>
+                </div>
+                
+                <!-- Edit controls (hidden initially) -->
+                <div id="additionalInfoEdit" style="display: none;">
+                    <div><strong>Date of Registration:</strong> <input type="text" id="editRegistrationDate" value="" class="form-control" readonly autocomplete="off" placeholder="Auto-generated from account creation"></div>
+                </div>
+            </div>
+            <div class="flex justify-center mt-6 space-x-4">
+                <button class="btn" id="savePatientInfoBtn" style="display: none;">Save Changes</button>
+                <button class="btn bg-gray-500 hover:bg-gray-600" id="cancelEditBtn" style="display: none;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="appointmentDetailsModal" class="modal">
+        <div class="appointment-details-modal-content">
+            <div class="flex justify-end">
+                <button id="closeAppointmentDetailsModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2>Consultation Details</h2>
+            <p><strong><i class="fas fa-user-md mr-2"></i>Doctor:</strong> <span id="modalDoctor"></span></p>
+            <p></style> <strong><i class="far fa-calendar-alt mr-2"></i>Date:</strong> <span id="modalDate"></span></p>
+            <p><strong><i class="far fa-clock mr-2"></i>Time:</strong> <span id="modalTime"></span></p>
+            <p><strong><i class="fas fa-stethoscope mr-2"></i>Type:</strong> <span id="modalType"></span></p>
+            <p><strong><i class="fas fa-info-circle mr-2"></i>Status:</strong> <span id="modalStatus" class="status-badge"></span></p>
+        </div>
+    </div>
+
+    <div id="familyMemberModal" class="modal">
+        <div class="patient-info-modal-content">
+            <div class="flex justify-end">
+                <button id="closeFamilyMemberModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="logoutConfirmationModal" class="modal">
+        <div class="confirmation-modal-content">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="button-group">
+                <button class="btn btn-yes" id="confirmLogoutYes">Yes</button>
+                <button class="btn btn-no" id="confirmLogoutNo">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Prescription Modal -->
+    <div id="prescriptionModal" class="modal">
+        <div class="appointment-details-modal-content">
+            <div class="flex justify-end">
+                <button id="closePrescriptionModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2>My Prescriptions</h2>
+            <ul class="medical-history-list">
+                <!-- Prescriptions will be loaded dynamically from database -->
+            </ul>
+        </div>
+    </div>
+    <!-- End New Prescription Modal -->
+
+    <!-- Profile Photo Change Modal -->
+    <div id="profilePhotoChangeModal" class="modal">
+        <div class="appointment-details-modal-content">
+            <div class="flex justify-end">
+                <button id="closeProfilePhotoChangeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Change Profile Photo</h2>
+            
+            <div class="flex flex-col md:flex-row md:items-start md:gap-6">
+                <!-- Left column: actions -->
+                <div class="w-full md:w-1/3 flex flex-col items-stretch gap-3">
+                    <button type="button" id="takeNewPhotoBtn" class="bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-md transition duration-300 inline-flex items-center justify-center">
+                        <i class="fas fa-camera mr-2"></i> Take Photo
+                    </button>
+                    <label for="newProfilePhotoFile" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md transition duration-300 cursor-pointer inline-flex items-center justify-center">
+                        <i class="fas fa-file-image mr-2"></i> Choose Photo
+                    </label>
+                    <input type="file" id="newProfilePhotoFile" accept="image/*" class="hidden">
+                </div>
+
+                <!-- Right column: preview -->
+                <div class="w-full md:w-2/3 mt-4 md:mt-0">
+                    <video id="newCameraFeed" autoplay playsinline style="display:none;" class="rounded-md border border-gray-300 shadow-md w-full max-w-md h-auto mx-auto"></video>
+                    <canvas id="newPhotoCanvas" style="display:none;"></canvas>
+                    <img id="newCapturedPhoto" alt="New Profile Photo Preview" class="mx-auto mt-4 rounded-md border border-gray-300 shadow-md w-full max-w-md h-auto hidden">
+                    <div class="error-message text-red-500 text-xs mt-1 text-center" id="newCapturedPhotoError"></div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mt-6 gap-4">
+                <button id="saveNewProfilePhotoBtn" class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-md transition duration-300" style="display: none;">
+                    <i class="fas fa-save mr-2"></i>Save Photo
+                </button>
+                <button id="cancelProfilePhotoChangeBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md transition duration-300">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- End Profile Photo Change Modal -->
+
+    
+
+    
+    <!-- Split JS: order matters: ui -> tts -> data -> prescription -> logout -->
+    <script src="js/ui.js"></script>
+    <script src="js/tts.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/prescription.js"></script>
+    <script src="js/health-timeline.js"></script>
+    <script src="js/followups.js"></script>
+    <script src="js/logout.js"></script>
+    </body>
+</html>
