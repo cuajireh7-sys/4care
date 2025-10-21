@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4Care</title>
+    <link rel="icon" type="image/x-icon" href="4CARE LOGO.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="4Care-Main.css">
+    
+    <!-- Constants for dynamic content -->
+    <script>
+        const APP_CONFIG = {
+            APP_NAME: '4Care',
+            HEALTH_CENTER_NAME: 'F. Legarda Health Center',
+            HEALTH_CENTER_DESCRIPTION: 'We are committed to providing quality and affordable healthcare services for the people of Sampaloc, Manila. Our staff is trained to provide high-quality care that meets international standards. We offer a wide range of medical services including family planning, prenatal care, dental hygiene and more!',
+            VIDEO_OVERLAY_TITLE: 'Your Health, Our Priority',
+            VIDEO_OVERLAY_DESCRIPTION: 'Providing compassionate and comprehensive healthcare services to our community. Watch to learn more about our commitment to your well-being.',
+            DEFAULT_PROFILE_IMAGE: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjIwIiBmaWxsPSIjMzM3QUJCIi8+CjxwYXRoIGQ9Ik0yNCAxMDBDMjQgODguOTU0NCAzMi45NTQ0IDgwIDQ0IDgwSDg0Qzk1LjA0NTYgODAgMTA0IDg4Ljk1NDQgMTA0IDEwMFYxMjhIMjRWMTIwWiIgZmlsbD0iIzMzN0FCQiIvPgo8L3N2Zz4K'
+        };
+    </script>
+    
+
+
+<body>
+    <nav class="bg-white shadow-md sticky top-0 z-50 navbar-custom">
+        <div class="container mx-auto px-6 flex flex-col">
+            <div class="flex justify-between items-center py-3">
+                <div class="flex items-center space-x-2">
+                    <img src="4CARE LOGO.png" alt="4Care Logo" class="h-10">
+                    <span class="logo-text" id="appName">4Care</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-4 items-center">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#emergency-hotlines" class="nav-link">Emergency Hotlines</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                    <button id="search-icon-button" class="nav-link">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="#" id="openSignupModalBtnNav" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-full font-bold shadow-md transition duration-300">
+                        Create an Account
+                    </a>
+                    <a href="#" id="openLoginModalBtn" class="bg-yellow-500 hover:bg-yellow-600 text-gray-800 py-2 px-4 rounded-full font-bold shadow-md transition duration-300">
+                        Log In
+                    </a>
+                </div>
+                
+                <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="mobile-menu" class="mobile-menu md:hidden bg-white px-6 pb-4">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#emergency-hotlines" class="nav-link">Emergency Hotlines</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="#" id="mobile-search-icon-button" class="mobile-nav-btn search-btn">
+                    <i class="fas fa-search mr-2"></i> Search
+                </a>
+                <a href="#" id="openSignupModalBtnMobileNav" class="mobile-nav-btn book-appointment">Create an Account</a>
+                <a href="#" id="openLoginModalBtnMobile" class="mobile-nav-btn login">Log In</a>
+            </div>
+            <div id="search-container" class="hidden">
+                <input type="text" id="popup-search-input" placeholder="Search services...">
+                <button id="popup-search-button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content-wrapper">
+        <section id="home" class="hero text-white py-16">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+                <div class="hero-content md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-xl md:text-4xl font-bold mb-4" id="healthCenterName">F. Legarda Health Center</h1>
+                    <p class="text-l mb-6" id="healthCenterDescription">We are committed to providing quality and affordable healthcare services for the people of Sampaloc, Manila. Our staff is trained to provide high-quality care that meets international standards. We offer a wide range of medical services including family planning, prenatal care, dental hygiene and more!</p>
+                </div>
+                
+                <div class="hero-right-content">
+                    <div class="carousel-container">
+                        <div class="carousel-slide" id="hero-carousel-slide">
+                            <img src="heropic2.png" alt="Health Image 1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+  
+    <section id="announcements" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600 -mt-10">Center Announcements</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-100 text-blue-600 rounded-full p-3 mr-4">
+                            <i class="fas fa-calendar-day text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Updated Hours</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">Starting next month, we're extending our weekdays hours from 8AM to 4PM to better serve our community.</p>
+                    <div class="text-sm text-gray-500">Posted: June 15, 2025</div>
+                </div>
+                
+                <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300 hidden-mobile">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-100 text-green-600 rounded-full p-3 mr-4">
+                            <i class="fas fa-user-md text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">New Specialist Joined</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">We're pleased to welcome Dr. Sarah Johnson, our new pediatric specialist. She'll be accepting new patients starting July 1st.</p>
+                    <div class="text-sm text-gray-500">Posted: December 10, 2024</div>
+                </div>
+                
+                <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300 hidden-mobile">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-100 text-yellow-600 rounded-full p-3 mr-4">
+                            <i class="fas fa-syringe text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Anti-Rabies Vaccines Available</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">This year's anti-rabies vaccines have arrived. Set your appointment to schedule your vaccination.</p>
+                    <div class="text-sm text-gray-500">Posted: January 5, 2025</div>
+                </div>
+            </div>
+
+            <button id="viewAllAnnouncementsBtn" class="view-all-announcements-btn md:hidden">View All Announcements</button>
+        </div>
+    </section>
+
+    <section id="hero-video-section" class="hero-video">
+        <video autoplay muted loop playsinline preload="auto" poster="heropic2.png">
+            <source src="https://www.shutterstock.com/shutterstock/videos/20206021/preview/stock-footage-philippine-general-hospital-pgh-manila-philippines-october-patients-seeking-medical.webm" type="video/webm">
+            <source src="videos/clinic.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-video-overlay">
+            <h2 class="text-2xl md:text-6xl font-bold mb-4" id="videoOverlayTitle">Your Health, Our Priority</h2>
+            <p class="text-lg md:text-xl max-w-2xl" id="videoOverlayDescription">Providing compassionate and comprehensive healthcare services to our community. Watch to learn more about our commitment to your well-being.</p>
+            <a href="#servicesection" class="mt-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300">Explore Services</a>
+        </div>
+    </section>
+
+
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 id="services" class="text-3xl font-bold text-center mb-8 text-blue-600">Our Services </h2>
+            
+            <div class="services-carousel-wrapper md:hidden" style="padding-bottom: 40px;">
+                <div class="services-carousel-inner" id="services-carousel-inner">
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-blue-600 text-4xl mb-4">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Primary Care</h3>
+                        <p class="text-gray-600">Comprehensive health assessments and preventive care for all ages.</p>
+                    </div>
+                    
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-green-600 text-4xl mb-4">
+                            <i class="fas fa-child"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Pediatrics</h3>
+                        <p class="text-gray-600">Specialized care for infants, children, and adolescents.</p>
+                    </div>
+                    
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-purple-600 text-4xl mb-4">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Immediate Care</h3>
+                        <p class="text-gray-600">Preventive care such as physical examinations, vaccinations, and screening tests, in addition to treating acute illnesses and injuries.</p>
+                    </div>
+                    
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-yellow-600 text-4xl mb-4">
+                            <i class="fas fa-tooth"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Dental Care</h3>
+                        <p class="text-gray-600">Oral health services including cleanings and restorative care.</p>
+                    </div>
+
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-red-600 text-4xl mb-4">
+                            <i class="fas fa-x-ray"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Radiology</h3>
+                        <p class="text-gray-600">Advanced imaging services including X-rays and ultrasounds.</p>
+                    </div>
+
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-orange-600 text-4xl mb-4">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Laboratory Services</h3>
+                        <p class="text-gray-600">On-site lab tests for quick and accurate diagnoses.</p>
+                    </div>
+
+                    <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                        <div class="text-cyan-600 text-4xl mb-4">
+                            <i class="fas fa-notes-medical"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Consultation</h3>
+                        <p class="text-gray-600">Expert medical advice and personalized treatment plans.</p>
+                    </div>
+
+                    
+                </div>
+                <div class="services-carousel-nav">
+                    <button id="services-prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button id="services-next-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="services-carousel-pagination" id="services-pagination"></div>
+            </div>
+
+            <div id="servicesection" class="services-grid hidden md:grid grid-cols-1 md:grid-cols-0 lg:grid-cols-5 gap-3">
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-2">Dental</h3>
+                    <div class="text-green-600 text-4xl order-1">
+                        <i class="fa-solid fa-tooth"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-2">Immunization</h3>
+                    <div class="text-purple-600 text-4xl order-1">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-l font-bold order-2">Animal Bite Treatment</h3>
+                    <div class="text-orange-600 text-4xl order-1">
+                        <i class="fas fa-cat"></i>
+                    </div>
+                </div>
+
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-l font-bold order-2">TB Prevention & Treatment</h3>
+                    <div class="text-blue-600 text-3xl order-1">
+                        <i class="fas fa-hand"></i>
+                    </div>
+                </div>
+
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-l font-bold order-2">Post Partum/Newborn</h3>
+                    <div class="text-gray-600 text-4xl order-1">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-1">Covid Vaccination</h3>
+                    <div class="text-black-600 text-4xl order-2">
+                        <i class="fa-solid fa-viruses"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-1">Milk Letting</h3>
+                    <div class="text-yellow-500 text-4xl order-2">
+                        <i class="fa-solid fa-bottle-droplet"></i>
+                    </div>
+                </div>
+            
+
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-l font-bold order-1">Risk Management & WHODAS</h3>
+                    <div class="text-red-600 text-4xl order-2">
+                        <i class="fas fa-circle-exclamation"></i>
+                    </div>
+                </div>
+
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-l font-bold order-1">Pre-Natal Check Up (OB Ultrasound)</h3>
+                    <div class="text-gray-400 text-4xl order-2">
+                        <i class="fa-solid fa-prescription-bottle-medical"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-m font-bold order-1">Visual Inspection with Acetic Acid</h3>
+                    <div class="text-yellow-600 text-4xl order-2">
+                        <i class="fas fa-tooth"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-2">FP & Counseling</h3>
+                    <div class="text-orange-200 text-4xl order-1">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-2">Syphilis/HEPA/HIV</h3>
+                    <div class="text-yellow-600 text-4xl order-1">
+                        <i class="fas fa-hand-dots"></i>
+                    </div>
+                </div>
+
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-l font-bold order-2">Subdermal Implant</h3>
+                    <div class="text-blue-700 text-4xl order-1">
+                        <i class="fas fa-user-doctor"></i>
+                    </div>
+                </div>
+
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <h3 class="text-xl font-bold order-2">PAP Smear</h3>
+                    <div class="text-pink-300 text-4xl order-1">
+                        <i class="fa-solid fa-person"></i>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-md transition flex items-center justify-between">
+                     <h3 class="text-xl font-bold order-2">Laboratory Test</h3>
+                    <div class="text-blue-600 text-4xl order-1">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="emergency-hotlines" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-red-600 " >Emergency Hotlines</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div class="bg-white p-6 rounded-lg shadow-md text-center " >
+                    <h3 class="text-xl font-bold mb-2">Emergency 911 National Office</h3>
+                    <p class="text-gray-600 text-l font-semibold">911 / (02) 925-9111 </p>
+                    <p class="text-gray-500 text-sm mt-1">For all types of emergencies.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-bold mb-2">Bureau of Fire Protection</h3>
+                    <p class="text-gray-600 text-l font-semibold">(02) 426-0219 </p>
+                    <p class="text-gray-500 text-sm mt-1">For fire incidents.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-bold mb-2">Philippine National Police</h3>
+                    <p class="text-600 text-l font-semibold">(2) 722-0650 or +63917-847-5757</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-bold mb-2">Manila Traffic and Parking Bureau (MTPB)</h3>
+                    <p class="text-gray-600 text-l font-semibold">8-5279860 or 0932-6622322</p>
+                    <p class="text-gray-500 text-sm">The MTPB is the city's organization responsible for traffic management and enforcement. </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-bold mb-2">Department of Social Welfare and Development (DSWD) </h3>
+                    <p class="text-gray-600 text-l font-semibold">+630918-912-2813</p>
+                    <p class="text-gray-500 text-sm">Available Monday-Friday, 8AM-5PM</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <h3 class="text-xl font-bold mb-2">F. Legarda Health Center</h3>
+                    <p class="text-gray-600 text-l font-semibold">+63 027812456</p>
+                    <p class="text-gray-500 text-sm">Available Monday-Friday, 8AM-1PM</p>
+                    <p class="text-gray-500 text-sm mt-1">Our direct line for urgent inquiries during operating hours.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="map-location" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-600">Find Us on the Map</h2>
+            <div class="map-container bg-gray-100 rounded-lg shadow-md overflow-hidden" style="height: 450px;">
+                <iframe 
+                    title="F. Legarda Health Center Map"
+                    src="https://www.google.com/maps?q=F.%20Legarda%20Health%20Center%20Manila&hl=en&z=16&output=embed" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="bg-blue-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">4Care: F. Legarda Health Center</h3>
+                    <p class="mb-4">F. Legarda Health Center is a government owned health center located in Sampaloc, Manila.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-yellow-400 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white hover:text-yellow-400 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white hover:text-yellow-400 transition"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <p class="mb-2"><i class="fas fa-map-marker-alt mr-2"></i> 457 Gen. E. Quintos Senior, Manila, Philippines</p>
+                    <p class="mb-2"><i class="fas fa-phone mr-2"></i> +63 027812456</p>
+                    <p class="mb-2"><i class="fas fa-envelope mr-2"></i> Belinda Laya</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Opening Hours</h3>
+                    <p class="mb-2">Monday - Friday: 8AM - 1PM</p>
+                    <p>Saturday & Sunday: Closed</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button onclick="topFunction()" id="backToTopBtn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+
+    <!-- Email Input Modal -->
+    <div id="emailInputModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="otp-method-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeEmailInputModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Email Verification</h2>
+            <p class="text-center text-gray-600 mb-8">Enter your email address to receive verification code</p>
+            
+            <form id="emailInputForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="emailInput" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="emailInput" name="email" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="emailInputError"></div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                    Send Verification Code
+                </button>
+            </form>
+            
+            <div class="text-center mt-6">
+                <p class="text-gray-600">Wrong method? <a href="#" id="backToOtpMethodFromEmailInput" class="text-blue-600 hover:text-blue-800 font-bold">Go back</a></p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Email OTP Modal -->
+    <div id="emailOtpModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="otp-modal-content bg-white p-10 rounded-xl shadow-xl w-full max-w-lg relative">
+            <button id="closeEmailOtpModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-envelope text-blue-600 text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Check Your Email</h2>
+                <p class="text-gray-600 text-sm">We sent a 6-digit code to</p>
+                <p class="text-blue-600 font-medium" id="otpEmailDisplay"></p>
+            </div>
+            
+            <!-- Attempt Counter and Timer -->
+            <div class="text-center mb-6 space-y-3">
+                <div class="inline-flex items-center bg-amber-50 border border-amber-200 rounded-full px-4 py-2">
+                    <i class="fas fa-shield-alt text-amber-600 mr-2"></i>
+                    <span class="text-amber-800 text-sm font-medium">
+                        <span id="attemptCounter" class="font-bold">3</span> attempts left
+                    </span>
+                </div>
+                <div class="inline-flex items-center bg-blue-50 border border-blue-200 rounded-full px-4 py-2">
+                    <i class="fas fa-clock text-blue-600 mr-2"></i>
+                    <span class="text-blue-800 text-sm font-medium">
+                        Expires in <span id="otpTimer" class="font-bold text-blue-700">2:00</span>
+                    </span>
+                </div>
+            </div>
+            
+            <form id="emailOtpForm" class="space-y-6">
+                <div class="form-group">
+                    <div class="flex justify-center space-x-5">
+                        <input type="text" id="emailOtp1" class="otp-input w-16 h-16 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" maxlength="1" required>
+                        <input type="text" id="emailOtp2" class="otp-input w-16 h-16 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" maxlength="1" required>
+                        <input type="text" id="emailOtp3" class="otp-input w-16 h-16 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" maxlength="1" required>
+                        <input type="text" id="emailOtp4" class="otp-input w-16 h-16 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" maxlength="1" required>
+                        <input type="text" id="emailOtp5" class="otp-input w-16 h-16 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" maxlength="1" required>
+                        <input type="text" id="emailOtp6" class="otp-input w-16 h-16 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" maxlength="1" required>
+                    </div>
+                    <div class="error-message text-red-500 text-sm mt-4 text-center font-medium" id="emailOtpError"></div>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg" id="verifyOtpBtn">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Verify Code
+                </button>
+            </form>
+            
+            <!-- Lockout Message (hidden by default) -->
+            <div id="lockoutMessage" class="text-center mt-6 hidden">
+                <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-lock text-red-600 text-xl"></i>
+                    </div>
+                    <p class="text-red-800 font-semibold text-lg">Too Many Attempts</p>
+                    <p class="text-red-600 text-sm mt-2">Try again in <span id="lockoutTimer" class="font-bold text-red-700">5 minutes</span></p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <p class="text-gray-500 text-sm">Didn't get the code?</p>
+                <a href="#" id="resendEmailOtp" class="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors duration-200">
+                    <i class="fas fa-redo mr-1"></i>
+                    Send again
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="loginModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="login-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeLoginModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Login to 4Care</h2>
+            <form id="loginForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="loginEmail" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="loginEmail" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="loginEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="loginPassword" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="********" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="loginPasswordError"></div>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center text-gray-600">
+                        <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded">
+                        <span class="ml-2">Remember me</span>
+                    </label>
+                    <a href="#" id="forgotPasswordLink" class="text-blue-600 hover:underline" method="post" action="Back-end/forgot-password/send-pass-reset.php">Forgot Password?</a>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Login
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-4">Don't have an account? <a href="#" id="openSignupModalLink" class="text-blue-600 hover:underline">Sign Up</a></p>
+                <div class="success-message text-green-600 text-center mt-4 hidden" id="loginSuccessMessage">Login successful! Redirecting...</div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="signupModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="signup-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeSignupModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Sign Up for 4Care</h2>
+            
+            <!-- Profile Photo Display (hidden initially) -->
+            <div id="profilePhotoDisplay" class="text-center mb-6 hidden">
+                <h3 class="text-lg font-semibold mb-3 text-gray-700">Your Profile Photo</h3>
+                <img id="displayProfilePhoto" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjIwIiBmaWxsPSIjMzM3QUJCIi8+CjxwYXRoIGQ9Ik0yNCAxMDBDMjQgODguOTU0NCAzMi45NTQ0IDgwIDQ0IDgwSDg0Qzk1LjA0NTYgODAgMTA0IDg4Ljk1NDQgMTA0IDEwMFYxMjhIMjRWMTIwWiIgZmlsbD0iIzMzN0FCQiIvPgo8L3N2Zz4K" alt="Your Profile Photo" class="w-32 h-32 rounded-full object-cover border-4 border-blue-500 mx-auto shadow-lg">
+                <p class="text-sm text-gray-600 mt-2">This photo will be used in your patient dashboard</p>
+            </div>
+            
+            <form id="signupForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="signupFirstName" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="signupFirstName" name="firstName" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="John" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupFirstNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupLastName" class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="signupLastName" name="lastName" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Doe" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupLastNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="signupEmail" name="email" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="signupPassword" name="password" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="********" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupPasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="signupConfirmPassword" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="********" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="signupConfirmPasswordError"></div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Sign Up
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-4">Already have an account? <a href="#" id="openLoginModalLink" class="text-blue-600 hover:underline">Log In</a></p>
+                <div class="success-message text-green-600 text-center mt-4 hidden" id="signupSuccessMessage">Registration successful!</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="userAgreementModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl relative max-h-[80vh] overflow-y-auto">
+            <button id="closeUserAgreementBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-600"> User Agreement</h2>
+            <div class="prose max-w-none mb-1">
+                <h3 class="text-1xl font-bold text-left mb-6">Privacy Policy</h3>
+                <p>By creating an account, you agree that we may collect and use your personal information as outlined in our Privacy Policy.</p>
+                
+            
+                <h3 class="text-1xl font-bold text-left mb-6">Terms of Service</h3>
+                <p>You agree to use our services in accordance with all applicable laws and regulations.</p>
+
+                <div class="mt-6 flex items-center">
+                    <input type="checkbox" id="agreeTerms" class="form-checkbox h-5 w-5 text-blue-600">
+                    <label for="agreeTerms" class="ml-2">I have read and agree to the terms and conditions.</label>
+                </div>
+            </div>
+            <div class="flex justify-end gap-4">
+                <button id="declineAgreementBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                    Decline
+                </button>
+                <button id="acceptAgreementBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+                    Accept & Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="forgotPasswordModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="forgot-password-modal-content bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+            <button id="closeForgotPasswordModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">Forgot Password?</h2>
+            <p class="text-center text-gray-600 mb-6">Enter your email address below and we'll send you a link to reset your password.</p>
+            <form id="forgotPasswordForm" class="space-y-5">
+                <div class="form-group">
+                    <label for="forgotEmail" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                    <div class="input-group relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="forgotEmail" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="email@example.com" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="forgotEmailError"></div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300">
+                    Send Reset Link
+                </button>
+                <p class="text-center text-gray-600 text-sm mt-4">Remember your password? <a href="#" id="backToLoginLink" class="text-blue-600 hover:underline">Log In</a></p>
+                <div class="success-message text-green-600 text-center mt-4 hidden" id="forgotPasswordSuccessMessage">Password reset link sent! Check your email.</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="announcementsModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="announcements-modal-content">
+            <div class="flex justify-end">
+                <button id="closeAnnouncementsModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-6 text-blue-600">All Announcements</h3>
+            <div id="otherAnnouncementsContainer">
+                <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-100 text-green-600 rounded-full p-3 mr-4">
+                            <i class="fas fa-user-md text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">New Specialist Joined</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">We're pleased to welcome Dr. Sarah Johnson, our new pediatric specialist. She'll be accepting new patients starting July 1st.</p>
+                    <div class="text-sm text-gray-500">Posted: June 10, 2023</div>
+                </div>
+                
+                <div class="announcement-card bg-white p-6 rounded-lg shadow-md transition duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-yellow-100 text-yellow-600 rounded-full p-3 mr-4">
+                            <i class="fas fa-syringe text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Flu Vaccines Available</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">This year's flu vaccines have arrived. Call to schedule your vaccination or inquire about our walk-in hours.</p>
+                    <div class="text-sm text-gray-500">Posted: June 5, 2023</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Patient Details Modal -->
+    <div id="patientDetailsModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
+        <div class="patient-details-modal-content">
+            <button id="closePatientDetailsModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-1000">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h2 class="text-3xl font-bold text-center mb-1 text-blue-600">Patient Details</h2>
+            <p class="text-center text-gray-600 mb-1">Please provide your personal details to complete your profile.</p>   
+            <form id="patientDetailsForm" class="space-y-8">
+            <!-- Basic Info Group -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-xl font-semibold mb-6 text-blue-700 border-b border-blue-200 pb-2">Basic Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="form-group">
+                    <label for="patientBirthdate" class="block text-gray-700 font-medium mb-2">Birthdate</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="date" id="patientBirthdate" name="birthDate" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientBirthdateError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="patientAge" class="block text-gray-700 font-medium mb-2">Age</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="number" id="patientAge" name="age" min="0" max="150" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 30" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientAgeError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="patientGender" class="block text-gray-700 font-medium mb-2">Gender</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-venus-mars absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select id="patientGender" name="gender" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientGenderError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="patientCivilStatus" class="block text-gray-700 font-medium mb-2">Civil Status</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-ring absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select id="patientCivilStatus" name="civilStatus" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                    </select>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientCivilStatusError"></div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Contact & Address Group -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-xl font-semibold mb-1 text-blue-700 border-b border-blue-200 pb-2">Contact & Address</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="form-group">
+                    <label for="patientContact" class="block text-gray-700 font-medium mb-2">Contact Number</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-phone absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="tel" id="patientContact" name="contact" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., 09123456789" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientContactError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="patientAddress" class="block text-gray-700 font-medium mb-2">Address</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-map-marker-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="patientAddress" name="address" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Street, City, Province" required>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientAddressError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="patientBarangayNumber" class="block text-gray-700 font-medium mb-2">Barangay Number</label>
+                    <div class="input-group relative">
+                    <i class="fas fa-hashtag absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                     <select id="patientBarangayNumber" name="barangay" class="form-control w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                         <option value="">Select Barangay</option>
+                         <option value="545">545</option>
+                         <option value="546">546</option>
+                         <option value="547">547</option>
+                         <option value="548">548</option>
+                         <option value="549">549</option>
+                         <option value="550">550</option>
+                         <option value="551">551</option>
+                     </select>
+                    </div>
+                    <div class="error-message text-red-500 text-xs mt-1" id="patientBarangayNumberError"></div>
+                </div>
+                </div>
+            </div>
+
+
+
+            <!-- Profile Photo Group -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-xl font-semibold mb-6 text-blue-700 border-b border-blue-200 pb-2">Profile Picture</h3>
+                <div class="form-group camera-section">
+                <p class="text-gray-500 text-xs mb-3">Camera is optional. You can also upload a photo.</p>
+
+                <div class="flex flex-col md:flex-row md:items-start md:gap-6">
+                    <!-- Left column: actions stacked -->
+                    <div class="w-full md:w-1/3 flex flex-col items-stretch gap-3" name="photoUpload">
+                        <button type="button" id="takePhotoBtn" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-md transition duration-300 inline-flex items-center justify-center">
+                            <i class="fas fa-camera mr-2"></i> Take Photo
+                        </button>
+                        <label for="profilePhotoFile" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition duration-300 cursor-pointer inline-flex items-center justify-center">
+                            <i class="fas fa-file-image mr-2"></i> Choose Photo
+                        </label>
+                        <input type="file" id="profilePhotoFile" accept="image/*" class="hidden">
+                    </div>
+
+                    <!-- Right column: framed live view / preview -->
+                    <div class="w-full md:w-2/3 mt-4 md:mt-0 md:pl-6">
+                        <!-- Picture Frame + Controls wrapper (keeps both centered and same width) -->
+                        <div id="photoFrameWrap" class="w-full max-w-[600px] flex flex-col items-center justify-center">
+                            <!-- Picture Frame (fixed size, centered) -->
+                            <div id="photoFrame" class="w-full h-[400px] rounded-md overflow-hidden relative">
+                                <video id="cameraFeed" autoplay playsinline style="display:none;" class="absolute inset-0 w-full h-full object-cover"></video>
+                                <img id="capturedPhoto" alt="Profile Photo Preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                                <canvas id="photoCanvas" style="display:none;"></canvas>
+                            </div>
+                            <!-- Controls below the frame -->
+                            <div id="cameraControls" class="w-full flex items-center justify-center gap-1 mt-0" style="display:none;">
+                                <button type="button" id="capturePhotoBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-5 rounded-md transition duration-300 inline-flex items-center justify-center">
+                                    <i class="fas fa-circle mr-2"></i> Capture
+                                </button>
+                                <button type="button" id="retakePhotoBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-5 rounded-md transition duration-300 inline-flex items-center justify-center" style="display:none;">
+                                    <i class="fas fa-redo mr-2"></i> Retake
+                                </button>
+                            </div>
+                        </div>
+                        <!-- end wrapper -->
+                        <!-- Controls below the frame -->
+                        <div id="cameraControlsLegacy" class="hidden"></div>
+                        <div class="error-message text-red-500 text-xs mt-1 text-center" id="capturedPhotoError"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300 text-lg font-semibold">
+                Save Details
+            </button>
+            <div class="success-message text-green-600 text-center mt-4 hidden" id="patientDetailsSuccessMessage">Details saved successfully!</div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Split JS: keep order: carousel -> ui -> auth -> patient-details -->
+    <script src="js/carousel.js?v=4"></script>
+    <script src="js/ui.js?v=4"></script>
+    <script src="js/auth.js?v=4"></script>
+    <script src="js/patient-details.js?v=4"></script>
+    <script src="js/patient.js?v=1"></script>
+
+
+    
+    </body>
